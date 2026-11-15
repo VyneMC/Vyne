@@ -25,22 +25,30 @@ public final class ConvertedModMount {
 
     private static volatile Path preparedFmlCache;
 
+    private static volatile NeoForgeInstall install;
+
     public static void preparePatchedGame(boolean dedicatedServer) {
-        String patched = System.getProperty("vyne.neoforge.patchedGame");
-        if (patched == null || patched.isBlank()) return;
+        if ("false".equalsIgnoreCase(System.getProperty("vyne.patchedGame"))) return;
+        String version = VyneLauncher.getNeoForgeVersion();
+        List<DetectedMod> mods = VyneLauncher.getDetectedMods();
+        boolean neoForgeMods = mods != null && mods.stream()
+                .anyMatch(mod -> mod.getLoaderType() == DetectedMod.LoaderType.NEOFORGE);
+        boolean fabricMods = mods != null && mods.stream()
+                .anyMatch(mod -> mod.getLoaderType() == DetectedMod.LoaderType.FABRIC);
+        if (version == null || version.isBlank() || !neoForgeMods) return;
+        if (fabricMods) {
+            VyneLogger.info("[PatchedGame] Fabric and NeoForge mods together: using the compatibility path");
+            return;
+        }
         try {
+            Path base = Path.of(System.getProperty("vyne.gameDir", ".")).toAbsolutePath().normalize();
+            NeoForgeInstall neoForge = NeoForgeInstall.ensure(version, dedicatedServer, base);
             List<Path> classpath = new ArrayList<>();
-            String extra = System.getProperty("vyne.neoforge.patchedClasspath", "");
-            for (String part : extra.split(java.io.File.pathSeparator)) {
-                if (!part.isBlank()) classpath.add(Path.of(part));
-            }
+            classpath.add(neoForge.vanillaGame());
             Path neoApi = VyneLauncher.getNeoForgeApiJar();
             if (neoApi != null) classpath.add(neoApi);
-            for (String key : new String[] {"vyne.neoforge.fmlJar", "vyne.neoforge.busJar"}) {
-                String value = System.getProperty(key);
-                if (value != null && !value.isBlank()) classpath.add(Path.of(value));
-            }
-            dev.stolym.vyne.core.VyneMode.enablePatchedGame();
+            classpath.add(neoForge.fml());
+            classpath.add(neoForge.bus());
             List<Path> inputs = new ArrayList<>();
             List<Path> indexSources = new ArrayList<>();
             if (neoApi != null && Files.exists(neoApi)) {
@@ -61,15 +69,17 @@ public final class ConvertedModMount {
             Path cache = Path.of(System.getProperty("vyne.gameDir", ".")).toAbsolutePath().normalize()
                     .resolve(".vyne").resolve("cache").resolve("patched");
             dev.stolym.vyne.ui.VyneLoadingScreen.update("Preparing NeoForge's game (first launch only)", 50);
-            PatchedGameBuilder.Result result = PatchedGameBuilder.build(Path.of(patched), inputs, classpath,
+            PatchedGameBuilder.Result result = PatchedGameBuilder.build(neoForge.patchedGame(), inputs, classpath,
                     dev.stolym.vyne.mappings.MojmapDownloader.getIntermediaryPath(mc),
                     dev.stolym.vyne.mappings.MojmapDownloader.getMojmapPath(mc), cache, dedicatedServer);
+            dev.stolym.vyne.core.VyneMode.enablePatchedGame();
             GameOverlay.install(result.game());
             for (int i = 0; i < inputs.size(); i++) {
                 ModConverter.registerConverted(inputs.get(i), indexSources.get(i), result.converted().get(inputs.get(i)));
             }
             dev.stolym.vyne.core.VyneMode.remapClasspath(classpath);
             preparedFmlCache = cache;
+            install = neoForge;
             VyneLogger.info("[PatchedGame] Running Minecraft with NeoForge's patches (" + GameOverlay.size() + " entries)");
         } catch (Throwable t) {
             VyneLogger.error("[PatchedGame] Could not prepare NeoForge's patched game, running vanilla: " + t, t);
@@ -129,15 +139,11 @@ public final class ConvertedModMount {
             dev.stolym.vyne.core.VyneMode.neoForgeApiJar(apiRuntime);
             addCodeSource.accept(apiRuntime);
         }
-        if (dev.stolym.vyne.core.VyneMode.patchedGame()) {
-            for (String library : System.getProperty("vyne.neoforge.libraries", "").split(java.io.File.pathSeparator)) {
-                if (!library.isBlank()) addCodeSource.accept(Path.of(library));
-            }
-        }
-        String bus = System.getProperty("vyne.neoforge.busJar");
-        if (dev.stolym.vyne.core.VyneMode.patchedGame() && bus != null && !bus.isBlank()) {
-            addCodeSource.accept(Path.of(bus));
-            VyneLogger.info("[PatchedGame] NeoForge's event bus mounted: " + Path.of(bus).getFileName());
+        NeoForgeInstall neoForge = install;
+        if (dev.stolym.vyne.core.VyneMode.patchedGame() && neoForge != null) {
+            for (Path library : neoForge.libraries()) addCodeSource.accept(library);
+            addCodeSource.accept(neoForge.bus());
+            VyneLogger.info("[PatchedGame] NeoForge's event bus mounted: " + neoForge.bus().getFileName());
         }
         try {
             addCodeSource.accept(VyneGameJar.prepare());
@@ -148,10 +154,10 @@ public final class ConvertedModMount {
     }
 
     private static void mountFml(Consumer<Path> addCodeSource) {
-        String fml = System.getProperty("vyne.neoforge.fmlJar");
-        if (!dev.stolym.vyne.core.VyneMode.patchedGame() || fml == null || fml.isBlank() || preparedFmlCache == null) return;
+        NeoForgeInstall neoForge = install;
+        if (!dev.stolym.vyne.core.VyneMode.patchedGame() || neoForge == null || preparedFmlCache == null) return;
         try {
-            Path loader = FmlMount.prepare(Path.of(fml), preparedFmlCache);
+            Path loader = FmlMount.prepare(neoForge.fml(), preparedFmlCache);
             addCodeSource.accept(loader);
             VyneLogger.info("[PatchedGame] NeoForge's FML mounted: " + loader.getFileName());
         } catch (Throwable t) {

@@ -18,6 +18,8 @@ dependencies {
     fmlCompileOnly 'org.apache.maven:maven-artifact:3.8.5'
     fmlCompileOnly 'org.jetbrains:annotations:23.0.0'
     fmlCompileOnly 'org.slf4j:slf4j-api:2.0.9'
+    fmlCompileOnly 'org.lwjgl:lwjgl:3.3.3'
+    fmlCompileOnly 'org.lwjgl:lwjgl-glfw:3.3.3'
     fmlCompileOnly files(layout.buildDirectory.dir('fml-vyne-classes')) {
         builtBy 'vyneClassesForFml'
     }

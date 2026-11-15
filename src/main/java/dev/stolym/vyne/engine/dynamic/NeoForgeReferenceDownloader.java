@@ -44,7 +44,7 @@ public final class NeoForgeReferenceDownloader {
         return null;
     }
 
-    private static boolean tryDownload(String version, String fileName, Path target) {
+    public static boolean tryDownload(String version, String fileName, Path target) {
         String urlStr = MAVEN_URL + version + "/" + fileName;
         int maxRedirects = 5;
         int redirectCount = 0;

@@ -176,6 +176,7 @@ public final class VyneLauncher {
             dev.stolym.vyne.engine.dynamic.NeoForgeVersionResolver.resolve(detectedMods, preferredVersion);
 
         String neoVersion = res.selectedVersion();
+        neoForgeVersion = neoVersion;
         if (!res.incompatibleModIds().isEmpty()) {
             for (String modId : res.incompatibleModIds()) {
                 hardDisabledModIds.add(modId);
@@ -475,6 +476,12 @@ public final class VyneLauncher {
                 mod.getLoaderType() == DetectedMod.LoaderType.VYNE
             ) continue;
         }
+    }
+
+    private static volatile String neoForgeVersion;
+
+    public static String getNeoForgeVersion() {
+        return neoForgeVersion;
     }
 
     public static List<DetectedMod> getDetectedMods() {

@@ -56,12 +56,13 @@ public final class ExactRemap {
                 .rebuildSourceFilenames(true)
                 .build();
         List<Path> temporary = new ArrayList<>();
+        List<Path> sources = SharedMethodSplit.prepare(inputs, classpath, mappings, outputs.get(0).getParent());
         try {
             for (Path entry : classpath) {
                 if (entry != null && Files.exists(entry) && !inputs.contains(entry)) remapper.readClassPath(entry);
             }
             List<InputTag> tags = new ArrayList<>();
-            for (Path input : inputs) {
+            for (Path input : sources) {
                 InputTag tag = remapper.createInputTag();
                 tags.add(tag);
                 remapper.readInputs(tag, input);
@@ -70,12 +71,15 @@ public final class ExactRemap {
                 Path tmp = outputs.get(i).resolveSibling(outputs.get(i).getFileName() + "." + ProcessHandle.current().pid() + ".remap");
                 temporary.add(tmp);
                 try (OutputConsumerPath consumer = new OutputConsumerPath.Builder(tmp).assumeArchive(true).build()) {
-                    consumer.addNonClassFiles(inputs.get(i), NonClassCopyMode.FIX_META_INF, remapper);
+                    consumer.addNonClassFiles(sources.get(i), NonClassCopyMode.FIX_META_INF, remapper);
                     remapper.apply(consumer, tags.get(i));
                 }
             }
         } finally {
             remapper.finish();
+            for (Path source : sources) {
+                if (!inputs.contains(source)) Files.deleteIfExists(source);
+            }
         }
         for (int i = 0; i < inputs.size(); i++) {
             route(temporary.get(i), outputs.get(i));
@@ -92,7 +96,7 @@ public final class ExactRemap {
                 zos.putNextEntry(new ZipEntry(entry.getName()));
                 try (InputStream data = zip.getInputStream(entry)) {
                     byte[] bytes = data.readAllBytes();
-                    zos.write(entry.getName().endsWith(".class") ? Routing.apply(bytes) : bytes);
+                    zos.write(entry.getName().endsWith(".class") ? Routing.apply(SharedMethodSplit.restoreNames(bytes)) : bytes);
                 }
                 zos.closeEntry();
             }
