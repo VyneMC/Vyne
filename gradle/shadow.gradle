@@ -1,0 +1,32 @@
+tasks.named('jar') {
+    enabled = false
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    dependsOn tasks.named('neoForgeRegistriesBootstrapJar')
+
+    from sourceSets.main.output
+    from sourceSets.fml.output
+    configurations = [project.configurations.include]
+    mergeServiceFiles()
+    exclude 'net/minecraft/**'
+    exclude { fe ->
+        String p = fe.relativePath.pathString.replace('\\', '/')
+        p == 'net/neoforged/neoforge/registries/NeoForgeRegistries.class'
+            || p.startsWith('net/neoforged/neoforge/registries/NeoForgeRegistries$')
+    }
+
+    from(tasks.named('neoForgeRegistriesBootstrapJar').flatMap { it.archiveFile }) {
+    into 'META-INF/vyne/bootstrap'
+    }
+
+    manifest {
+        attributes(
+            'Main-Class': 'dev.stolym.vyne.core.VyneLauncher',
+            'Implementation-Title': 'Vyne',
+            'Implementation-Version': project.version
+        )
+        attributes(['Implementation-Version': '9.7.1'], 'org/objectweb/asm/')
+    }
+}

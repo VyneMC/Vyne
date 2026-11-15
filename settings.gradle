@@ -1,0 +1,29 @@
+/*
+ * This file is part of Stolym Studios project, licensed under the GPL-3.0 License.
+ * Full license text is available in the LICENSE file in the project root.
+ */
+
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        maven {
+            name = 'NeoForge'
+            url = 'https://maven.neoforged.net/releases/'
+        }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'vyne'
+
+if (file('vyne-api/api').isDirectory()) {
+    include 'vyne-api'
+    project(':vyne-api').projectDir = file('vyne-api/api')
+}
+if (file('vyne-api/plugin').isDirectory()) {
+    include 'vyne-api-plugin'
+    project(':vyne-api-plugin').projectDir = file('vyne-api/plugin')
+}

@@ -1,0 +1,71 @@
+configurations {
+    include
+    implementation.extendsFrom include
+
+    all {
+        resolutionStrategy {
+            force "org.ow2.asm:asm:${asmVersion}"
+            force "org.ow2.asm:asm-analysis:${asmVersion}"
+            force "org.ow2.asm:asm-commons:${asmVersion}"
+            force "org.ow2.asm:asm-tree:${asmVersion}"
+            force "org.ow2.asm:asm-util:${asmVersion}"
+        }
+    }
+}
+
+dependencies {
+    include "org.ow2.asm:asm:${asmVersion}"
+    include "org.ow2.asm:asm-analysis:${asmVersion}"
+    include "org.ow2.asm:asm-commons:${asmVersion}"
+    include "org.ow2.asm:asm-tree:${asmVersion}"
+    include "org.ow2.asm:asm-util:${asmVersion}"
+
+    include('net.fabricmc:sponge-mixin:0.17.1+mixin.0.8.7') {
+        exclude group: 'org.ow2.asm'
+        exclude group: 'org.objectweb'
+    }
+
+    include 'io.github.llamalad7:mixinextras-fabric:0.4.0'
+    include 'org.ow2.sat4j:org.ow2.sat4j.core:2.3.6'
+    include 'org.ow2.sat4j:org.ow2.sat4j.pb:2.3.6'
+    include "net.fabricmc:tiny-remapper:0.10.3"
+    include "net.fabricmc:mapping-io:0.6.1"
+    include "net.fabricmc:class-tweaker:0.3.0-beta.2"
+    compileOnly("net.minecraft:launchwrapper:1.12") {
+        exclude group: 'org.lwjgl.lwjgl'
+        exclude group: 'net.java.jinput'
+        exclude group: 'net.java.jutils'
+    }
+
+    include 'com.google.code.gson:gson:2.10.1'
+    include 'com.moandjiezana.toml:toml4j:0.7.2'
+    include 'com.electronwill.night-config:core:3.8.3'
+    include 'com.electronwill.night-config:toml:3.8.3'
+    include 'net.jodah:typetools:0.6.3'
+    include 'org.apache.commons:commons-lang3:3.14.0'
+    include('org.apache.maven:maven-artifact:3.8.5') {
+        transitive = false
+    }
+
+    include 'org.slf4j:slf4j-api:2.0.9'
+    include 'org.apache.logging.log4j:log4j-slf4j2-impl:2.22.0'
+    include 'org.apache.logging.log4j:log4j-api:2.22.0'
+    include 'org.apache.logging.log4j:log4j-core:2.22.0'
+
+    compileOnly 'org.jetbrains:annotations:23.0.0'
+    compileOnly 'org.lwjgl:lwjgl:3.3.3'
+    compileOnly 'org.lwjgl:lwjgl-glfw:3.3.3'
+    compileOnly 'org.lwjgl:lwjgl-opengl:3.3.3'
+    compileOnly 'net.neoforged:neoforge:21.1.23'
+    compileOnly 'net.fabricmc:fabric-loader:0.16.0'
+    compileOnly 'com.mojang:datafixerupper:8.0.16'
+    compileOnly 'it.unimi.dsi:fastutil:8.5.12'
+    compileOnly 'com.mojang:authlib:6.0.54'
+    compileOnly 'org.apache.commons:commons-lang3:3.14.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testImplementation 'org.mockito:mockito-core:5.5.0'
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}

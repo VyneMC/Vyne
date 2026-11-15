@@ -1,0 +1,50 @@
+# --- Gradle -----------------------------------------------------------------
+.gradle/
+.gradle-local/
+**/build/
+!**/src/**/build/
+gradle-app.setting
+.gradletasknamecache
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# --- IDEs / editors / tooling ------------------------------------------------
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+bin/
+out/
+.zcode/
+.DS_Store
+
+# --- Local game runs ----------------------------------------------------------
+run/
+logs/
+*.log
+.vyne/
+server.properties
+
+# --- Local working material (never published) --------------------------------
+scratch/
+BUILD_BACKUP/
+files/
+fabric-loader/
+fabric_loader.zip
+.BiomesOPlenty-1.21.1/
+.neoforge-source/
+/test/
+/temp/
+/test_mods/
+
+# Local stuff
+smoke/*
+vyne-api/
+
+# --- Stray artifacts ------------------------------------------------------------
+*.class
+*.tmp
+jar_content.txt
+recovery_errors.txt

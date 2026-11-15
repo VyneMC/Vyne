@@ -1,0 +1,22 @@
+accessWidener	v1	intermediary
+
+accessible	method	net/minecraft/class_2960	<init>	(Ljava/lang/String;Ljava/lang/String;)V
+accessible	method	net/minecraft/class_2960	<init>	(Ljava/lang/String;)V
+accessible	method	net/minecraft/class_2378	method_10230	(Lnet/minecraft/class_2378;Lnet/minecraft/class_2960;Ljava/lang/Object;)Ljava/lang/Object;
+accessible	method	net/minecraft/class_2400	<init>	(Z)V
+accessible	method	net/minecraft/class_8177	method_48813	(Lnet/minecraft/class_8177;)Lnet/minecraft/class_8177;
+accessible	method	net/minecraft/class_4719	method_24027	(Lnet/minecraft/class_4719;)Lnet/minecraft/class_4719;
+accessible	method	net/minecraft/class_2510	<init>	(Lnet/minecraft/class_2680;Lnet/minecraft/class_4970$class_2251;)V
+accessible	method	net/minecraft/class_2323	<init>	(Lnet/minecraft/class_8177;Lnet/minecraft/class_4970$class_2251;)V
+accessible	method	net/minecraft/class_2533	<init>	(Lnet/minecraft/class_8177;Lnet/minecraft/class_4970$class_2251;)V
+accessible	method	net/minecraft/class_2440	<init>	(Lnet/minecraft/class_8177;Lnet/minecraft/class_4970$class_2251;)V
+accessible	method	net/minecraft/class_2269	<init>	(Lnet/minecraft/class_8177;ILnet/minecraft/class_4970$class_2251;)V
+accessible	method	net/minecraft/class_8810	<init>	(Lnet/minecraft/class_4970$class_2251;)V
+accessible	field	net/minecraft/class_1821	field_8912	Ljava/util/Map;
+mutable	field	net/minecraft/class_1821	field_8912	Ljava/util/Map;
+
+accessible	method	net/minecraft/class_7788	method_46003	(Lnet/minecraft/class_1935;)Lnet/minecraft/class_52$class_53;
+extendable	method	net/minecraft/class_7788	method_46003	(Lnet/minecraft/class_1935;)Lnet/minecraft/class_52$class_53;
+accessible	method	net/minecraft/class_7788	method_46009	(Lnet/minecraft/class_1935;)Lnet/minecraft/class_52$class_53;
+extendable	method	net/minecraft/class_7788	method_46009	(Lnet/minecraft/class_1935;)Lnet/minecraft/class_52$class_53;
+accessible	method	net/minecraft/class_437	method_37063	(Lnet/minecraft/class_364;)Lnet/minecraft/class_364;

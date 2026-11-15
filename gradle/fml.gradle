@@ -1,0 +1,36 @@
+sourceSets {
+    fml {
+        java {
+            srcDirs = ['src/fml/java']
+        }
+    }
+}
+
+configurations {
+    fmlApi
+    fmlCompileOnly.extendsFrom fmlApi
+}
+
+dependencies {
+    fmlApi 'net.neoforged.fancymodloader:loader:4.0.45'
+    fmlApi 'net.neoforged:bus:8.0.5'
+    fmlCompileOnly 'cpw.mods:securejarhandler:3.0.8'
+    fmlCompileOnly 'org.apache.maven:maven-artifact:3.8.5'
+    fmlCompileOnly 'org.jetbrains:annotations:23.0.0'
+    fmlCompileOnly 'org.slf4j:slf4j-api:2.0.9'
+    fmlCompileOnly files(layout.buildDirectory.dir('fml-vyne-classes')) {
+        builtBy 'vyneClassesForFml'
+    }
+}
+
+tasks.register('vyneClassesForFml', Sync) {
+    dependsOn tasks.named('compileJava'), 'injectDeferredRegisterBridges', 'injectRegisterEventBridges'
+    from sourceSets.main.output.classesDirs
+    exclude 'net/neoforged/**', 'net/minecraftforge/**', 'cpw/**', 'net/minecraft/**'
+    into layout.buildDirectory.dir('fml-vyne-classes')
+}
+
+tasks.named('compileFmlJava') {
+    dependsOn 'vyneClassesForFml'
+    options.compilerArgs += ['-Xlint:-deprecation', '-Xlint:-removal']
+}

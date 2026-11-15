@@ -1,0 +1,24 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="GPL-3.0"
+issueTrackerURL="https://example.com/invalid"
+
+[[mods]]
+modId="vyne-mixin-fixture"
+version="1.0.0"
+displayName="Vyne Mixin Fixture"
+description="Fixture mod proving the emulated-mod mixin pipeline (docs/dev/heavy-mod-roadmap.md Phase 1.1)."
+authors="Vyne"
+
+[[mixins]]
+config = "vyne-mixin-fixture.mixins.json"
+
+[[dependencies.vyne-mixin-fixture]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21,)"
+
+[[dependencies.vyne-mixin-fixture]]
+    modId="neoforge"
+    type="required"
+    versionRange="[1,)"

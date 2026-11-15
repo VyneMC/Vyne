@@ -1,0 +1,309 @@
+{
+  "_comment": "Default bridge rules for the Vyne dynamic engine. Users can override by placing a file at <gameDir>/.vyne/bridges.json. Only add entries here when the auto-synthesized default (return null/zero) isn't semantically correct.",
+  "classes": [
+    {
+      "internal": "net/neoforged/neoforge/common/util/LazyOptional",
+      "superclass": "java/lang/Object",
+      "singletons": { "EMPTY": "self-ctor" }
+    },
+    {
+      "internal": "net/minecraftforge/common/util/LazyOptional",
+      "superclass": "java/lang/Object",
+      "singletons": { "EMPTY": "self-ctor" }
+    },
+    {
+      "internal": "net/neoforged/neoforge/common/capabilities/Capability",
+      "superclass": "java/lang/Object"
+    },
+    {
+      "internal": "net/minecraftforge/common/capabilities/Capability",
+      "superclass": "java/lang/Object"
+    },
+    {
+      "internal": "net/neoforged/neoforge/common/capabilities/CapabilityToken",
+      "superclass": "java/lang/Object"
+    },
+    {
+      "internal": "net/minecraftforge/common/capabilities/CapabilityToken",
+      "superclass": "java/lang/Object"
+    },
+
+    {
+      "_comment": "NeoForge client datagen model hierarchy. Registrate and similar mods reference these from blockstate/item model builders. The stub synthesizer defaults unknown classes to `java/lang/Object`, which can trip the verifier when a `ModelBuilder` must be assignable to `ModelFile`. Mirror the NeoForge supertype chain (ModelFile <- ModelBuilder <- {BlockModelBuilder, ItemModelBuilder}) so verification passes on dedicated servers.",
+      "internal": "net/neoforged/neoforge/client/model/generators/ModelBuilder",
+      "superclass": "net/neoforged/neoforge/client/model/generators/ModelFile"
+    },
+    {
+      "_comment": "ModelFile$UncheckedModelFile is a public inner subclass of ModelFile used by Registrate's `RegistrateItemModelProvider.generated` as the fallback parent when a mod doesn't supply its own model.",
+      "internal": "net/neoforged/neoforge/client/model/generators/ModelFile$UncheckedModelFile",
+      "superclass": "net/neoforged/neoforge/client/model/generators/ModelFile"
+    },
+    {
+      "internal": "net/neoforged/neoforge/client/model/generators/ModelFile$ExistingModelFile",
+      "superclass": "net/neoforged/neoforge/client/model/generators/ModelFile"
+    },
+    {
+      "internal": "net/minecraftforge/client/model/generators/ModelFile$UncheckedModelFile",
+      "superclass": "net/minecraftforge/client/model/generators/ModelFile"
+    },
+    {
+      "internal": "net/minecraftforge/client/model/generators/ModelFile$ExistingModelFile",
+      "superclass": "net/minecraftforge/client/model/generators/ModelFile"
+    },
+    {
+      "internal": "net/neoforged/neoforge/client/model/generators/BlockModelBuilder",
+      "superclass": "net/neoforged/neoforge/client/model/generators/ModelBuilder"
+    },
+    {
+      "internal": "net/neoforged/neoforge/client/model/generators/ItemModelBuilder",
+      "superclass": "net/neoforged/neoforge/client/model/generators/ModelBuilder"
+    },
+    {
+      "internal": "net/neoforged/neoforge/client/model/generators/ConfiguredModel$Builder",
+      "superclass": "java/lang/Object"
+    },
+    {
+      "internal": "net/neoforged/neoforge/client/model/generators/MultiPartBlockStateBuilder",
+      "superclass": "java/lang/Object"
+    },
+    {
+      "internal": "net/neoforged/neoforge/client/model/generators/VariantBlockStateBuilder",
+      "superclass": "java/lang/Object"
+    },
+    {
+      "_comment": "Mirror of the above for the older minecraftforge package path so pre-port mods still verify.",
+      "internal": "net/minecraftforge/client/model/generators/ModelBuilder",
+      "superclass": "net/minecraftforge/client/model/generators/ModelFile"
+    },
+    {
+      "internal": "net/minecraftforge/client/model/generators/BlockModelBuilder",
+      "superclass": "net/minecraftforge/client/model/generators/ModelBuilder"
+    },
+    {
+      "internal": "net/minecraftforge/client/model/generators/ItemModelBuilder",
+      "superclass": "net/minecraftforge/client/model/generators/ModelBuilder"
+    },
+
+    {
+      "_comment": "Client player hierarchy stubs. AbstractClientPlayer (class_742) is the common super of LocalPlayer (class_746). Render handlers like ShootableGadgetRenderHandler use both; COMPUTE_FRAMES needs this relationship or the verifier rejects the class on a dedicated server where these are not in the game jar.",
+      "internal": "net/minecraft/class_742",
+      "superclass": "java/lang/Object"
+    },
+    {
+      "internal": "net/minecraft/class_746",
+      "superclass": "net/minecraft/class_742"
+    },
+
+    {
+      "_comment": "NeoForge fluid hierarchy: `BaseFlowingFluid` must subtype Mojmap `FlowingFluid` (1.21+ intermediary `class_3609`, not `class_3610` which is final `FluidState`). Chain: Fluid <- FlowingFluid <- BaseFlowingFluid <- {Source, Flowing}.",
+      "internal": "net/neoforged/neoforge/fluids/BaseFlowingFluid",
+      "superclass": "net/minecraft/world/level/material/FlowingFluid"
+    },
+    {
+      "internal": "net/neoforged/neoforge/fluids/BaseFlowingFluid$Source",
+      "superclass": "net/neoforged/neoforge/fluids/BaseFlowingFluid"
+    },
+    {
+      "internal": "net/neoforged/neoforge/fluids/BaseFlowingFluid$Flowing",
+      "superclass": "net/neoforged/neoforge/fluids/BaseFlowingFluid"
+    },
+    {
+      "internal": "net/neoforged/neoforge/fluids/BaseFlowingFluid$Properties",
+      "superclass": "java/lang/Object"
+    },
+    {
+      "_comment": "Legacy minecraftforge package mirror of the fluid hierarchy.",
+      "internal": "net/minecraftforge/fluids/ForgeFlowingFluid",
+      "superclass": "net/minecraft/world/level/material/FlowingFluid"
+    },
+    {
+      "internal": "net/minecraftforge/fluids/ForgeFlowingFluid$Source",
+      "superclass": "net/minecraftforge/fluids/ForgeFlowingFluid"
+    },
+    {
+      "internal": "net/minecraftforge/fluids/ForgeFlowingFluid$Flowing",
+      "superclass": "net/minecraftforge/fluids/ForgeFlowingFluid"
+    },
+    {
+      "_comment": "NeoForge ships DeferredSoundType under common/util; must extend vanilla SoundType (class_2498) for block property APIs.",
+      "internal": "net/neoforged/neoforge/common/util/DeferredSoundType",
+      "superclass": "net/minecraft/class_2498"
+    },
+    {
+      "_comment": "MekFakePlayer extends NeoForge FakePlayer; if FakePlayer is synthesized as Object, the subtype is not assignable to Entity (class_1297) when passed to loot APIs (TileEntityDigitalMiner.getDrops).",
+      "internal": "net/neoforged/neoforge/common/util/FakePlayer",
+      "superclass": "net/minecraft/class_3222"
+    }
+  ],
+  "methods": [
+    {
+      "_comment": "LazyOptional.of(Supplier) — return a non-null LazyOptional instance so mods can chain ifPresent/orElse without NPE.",
+      "owner": "net/neoforged/neoforge/common/util/LazyOptional",
+      "name":  "of",
+      "desc":  "(Lnet/neoforged/neoforge/common/util/NonNullSupplier;)Lnet/neoforged/neoforge/common/util/LazyOptional;",
+      "body":  "NEW_INSTANCE_SELF"
+    },
+    {
+      "owner": "net/neoforged/neoforge/common/util/LazyOptional",
+      "name":  "empty",
+      "desc":  "()Lnet/neoforged/neoforge/common/util/LazyOptional;",
+      "body":  "RETURN_FIELD",
+      "field": "EMPTY"
+    },
+    {
+      "_comment": "LazyOptional.orElse(T) — return the provided default value.",
+      "owner": "net/neoforged/neoforge/common/util/LazyOptional",
+      "name":  "orElse",
+      "desc":  "(Ljava/lang/Object;)Ljava/lang/Object;",
+      "body":  "RETURN_ARG",
+      "argIndex": 0
+    },
+    {
+      "_comment": "LazyOptional.isPresent() — conservative default: claim not-present so mods fall through their .orElse branches.",
+      "owner": "net/neoforged/neoforge/common/util/LazyOptional",
+      "name":  "isPresent",
+      "desc":  "()Z",
+      "body":  "AUTO_DEFAULT"
+    },
+    {
+      "_comment": "CapabilityManager.get — route to Vyne's bridge so mods get a non-null Capability token.",
+      "owner": "net/neoforged/neoforge/common/capabilities/CapabilityManager",
+      "name":  "get",
+      "desc":  "(Lnet/neoforged/neoforge/common/capabilities/CapabilityToken;)Lnet/neoforged/neoforge/common/capabilities/Capability;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/CapabilityBridge.getCapabilityByToken"
+    },
+    {
+      "_comment": "Player#getCapability(Capability, Direction) — delegate to Vyne's existing capability bridge so Traveler's Backpack and friends get a LazyOptional instead of NoSuchMethodError.",
+      "owner": "net/minecraft/class_1657",
+      "name":  "getCapability",
+      "desc":  "(Lnet/minecraftforge/common/capabilities/Capability;Lnet/minecraft/class_2350;)Lnet/minecraftforge/common/util/LazyOptional;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/CapabilityBridge.getCapability"
+    },
+    {
+      "owner": "net/minecraft/class_1657",
+      "name":  "getCapability",
+      "desc":  "(Lnet/minecraftforge/common/capabilities/Capability;)Lnet/minecraftforge/common/util/LazyOptional;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/CapabilityBridge.getCapabilityUnsided"
+    },
+    {
+      "owner": "net/minecraft/class_1297",
+      "name":  "getCapability",
+      "desc":  "(Lnet/minecraftforge/common/capabilities/Capability;Lnet/minecraft/class_2350;)Lnet/minecraftforge/common/util/LazyOptional;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/CapabilityBridge.getCapability"
+    },
+    {
+      "owner": "net/minecraft/class_1297",
+      "name":  "getCapability",
+      "desc":  "(Lnet/minecraftforge/common/capabilities/Capability;)Lnet/minecraftforge/common/util/LazyOptional;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/CapabilityBridge.getCapabilityUnsided"
+    },
+    {
+      "owner": "net/minecraft/class_1799",
+      "name":  "getCapability",
+      "desc":  "(Lnet/minecraftforge/common/capabilities/Capability;Lnet/minecraft/class_2350;)Lnet/minecraftforge/common/util/LazyOptional;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/CapabilityBridge.getCapability"
+    },
+    {
+      "owner": "net/minecraft/class_1799",
+      "name":  "getCapability",
+      "desc":  "(Lnet/minecraftforge/common/capabilities/Capability;)Lnet/minecraftforge/common/util/LazyOptional;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/CapabilityBridge.getCapabilityUnsided"
+    },
+    {
+      "_comment": "class_1761.builder() — Forge-added static factory missing on vanilla. VyneShims returns an Object; the engine CHECKCASTs it to the tab Builder thanks to targetDesc.",
+      "owner": "net/minecraft/class_1761",
+      "name":  "builder",
+      "desc":  "()Lnet/minecraft/class_1761$class_7913;",
+      "body":  "DELEGATE_STATIC",
+      "target": "net/minecraftforge/vyne/VyneShims.createCreativeTabBuilderCompat",
+      "targetDesc": "()Ljava/lang/Object;"
+    },
+    {
+      "_comment": "FluidType.getDescription(FluidStack) returning null makes mods NPE when they .getString() it. Return an empty Component instead.",
+      "owner": "net/neoforged/neoforge/fluids/FluidType",
+      "name":  "getDescription",
+      "desc":  "(Lnet/neoforged/neoforge/fluids/FluidStack;)Lnet/minecraft/class_2561;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/ComponentBridge.empty",
+      "targetDesc": "()Ljava/lang/Object;"
+    },
+    {
+      "owner": "net/minecraftforge/fluids/FluidType",
+      "name":  "getDescription",
+      "desc":  "(Lnet/minecraftforge/fluids/FluidStack;)Lnet/minecraft/class_2561;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/ComponentBridge.empty",
+      "targetDesc": "()Ljava/lang/Object;"
+    },
+    {
+      "_comment": "BlockState#getSoundType(LevelReader, BlockPos, Entity) — Forge 3-arg extension. Route to a helper that falls back to vanilla class_2680.method_26231().",
+      "owner": "net/minecraft/class_2680",
+      "name":  "getSoundType",
+      "desc":  "(Lnet/minecraft/class_4538;Lnet/minecraft/class_2338;Lnet/minecraft/class_1297;)Lnet/minecraft/class_2498;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/BlockStateBridge.getSoundType",
+      "targetDesc": "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"
+    },
+    {
+      "_comment": "FMLJavaModLoadingContext.getModEventBus — Forge-flavor return type. Our shim only declares the NeoForge-return overload (Java disallows return-only overloads), so mods compiled against Forge (e.g. Traveler's Backpack) get an AUTO_DEFAULT null and crash in <init> on addListener(). Route through a neutral bridge method so the INVOKESTATIC targetDesc is an actual existing method descriptor (VyneEventBus.global() returns VyneEventBus, not Object — that caused a NoSuchMethodError on the first try).",
+      "owner": "net/minecraftforge/fml/javafmlmod/FMLJavaModLoadingContext",
+      "name":  "getModEventBus",
+      "desc":  "()Lnet/minecraftforge/eventbus/api/IEventBus;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/EventBusBridge.forgeBus",
+      "targetDesc": "()Lnet/minecraftforge/eventbus/api/IEventBus;"
+    },
+    {
+      "_comment": "Same for the NeoForge-flavor bus package — keep both mapped so a mod compiled against either variant gets a live bus.",
+      "owner": "net/neoforged/neoforge/fml/javafmlmod/FMLJavaModLoadingContext",
+      "name":  "getModEventBus",
+      "desc":  "()Lnet/neoforged/neoforge/eventbus/api/IEventBus;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/EventBusBridge.neoBus",
+      "targetDesc": "()Lnet/neoforged/neoforge/eventbus/api/IEventBus;"
+    },
+    {
+      "_comment": "Some mods import ModLoadingContext (not FMLJavaModLoadingContext) and call getActiveContainer/getModEventBus through that. Route identically.",
+      "owner": "net/minecraftforge/fml/ModLoadingContext",
+      "name":  "getModEventBus",
+      "desc":  "()Lnet/minecraftforge/eventbus/api/IEventBus;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/EventBusBridge.forgeBus",
+      "targetDesc": "()Lnet/minecraftforge/eventbus/api/IEventBus;"
+    },
+    {
+      "_comment": "Fluid#getFluidType() — Forge-namespace call site. DynamicBridgeEngine keys its catalog lookup on the raw descriptor it scanned from the mod jar (pre VyneRemapper); TB and most 1.21.1 Forge-port mods still ship bytecode that declares the return type as net/minecraftforge/fluids/FluidType. AUTO_DEFAULT (null) NPE'd inside TB EffectFluidRegistry#registerFluidEffect. The targetDesc's return type is the live class in Vyne's classpath; VyneRemapper rewrites net/minecraftforge/ → net/neoforged/neoforge/ at class-load so the CHECKCAST types line up at runtime.",
+      "owner": "net/minecraft/class_3611",
+      "name":  "getFluidType",
+      "desc":  "()Lnet/minecraftforge/fluids/FluidType;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/FluidTypeBridge.getFluidType",
+      "targetDesc": "(Ljava/lang/Object;)Lnet/neoforged/neoforge/fluids/FluidType;"
+    },
+    {
+      "_comment": "Codec.intRange(int,int) — Forge/NeoForge-added static extension on com/mojang/serialization/Codec. DynamicBridgeEngine's hierarchy-aware method translator spots the same (II)LCodec; signature on net/minecraft/class_5699.method_48766 (ExtraCodecs.intRange) and rewrites the shim name to method_48766 while keeping the owner as Codec, then fails isMethodResolvable because Codec itself doesn't declare it — falls through to AUTO_DEFAULT (null) and NPEs TB's BackpackContainerContents$Slot.<clinit>. Route the call straight to ExtraCodecs.intRange, which is the exact implementation NeoForge's patch delegates to.",
+      "owner": "com/mojang/serialization/Codec",
+      "name":  "method_48766",
+      "desc":  "(II)Lcom/mojang/serialization/Codec;",
+      "body":  "DELEGATE_STATIC",
+      "target": "net/minecraft/class_5699.method_48766",
+      "targetDesc": "(II)Lcom/mojang/serialization/Codec;"
+    },
+    {
+      "_comment": "Same getFluidType extension, NeoForge-namespace variant — some mod jars already compile against net/neoforged/neoforge/fluids/FluidType directly.",
+      "owner": "net/minecraft/class_3611",
+      "name":  "getFluidType",
+      "desc":  "()Lnet/neoforged/neoforge/fluids/FluidType;",
+      "body":  "DELEGATE_STATIC",
+      "target": "dev/stolym/vyne/compat/FluidTypeBridge.getFluidType",
+      "targetDesc": "(Ljava/lang/Object;)Lnet/neoforged/neoforge/fluids/FluidType;"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+name: Bug report
+description: Vyne crashed, froze a mod, or behaved incorrectly.
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. Vyne is in **alpha**, so reports with logs are the fastest way to get things fixed.
+        If a specific (Neo)Forge or Fabric mod doesn't work under Vyne, please use the **Mod incompatibility** template instead.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Install Vyne 0.1.0-alpha with these mods: ...
+        2. Create a new world
+        3. ...
+    validations:
+      required: true
+
+  - type: input
+    id: vyne-version
+    attributes:
+      label: Vyne version
+      placeholder: 0.1.0-alpha
+    validations:
+      required: true
+
+  - type: dropdown
+    id: side
+    attributes:
+      label: Side
+      options:
+        - Client
+        - Dedicated server
+        - Both
+    validations:
+      required: true
+
+  - type: input
+    id: launcher
+    attributes:
+      label: Launcher
+      placeholder: Prism Launcher 9.x / vanilla launcher / MultiMC / ...
+
+  - type: textarea
+    id: mods
+    attributes:
+      label: Mod list
+      description: Every mod in your `mods/` folder, with versions.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Attach `logs/latest.log` and any files from `.vyne/reports/`.
+        Please upload them as files or use a paste service (e.g. https://mclo.gs) rather than pasting thousands of lines here.
+    validations:
+      required: true

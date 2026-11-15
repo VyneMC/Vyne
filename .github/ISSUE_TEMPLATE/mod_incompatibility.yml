@@ -1,0 +1,67 @@
+name: Mod incompatibility
+description: A specific Fabric, NeoForge or Forge mod doesn't work under Vyne.
+labels: ["compat", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing, please check the [compatibility notes](https://github.com/VyneMC/Vyne/blob/main/docs/loaders.md) and search existing issues for the mod's name.
+        **Please test the mod on its own first** (only the mod and its required dependencies), so we know which mod is involved.
+
+  - type: input
+    id: mod
+    attributes:
+      label: Mod name and version
+      placeholder: Example Mod 2.3.1
+    validations:
+      required: true
+
+  - type: dropdown
+    id: loader
+    attributes:
+      label: The mod is built for
+      options:
+        - NeoForge
+        - Forge
+        - Fabric
+    validations:
+      required: true
+
+  - type: input
+    id: link
+    attributes:
+      label: Download link
+      description: Modrinth or CurseForge page for the exact file you used.
+    validations:
+      required: true
+
+  - type: input
+    id: vyne-version
+    attributes:
+      label: Vyne version
+      placeholder: 0.1.0-alpha
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: isolated
+    attributes:
+      label: Isolation
+      options:
+        - label: I reproduced this with only this mod and its required dependencies installed.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happens?
+      description: Crash at startup, mod frozen by the Guard, missing content, visual glitch, ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Attach `logs/latest.log` and any files from `.vyne/reports/` (or link to https://mclo.gs).
+    validations:
+      required: true

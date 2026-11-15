@@ -1,0 +1,7 @@
+net/neoforged/fml/ModList dev/stolym/vyne/fml/VyneModList
+net/neoforged/fml/ModLoader dev/stolym/vyne/fml/VyneModLoader
+net/neoforged/fml/loading/FMLLoader dev/stolym/vyne/fml/VyneFMLLoader
+net/neoforged/fml/loading/LoadingModList dev/stolym/vyne/fml/VyneLoadingModList
+net/neoforged/fml/loading/moddiscovery/ModInfo dev/stolym/vyne/fml/VyneModInfo
+net/neoforged/fml/loading/moddiscovery/ModFileInfo dev/stolym/vyne/fml/VyneModFileInfo
+net/neoforged/fml/loading/moddiscovery/ModFile dev/stolym/vyne/fml/VyneModFile

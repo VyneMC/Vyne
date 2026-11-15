@@ -1,0 +1,19 @@
+tasks.register('runServer', JavaExec) {
+    dependsOn tasks.shadowJar
+
+    def runDir = project.file('run')
+    runDir.mkdirs()
+    workingDir runDir
+
+    mainClass = 'dev.stolym.vyne.core.VyneLauncher'
+    classpath = files(tasks.shadowJar.archiveFile)
+
+    jvmArgs '-Xmx2G', '-Xms2G', '-Dvyne.dev=true', '-Djava.system.class.loader=dev.stolym.vyne.vcl.BridgeClassLoader'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
