@@ -33,7 +33,7 @@
     "LoadingOverlayVyneMixin",
     "WindowEarlyHandOffMixin",
     "OptionsKeyMappingsMixin",
-    "OptionsScreenModsButtonMixin",
+    "MainMenuScreenModsButtonMixin",
     "MinecraftExecuteLegacyShimMixin",
     "CrashReportVyneMixin",
     "KeyboardDebugCrashMixin",

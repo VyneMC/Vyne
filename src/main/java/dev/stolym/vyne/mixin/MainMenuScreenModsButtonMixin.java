@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(targets = "net.minecraft.class_429")
-public abstract class OptionsScreenModsButtonMixin {
+@Mixin(targets = "net.minecraft.class_442")
+public abstract class MainMenuScreenModsButtonMixin {
     @Inject(method = "method_25426", at = @At("TAIL"))
     private void vyne$addModsButton(CallbackInfo ci) {
         class_437 self = (class_437) (Object) this;
