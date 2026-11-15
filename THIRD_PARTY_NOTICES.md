@@ -8,12 +8,14 @@ Shadowed from `gradle/dependencies.gradle`:
 
 | Library | Version | License | Use |
 |---|---|---|---|
-| ASM (core, analysis, commons, tree, util) | 9.7.1 | BSD-3-Clause | Bytecode reading, remapping and generation |
-| Sponge Mixin (Fabric fork) | 0.17.1+mixin.0.8.7 | MIT | Mixin engine |
-| MixinExtras (fabric) | 0.4.0 | MIT | Extra mixin injection features |
-| tiny-remapper | 0.10.3 | LGPL-3.0 | Mapping application / remapping |
-| mapping-io | 0.6.1 | Apache-2.0 | Mapping file parsing |
-| class-tweaker | 0.3.0-beta.2 | Apache-2.0 | Access widening and class tweaks |
+| ASM (core, analysis, commons, tree, util) | 9.10.1 | BSD-3-Clause | Bytecode reading, remapping and generation |
+| Sponge Mixin (Fabric fork) | 0.17.5+mixin.0.8.7 | MIT | Mixin engine |
+| MixinExtras (fabric) | 0.5.5 | MIT | Extra mixin injection features |
+| tiny-remapper | 0.15.0 | LGPL-3.0 | Mapping application / remapping |
+| mapping-io | 0.9.1 | Apache-2.0 | Mapping file parsing |
+| class-tweaker | 0.3.0 | Apache-2.0 | Access widening and class tweaks |
+| jbsdiff | 1.0 | BSD-2-Clause | Applying Vyne's binary patches to vanilla classes |
+| Apache Commons Compress | 1.21 | Apache-2.0 | Compression used by jbsdiff |
 | Sat4j (core, pb) | 2.3.6 | EPL-1.0 / LGPL-2.1 (dual) | Constraint solving for version conflict resolution |
 | Gson | 2.10.1 | Apache-2.0 | JSON parsing (`fabric.mod.json` etc.) |
 | toml4j | 0.7.2 | MIT | TOML parsing (`mods.toml`) |
@@ -28,7 +30,7 @@ Shadowed from `gradle/dependencies.gradle`:
 
 | Code | Origin | License |
 |---|---|---|
-| `net/fabricmc/loader/**` | Patched fork of [Fabric Loader](https://github.com/FabricMC/fabric-loader). Original headers are kept in forked files. | Apache-2.0 |
+| `net/fabricmc/loader/**` | Patched fork of [Fabric Loader](https://github.com/FabricMC/fabric-loader) 0.20.1. Original headers are kept in forked files. | Apache-2.0 |
 | `net/minecraftforge/**`, `net/neoforged/**` | Vyne's own implementations of the parts of the Forge/NeoForge API surface Vyne must provide itself (loader integration, registries, events). Not copied source. Any copied source must keep its original header and be listed here. | GPL-3.0 (Vyne) |
 | `src/neoforge/` | Vyne's copy of the [NeoForge](https://github.com/neoforged/NeoForge) 21.1.265 API source and resources (from NeoForge's published sources jar). NeoForge's own headers are kept in every file. Vyne changes it to run on Vyne's hook layer. | LGPL-2.1-only (`Licenses/LICENSE_NEOFORGE`) |
 | `src/neoforge/java/net/neoforged/neoforge/common/LenientUnboundedMapCodec.java` | Part of NeoForge's source, originally from Microsoft's DataFixerUpper | MIT (header kept) |

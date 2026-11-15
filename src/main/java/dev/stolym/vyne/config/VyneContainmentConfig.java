@@ -29,7 +29,29 @@ public final class VyneContainmentConfig {
     private static final String KEY_NEOFORGE_VERSION   = "neoforge.version";
 
     public static String getNeoForgeVersion() {
-        return get(KEY_NEOFORGE_VERSION, "21.1.233");
+        String fallback = dev.stolym.vyne.core.VyneLauncher.DEFAULT_NEOFORGE;
+        String configured = get(KEY_NEOFORGE_VERSION, fallback);
+        return isNewer(configured, fallback) ? configured : fallback;
+    }
+
+    static boolean isNewer(String candidate, String than) {
+        if (candidate == null || candidate.isBlank()) return false;
+        String[] a = candidate.trim().split("\\.");
+        String[] b = than.split("\\.");
+        for (int i = 0; i < Math.max(a.length, b.length); i++) {
+            int x = i < a.length ? parse(a[i]) : 0;
+            int y = i < b.length ? parse(b[i]) : 0;
+            if (x != y) return x > y;
+        }
+        return false;
+    }
+
+    private static int parse(String part) {
+        try {
+            return Integer.parseInt(part.replaceAll("[^0-9].*$", ""));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     public static boolean isSnapshotEnabled() {
@@ -86,7 +108,6 @@ public final class VyneContainmentConfig {
             defaults.setProperty(KEY_REPORT_DIR,         ".vyne/reports");
             defaults.setProperty(KEY_TIER3_SHUTDOWN,     "true");
             defaults.setProperty(KEY_VERBOSE_FREEZE_LOG, "false");
-            defaults.setProperty(KEY_NEOFORGE_VERSION,   "21.1.233");
             try (var out = Files.newOutputStream(CONFIG_FILE)) {
                 defaults.store(out,
                     "Vyne Containment Config\n"
@@ -97,7 +118,7 @@ public final class VyneContainmentConfig {
                     + "# report.directory     - Where to write vyne-report files\n"
                     + "# triage.tier3.cleanShutdown - Shutdown on Tier 3 failure (true/false)\n"
                     + "# gate.verboseFreezeLog - Log every blocked execution (true/false)\n"
-                    + "# neoforge.version     - NeoForge version for reference bridging (string)");
+                    + "# neoforge.version     - Optional: a newer NeoForge 21.1.x version than Vyne's default");
             }
             props = defaults;
             VyneLogger.info("[VyneConfig] Created default config at " + CONFIG_FILE);

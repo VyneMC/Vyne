@@ -163,6 +163,9 @@ public final class ConvertedModMount {
         }
         try {
             addCodeSource.accept(VyneGameJar.prepare());
+            List<DetectedMod> installedMods = VyneLauncher.getDetectedMods();
+            boolean modMenu = installedMods != null && installedMods.stream().anyMatch(mod -> "modmenu".equals(mod.getModId()));
+            if (!modMenu) addCodeSource.accept(VyneGameJar.prepareModMenuApi());
         } catch (IOException e) {
             VyneLogger.error("[Vyne] Could not prepare Vyne's game-side classes: " + e.getMessage(), e);
         }

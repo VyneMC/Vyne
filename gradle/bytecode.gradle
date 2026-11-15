@@ -1,163 +1,155 @@
 buildscript {
     repositories { mavenCentral() }
     dependencies {
-        classpath "org.ow2.asm:asm:9.7.1"
-        classpath "org.ow2.asm:asm-tree:9.7.1"
+        classpath "org.ow2.asm:asm:9.10.1"
+        classpath "org.ow2.asm:asm-tree:9.10.1"
     }
 }
 
-tasks.register('injectDeferredRegisterBridges') {
-    group = 'build'
-    description = 'Inject synthetic register(String,Supplier|Function):RegistryObject bridges into DeferredRegister.class.'
-    dependsOn tasks.compileJava
-    def classFile = layout.buildDirectory
-        .file('classes/java/main/net/neoforged/neoforge/registries/DeferredRegister.class')
-    inputs.file(classFile)
-    outputs.file(classFile)
-    doLast {
-        def target = classFile.get().asFile
-        if (!target.exists()) {
-            throw new GradleException("DeferredRegister.class not found at ${target}")
-        }
-        def cr = new org.objectweb.asm.ClassReader(target.bytes)
-        def cn = new org.objectweb.asm.tree.ClassNode()
-        cr.accept(cn, 0)
-        def existing = cn.methods.collect { "${it.name}${it.desc}".toString() } as Set
+def injectDeferredRegisterBridgesInto = { File target ->
+    if (!target.exists()) {
+        throw new GradleException("DeferredRegister.class not found at ${target}")
+    }
+    def cr = new org.objectweb.asm.ClassReader(target.bytes)
+    def cn = new org.objectweb.asm.tree.ClassNode()
+    cr.accept(cn, 0)
+    def existing = cn.methods.collect { "${it.name}${it.desc}".toString() } as Set
 
-        def bridges = [
-            [
-                name   : 'register',
-                desc   : '(Ljava/lang/String;Ljava/util/function/Supplier;)Lnet/neoforged/neoforge/registries/RegistryObject;',
-                target : 'register',
-                tdesc  : '(Ljava/lang/String;Ljava/util/function/Supplier;)Lnet/neoforged/neoforge/registries/DeferredHolder;'
-            ],
-            [
-                name   : 'register',
-                desc   : '(Ljava/lang/String;Ljava/util/function/Function;)Lnet/neoforged/neoforge/registries/RegistryObject;',
-                target : 'register',
-                tdesc  : '(Ljava/lang/String;Ljava/util/function/Function;)Lnet/neoforged/neoforge/registries/DeferredHolder;'
-            ]
+    def bridges = [
+        [
+            name   : 'register',
+            desc   : '(Ljava/lang/String;Ljava/util/function/Supplier;)Lnet/neoforged/neoforge/registries/RegistryObject;',
+            target : 'register',
+            tdesc  : '(Ljava/lang/String;Ljava/util/function/Supplier;)Lnet/neoforged/neoforge/registries/DeferredHolder;'
+        ],
+        [
+            name   : 'register',
+            desc   : '(Ljava/lang/String;Ljava/util/function/Function;)Lnet/neoforged/neoforge/registries/RegistryObject;',
+            target : 'register',
+            tdesc  : '(Ljava/lang/String;Ljava/util/function/Function;)Lnet/neoforged/neoforge/registries/DeferredHolder;'
         ]
+    ]
 
-        int injected = 0
-        for (b in bridges) {
-            def sig = "${b.name}${b.desc}".toString()
-            if (existing.contains(sig)) continue
-
-            int access = org.objectweb.asm.Opcodes.ACC_PUBLIC |
-                         org.objectweb.asm.Opcodes.ACC_SYNTHETIC |
-                         org.objectweb.asm.Opcodes.ACC_BRIDGE
-            def mn = new org.objectweb.asm.tree.MethodNode(
-                access, b.name, b.desc, null, null)
-            def il = new org.objectweb.asm.tree.InsnList()
-            il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 0))
-            il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 1))
-            il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 2))
-            il.add(new org.objectweb.asm.tree.MethodInsnNode(
-                org.objectweb.asm.Opcodes.INVOKEVIRTUAL,
-                'net/neoforged/neoforge/registries/DeferredRegister',
-                b.target, b.tdesc, false))
-            il.add(new org.objectweb.asm.tree.TypeInsnNode(
-                org.objectweb.asm.Opcodes.CHECKCAST,
-                'net/neoforged/neoforge/registries/RegistryObject'))
-            il.add(new org.objectweb.asm.tree.InsnNode(org.objectweb.asm.Opcodes.ARETURN))
-            mn.instructions = il
-            mn.maxStack = 3
-            mn.maxLocals = 3
-            cn.methods.add(mn)
-            injected++
-        }
-
-        if (injected == 0) {
-            logger.lifecycle("[DeferredRegister bridge] no bridges needed (already present).")
-            return
-        }
-        def cw = new org.objectweb.asm.ClassWriter(0)
-        cn.accept(cw)
-        target.bytes = cw.toByteArray()
-        logger.lifecycle("[DeferredRegister bridge] injected ${injected} synthetic bridge(s).")
-    }
-}
-
-tasks.register('injectRegisterEventBridges') {
-    group = 'build'
-    description = 'Inject synthetic RegisterEvent.register(...) bridges (intermediary descriptors) for remapped NeoForge mods.'
-    dependsOn tasks.compileJava
-    def classFile = layout.buildDirectory
-        .file('classes/java/main/net/neoforged/neoforge/registries/RegisterEvent.class')
-    inputs.file(classFile)
-    outputs.file(classFile)
-    doLast {
-        def target = classFile.get().asFile
-        if (!target.exists()) {
-            throw new GradleException("RegisterEvent.class not found at ${target}")
-        }
-        def cr = new org.objectweb.asm.ClassReader(target.bytes)
-        def cn = new org.objectweb.asm.tree.ClassNode()
-        cr.accept(cn, 0)
-        def existing = cn.methods.collect { "${it.name}${it.desc}".toString() } as Set
+    int injected = 0
+    for (b in bridges) {
+        def sig = "${b.name}${b.desc}".toString()
+        if (existing.contains(sig)) continue
 
         int access = org.objectweb.asm.Opcodes.ACC_PUBLIC |
                      org.objectweb.asm.Opcodes.ACC_SYNTHETIC |
                      org.objectweb.asm.Opcodes.ACC_BRIDGE
-        int injected = 0
-
-        def bridgeRlSupplier = '(Lnet/minecraft/class_5321;Lnet/minecraft/class_2960;Ljava/util/function/Supplier;)V'
-        def targetRlSupplier = '(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/function/Supplier;)V'
-        if (!existing.contains("register${bridgeRlSupplier}".toString())) {
-            def mn = new org.objectweb.asm.tree.MethodNode(access, 'register', bridgeRlSupplier, null, null)
-            def il = new org.objectweb.asm.tree.InsnList()
-            il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 0))
-            il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 1))
-            il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 2))
-            il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 3))
-            il.add(new org.objectweb.asm.tree.MethodInsnNode(
-                org.objectweb.asm.Opcodes.INVOKEVIRTUAL,
-                'net/neoforged/neoforge/registries/RegisterEvent',
-                'register', targetRlSupplier, false))
-            il.add(new org.objectweb.asm.tree.InsnNode(org.objectweb.asm.Opcodes.RETURN))
-            mn.instructions = il
-            mn.maxStack = 4
-            mn.maxLocals = 4
-            cn.methods.add(mn)
-            existing.add("register${bridgeRlSupplier}".toString())
-            injected++
-        }
-
-        def bridgeConsumer = '(Lnet/minecraft/class_5321;Ljava/util/function/Consumer;)V'
-        def targetConsumer = '(Ljava/lang/Object;Ljava/util/function/Consumer;)V'
-        if (!existing.contains("register${bridgeConsumer}".toString())) {
-            def mn = new org.objectweb.asm.tree.MethodNode(access, 'register', bridgeConsumer, null, null)
-            def il = new org.objectweb.asm.tree.InsnList()
-            il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 0))
-            il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 1))
-            il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 2))
-            il.add(new org.objectweb.asm.tree.MethodInsnNode(
-                org.objectweb.asm.Opcodes.INVOKEVIRTUAL,
-                'net/neoforged/neoforge/registries/RegisterEvent',
-                'register', targetConsumer, false))
-            il.add(new org.objectweb.asm.tree.InsnNode(org.objectweb.asm.Opcodes.RETURN))
-            mn.instructions = il
-            mn.maxStack = 3
-            mn.maxLocals = 3
-            cn.methods.add(mn)
-            existing.add("register${bridgeConsumer}".toString())
-            injected++
-        }
-
-        if (injected == 0) {
-            logger.lifecycle('[RegisterEvent bridge] all synthetic bridges already present.')
-            return
-        }
-        def cw = new org.objectweb.asm.ClassWriter(0)
-        cn.accept(cw)
-        target.bytes = cw.toByteArray()
-        logger.lifecycle("[RegisterEvent bridge] injected ${injected} synthetic bridge(s).")
+        def mn = new org.objectweb.asm.tree.MethodNode(
+            access, b.name, b.desc, null, null)
+        def il = new org.objectweb.asm.tree.InsnList()
+        il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 0))
+        il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 1))
+        il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 2))
+        il.add(new org.objectweb.asm.tree.MethodInsnNode(
+            org.objectweb.asm.Opcodes.INVOKEVIRTUAL,
+            'net/neoforged/neoforge/registries/DeferredRegister',
+            b.target, b.tdesc, false))
+        il.add(new org.objectweb.asm.tree.TypeInsnNode(
+            org.objectweb.asm.Opcodes.CHECKCAST,
+            'net/neoforged/neoforge/registries/RegistryObject'))
+        il.add(new org.objectweb.asm.tree.InsnNode(org.objectweb.asm.Opcodes.ARETURN))
+        mn.instructions = il
+        mn.maxStack = 3
+        mn.maxLocals = 3
+        cn.methods.add(mn)
+        injected++
     }
+
+    if (injected == 0) {
+        logger.lifecycle("[DeferredRegister bridge] no bridges needed (already present).")
+        return
+    }
+    def cw = new org.objectweb.asm.ClassWriter(0)
+    cn.accept(cw)
+    target.bytes = cw.toByteArray()
+    logger.lifecycle("[DeferredRegister bridge] injected ${injected} synthetic bridge(s).")
+}
+
+def injectRegisterEventBridgesInto = { File target ->
+    if (!target.exists()) {
+        throw new GradleException("RegisterEvent.class not found at ${target}")
+    }
+    def cr = new org.objectweb.asm.ClassReader(target.bytes)
+    def cn = new org.objectweb.asm.tree.ClassNode()
+    cr.accept(cn, 0)
+    def existing = cn.methods.collect { "${it.name}${it.desc}".toString() } as Set
+
+    int access = org.objectweb.asm.Opcodes.ACC_PUBLIC |
+                 org.objectweb.asm.Opcodes.ACC_SYNTHETIC |
+                 org.objectweb.asm.Opcodes.ACC_BRIDGE
+    int injected = 0
+
+    def bridgeRlSupplier = '(Lnet/minecraft/class_5321;Lnet/minecraft/class_2960;Ljava/util/function/Supplier;)V'
+    def targetRlSupplier = '(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/function/Supplier;)V'
+    if (!existing.contains("register${bridgeRlSupplier}".toString())) {
+        def mn = new org.objectweb.asm.tree.MethodNode(access, 'register', bridgeRlSupplier, null, null)
+        def il = new org.objectweb.asm.tree.InsnList()
+        il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 0))
+        il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 1))
+        il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 2))
+        il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 3))
+        il.add(new org.objectweb.asm.tree.MethodInsnNode(
+            org.objectweb.asm.Opcodes.INVOKEVIRTUAL,
+            'net/neoforged/neoforge/registries/RegisterEvent',
+            'register', targetRlSupplier, false))
+        il.add(new org.objectweb.asm.tree.InsnNode(org.objectweb.asm.Opcodes.RETURN))
+        mn.instructions = il
+        mn.maxStack = 4
+        mn.maxLocals = 4
+        cn.methods.add(mn)
+        existing.add("register${bridgeRlSupplier}".toString())
+        injected++
+    }
+
+    def bridgeConsumer = '(Lnet/minecraft/class_5321;Ljava/util/function/Consumer;)V'
+    def targetConsumer = '(Ljava/lang/Object;Ljava/util/function/Consumer;)V'
+    if (!existing.contains("register${bridgeConsumer}".toString())) {
+        def mn = new org.objectweb.asm.tree.MethodNode(access, 'register', bridgeConsumer, null, null)
+        def il = new org.objectweb.asm.tree.InsnList()
+        il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 0))
+        il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 1))
+        il.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 2))
+        il.add(new org.objectweb.asm.tree.MethodInsnNode(
+            org.objectweb.asm.Opcodes.INVOKEVIRTUAL,
+            'net/neoforged/neoforge/registries/RegisterEvent',
+            'register', targetConsumer, false))
+        il.add(new org.objectweb.asm.tree.InsnNode(org.objectweb.asm.Opcodes.RETURN))
+        mn.instructions = il
+        mn.maxStack = 3
+        mn.maxLocals = 3
+        cn.methods.add(mn)
+        existing.add("register${bridgeConsumer}".toString())
+        injected++
+    }
+
+    if (injected == 0) {
+        logger.lifecycle('[RegisterEvent bridge] all synthetic bridges already present.')
+        return
+    }
+    def cw = new org.objectweb.asm.ClassWriter(0)
+    cn.accept(cw)
+    target.bytes = cw.toByteArray()
+    logger.lifecycle("[RegisterEvent bridge] injected ${injected} synthetic bridge(s).")
 }
 
 tasks.named('compileJava') {
-    finalizedBy 'injectDeferredRegisterBridges', 'injectRegisterEventBridges'
+    def classesDir = destinationDirectory
+    doLast {
+        injectDeferredRegisterBridgesInto(classesDir.file('net/neoforged/neoforge/registries/DeferredRegister.class').get().asFile)
+        injectRegisterEventBridgesInto(classesDir.file('net/neoforged/neoforge/registries/RegisterEvent.class').get().asFile)
+    }
+}
+
+tasks.register('injectDeferredRegisterBridges') {
+    dependsOn tasks.compileJava
+}
+
+tasks.register('injectRegisterEventBridges') {
+    dependsOn tasks.compileJava
 }
 
 tasks.register('neoForgeRegistriesBootstrapJar', Jar) {

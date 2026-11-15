@@ -1,0 +1,69 @@
+name: Dev build
+
+on:
+  push:
+    branches: [dev-1.21.1]
+  workflow_dispatch:
+
+concurrency:
+  group: dev-build-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build and publish pre-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build and run tests
+        run: ./gradlew build --stacktrace
+
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            build/reports/tests/
+            build/test-results/
+          if-no-files-found: ignore
+
+      - name: Publish pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
+          RUN: ${{ github.run_number }}
+          SHA: ${{ github.sha }}
+        run: |
+          version=$(grep '^vyne_version' gradle.properties | cut -d= -f2 | tr -d ' ')
+          tag="${BRANCH}-build-${RUN}"
+          jar=$(ls build/libs/vyne-loader-*.jar | head -n 1)
+          asset="build/libs/vyne-loader-${version}+${BRANCH}.${RUN}.jar"
+          cp "$jar" "$asset"
+          {
+            echo "Automatic development build from \`${BRANCH}\` at ${SHA}."
+            echo
+            echo "Not a release: expect bugs. Report problems at https://github.com/${GITHUB_REPOSITORY}/issues."
+            echo
+            echo "### Commit"
+            git log -1 --format='%s%n%n%b' "$SHA"
+          } > notes.md
+          gh release create "$tag" "$asset" \
+            --target "$SHA" \
+            --title "Vyne ${version} build ${RUN} (${BRANCH})" \
+            --notes-file notes.md \
+            --prerelease \
+            --latest=false

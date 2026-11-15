@@ -12,6 +12,7 @@ def defaultSkipPrefixes = [
         'org.apache.logging.log4j.',
         'org.spongepowered.asm.',
         'org.lwjgl.',
+        'com.terraformersmc.modmenu.api.',
         'org.apache.commons.compress.archivers.sevenz.',
         'org.apache.commons.compress.compressors.brotli.',
         'org.apache.commons.compress.compressors.lzma.',

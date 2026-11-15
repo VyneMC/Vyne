@@ -35,6 +35,7 @@ import net.fabricmc.loader.impl.gui.FabricStatusTree.FabricBasicButtonType;
 import net.fabricmc.loader.impl.gui.FabricStatusTree.FabricStatusNode;
 import net.fabricmc.loader.impl.gui.FabricStatusTree.FabricStatusTab;
 import net.fabricmc.loader.impl.gui.FabricStatusTree.FabricTreeWarningLevel;
+import net.fabricmc.loader.impl.metadata.DependencyOverrides;
 import net.fabricmc.loader.impl.util.LoaderUtil;
 import net.fabricmc.loader.impl.util.Localization;
 import net.fabricmc.loader.impl.util.SystemProperties;
@@ -138,6 +139,13 @@ public final class FabricGuiEntry {
 
 			tree.addButton(Localization.format("gui.button.exit"), FabricBasicButtonType.CLICK_ONCE).makeClose();
 			treeCustomiser.accept(tree);
+
+			DependencyOverrides dependencyOverrides = FabricLoaderImpl.INSTANCE.getDependencyOverrides();
+
+			if (dependencyOverrides != null && !dependencyOverrides.getAffectedModIds().isEmpty()) {
+				crashTab.node.addMessage(Localization.format("gui.error.dependencyOverrides",
+						String.join(", ", dependencyOverrides.getAffectedModIds())), FabricTreeWarningLevel.WARN);
+			}
 
 			try {
 				open(tree);

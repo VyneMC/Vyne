@@ -24,7 +24,6 @@ public class VCLMixinConfigPlugin implements IMixinConfigPlugin {
 
     private static final java.util.Set<String> PATCHED_GAME_MIXINS = java.util.Set.of(
             "LoadingOverlayVyneMixin",
-            "OptionsScreenModsButtonMixin",
             "CrashReportVyneMixin",
             "PackRepositoryVyneMixin",
             "DedicatedServerMixin",

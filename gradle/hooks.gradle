@@ -16,8 +16,8 @@ configurations {
 }
 
 dependencies {
-    hooksMixin 'net.fabricmc:sponge-mixin:0.17.1+mixin.0.8.7'
-    hooksMixin 'io.github.llamalad7:mixinextras-fabric:0.4.0'
+    hooksMixin 'net.fabricmc:sponge-mixin:0.17.5+mixin.0.8.7'
+    hooksMixin 'io.github.llamalad7:mixinextras-fabric:0.5.5'
 }
 
 afterEvaluate {
@@ -43,13 +43,19 @@ tasks.register('remapHooksJar', JavaExec) {
     systemProperty 'vyne.gameDir', work.absolutePath
     inputs.files(tasks.named('hooksJar'))
     outputs.file(hooksRuntimeJar)
-    doFirst {
-        args = [project.minecraft_version,
-                tasks.named('hooksJar').get().archiveFile.get().asFile.absolutePath,
-                hooksRuntimeJar.absolutePath,
-                layout.buildDirectory.file("minecraft/minecraft-${project.minecraft_version}-hooked.jar").get().asFile.absolutePath,
-                tasks.named('neoforgeJar').get().archiveFile.get().asFile.absolutePath, '--'] +
-                configurations.minecraftLibraries.files.collect { it.absolutePath } +
-                configurations.neoforgeLibraries.files.collect { it.absolutePath }
-    }
+    def mcVersion = project.minecraft_version
+    def hooksJarFile = tasks.named('hooksJar').flatMap { it.archiveFile }
+    def neoforgeJarFile = tasks.named('neoforgeJar').flatMap { it.archiveFile }
+    def hookedGameJar = layout.buildDirectory.file("minecraft/minecraft-${mcVersion}-hooked.jar")
+    def minecraftLibraries = configurations.minecraftLibraries
+    def neoforgeLibraries = configurations.neoforgeLibraries
+    argumentProviders.add({
+        [mcVersion,
+         hooksJarFile.get().asFile.absolutePath,
+         hooksRuntimeJar.absolutePath,
+         hookedGameJar.get().asFile.absolutePath,
+         neoforgeJarFile.get().asFile.absolutePath, '--'] +
+                minecraftLibraries.files.collect { it.absolutePath } +
+                neoforgeLibraries.files.collect { it.absolutePath }
+    } as CommandLineArgumentProvider)
 }

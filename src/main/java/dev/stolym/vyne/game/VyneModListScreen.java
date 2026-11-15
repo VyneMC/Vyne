@@ -192,32 +192,84 @@ public final class VyneModListScreen extends class_437 {
     private void updateConfigButton() {
         if (configButton != null) {
             configButton.field_22763 = selected >= 0 && selected < entries.size()
-                    && configFactory(entries.get(selected).id()).isPresent();
+                    && hasConfig(entries.get(selected).id());
         }
     }
 
     private void openConfig() {
         if (selected < 0 || selected >= entries.size()) return;
         String id = entries.get(selected).id();
-        configFactory(id).ifPresent(factory -> {
+        try {
+            class_437 screen = createConfigScreen(id);
+            if (screen != null) field_22787.method_1507(screen);
+        } catch (Throwable t) {
+            dev.stolym.vyne.util.VyneLogger.warn("[ModList] Could not open the config screen of " + id + ": " + t);
+        }
+    }
+
+    private final java.util.Map<String, Boolean> hasConfig = new java.util.HashMap<>();
+
+    private boolean hasConfig(String modId) {
+        return hasConfig.computeIfAbsent(modId, id -> {
+            if (neoForgeConfigFactory(id).isPresent()) return true;
             try {
-                Object container = net.neoforged.fml.ModList.get().getModContainerById(id).orElse(null);
-                for (Method m : factory.getClass().getMethods()) {
-                    if (m.getName().equals("createScreen") && m.getParameterCount() == 2) {
-                        m.setAccessible(true);
-                        Object screen = m.invoke(factory, container, this);
-                        if (screen instanceof class_437 target) field_22787.method_1507(target);
-                        return;
-                    }
-                }
+                return fabricConfigScreen(id) != null;
             } catch (Throwable t) {
-                dev.stolym.vyne.util.VyneLogger.warn("[ModList] Could not open the config screen of " + id + ": " + t);
+                return false;
             }
         });
     }
 
+    private class_437 createConfigScreen(String modId) throws Throwable {
+        Optional<Object> factory = neoForgeConfigFactory(modId);
+        if (factory.isPresent()) {
+            Object container = net.neoforged.fml.ModList.get().getModContainerById(modId).orElse(null);
+            for (Method m : factory.get().getClass().getMethods()) {
+                if (m.getName().equals("createScreen") && m.getParameterCount() == 2) {
+                    m.setAccessible(true);
+                    Object screen = m.invoke(factory.get(), container, this);
+                    return screen instanceof class_437 target ? target : null;
+                }
+            }
+        }
+        return fabricConfigScreen(modId);
+    }
+
+    private class_437 fabricConfigScreen(String modId) {
+        com.terraformersmc.modmenu.api.ConfigScreenFactory<?> factory = modMenuFactories().get(modId);
+        return factory == null ? null : factory.create(this);
+    }
+
+    private static java.util.Map<String, com.terraformersmc.modmenu.api.ConfigScreenFactory<?>> modMenuFactories;
+
+    private static synchronized java.util.Map<String, com.terraformersmc.modmenu.api.ConfigScreenFactory<?>> modMenuFactories() {
+        if (modMenuFactories != null) return modMenuFactories;
+        java.util.Map<String, com.terraformersmc.modmenu.api.ConfigScreenFactory<?>> own = new java.util.HashMap<>();
+        java.util.Map<String, com.terraformersmc.modmenu.api.ConfigScreenFactory<?>> provided = new java.util.HashMap<>();
+        try {
+            for (net.fabricmc.loader.api.entrypoint.EntrypointContainer<com.terraformersmc.modmenu.api.ModMenuApi> container
+                    : FabricLoader.getInstance().getEntrypointContainers("modmenu", com.terraformersmc.modmenu.api.ModMenuApi.class)) {
+                String id = container.getProvider().getMetadata().getId();
+                try {
+                    com.terraformersmc.modmenu.api.ModMenuApi api = container.getEntrypoint();
+                    com.terraformersmc.modmenu.api.ConfigScreenFactory<?> factory = api.getModConfigScreenFactory();
+                    if (factory != null) own.put(id, factory);
+                    java.util.Map<String, com.terraformersmc.modmenu.api.ConfigScreenFactory<?>> others = api.getProvidedConfigScreenFactories();
+                    if (others != null) others.forEach(provided::putIfAbsent);
+                } catch (Throwable t) {
+                    dev.stolym.vyne.util.VyneLogger.warn("[ModList] Mod Menu entrypoint of " + id + " failed: " + t);
+                }
+            }
+        } catch (Throwable t) {
+            dev.stolym.vyne.util.VyneLogger.debug("[ModList] Mod Menu entrypoints unavailable: " + t);
+        }
+        provided.putAll(own);
+        modMenuFactories = provided;
+        return provided;
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static Optional<Object> configFactory(String modId) {
+    private static Optional<Object> neoForgeConfigFactory(String modId) {
         try {
             Optional<net.neoforged.fml.ModContainer> container = net.neoforged.fml.ModList.get().getModContainerById(modId);
             if (container.isEmpty()) return Optional.empty();

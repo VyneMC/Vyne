@@ -108,15 +108,39 @@ public final class ModDetector {
         return mod.getJarPath().getFileName().toString().replaceAll("[-_+]?\\d[\\w.+-]*\\.jar$", "");
     }
 
+    private static List<java.util.zip.ZipEntry> nestedJarEntries(java.util.zip.ZipFile zip) throws IOException {
+        java.util.LinkedHashMap<String, java.util.zip.ZipEntry> found = new java.util.LinkedHashMap<>();
+        java.util.zip.ZipEntry metadata = zip.getEntry("META-INF/jarjar/metadata.json");
+        if (metadata != null) {
+            try (InputStream in = zip.getInputStream(metadata)) {
+                JsonElement root = JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+                if (root.isJsonObject() && root.getAsJsonObject().get("jars") instanceof com.google.gson.JsonArray jars) {
+                    for (JsonElement jar : jars) {
+                        if (!jar.isJsonObject() || !jar.getAsJsonObject().has("path")) continue;
+                        String path = jar.getAsJsonObject().get("path").getAsString();
+                        java.util.zip.ZipEntry entry = zip.getEntry(path);
+                        if (entry != null && !entry.isDirectory()) found.put(path, entry);
+                    }
+                }
+            } catch (RuntimeException e) {
+                VyneLogger.warn("[Detector] Unreadable jar-in-jar metadata in " + zip.getName() + ": " + e.getMessage());
+            }
+        }
+        java.util.Enumeration<? extends java.util.zip.ZipEntry> entries = zip.entries();
+        while (entries.hasMoreElements()) {
+            java.util.zip.ZipEntry entry = entries.nextElement();
+            String name = entry.getName();
+            if (!entry.isDirectory() && name.startsWith("META-INF/jarjar/") && name.endsWith(".jar")) found.putIfAbsent(name, entry);
+        }
+        return new ArrayList<>(found.values());
+    }
+
     private static List<Path> extractNestedJars(Path hostJar, Path cacheRoot) {
         List<Path> out = new ArrayList<>();
         try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(hostJar.toFile())) {
-            java.util.Enumeration<? extends java.util.zip.ZipEntry> entries = zip.entries();
             Path dir = cacheRoot.resolve(hostJar.getFileName().toString().replace(".jar", ""));
-            while (entries.hasMoreElements()) {
-                java.util.zip.ZipEntry entry = entries.nextElement();
+            for (java.util.zip.ZipEntry entry : nestedJarEntries(zip)) {
                 String name = entry.getName();
-                if (entry.isDirectory() || !name.startsWith("META-INF/jarjar/") || !name.endsWith(".jar")) continue;
                 Path target = dir.resolve(name.substring(name.lastIndexOf('/') + 1)).normalize();
                 if (!target.startsWith(dir)) continue;
                 if (!Files.exists(target) || Files.size(target) != entry.getSize()) {

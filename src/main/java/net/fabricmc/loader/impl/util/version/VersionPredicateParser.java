@@ -39,7 +39,13 @@ import net.fabricmc.loader.api.metadata.version.VersionPredicate.PredicateTerm;
 public final class VersionPredicateParser {
 	private static final VersionComparisonOperator[] OPERATORS = VersionComparisonOperator.values();
 
+	public static VersionPredicate any() {
+		return AnyVersionPredicate.INSTANCE;
+	}
+
 	public static VersionPredicate parse(String predicate) throws VersionParsingException {
+		if (predicate.isEmpty() || predicate.equals("*")) return AnyVersionPredicate.INSTANCE;
+
 		List<SingleVersionPredicate> predicateList = new ArrayList<>();
 
 		for (String s : predicate.split(" ")) {
@@ -71,11 +77,6 @@ public final class VersionPredicateParser {
 
 					assert !semVer.getPrereleaseKey().isPresent();
 
-					int compCount = semVer.getVersionComponentCount();
-					assert compCount == 2 || compCount == 3;
-
-					operator = compCount == 2 ? VersionComparisonOperator.SAME_TO_NEXT_MAJOR : VersionComparisonOperator.SAME_TO_NEXT_MINOR;
-
 					int[] newComponents = new int[semVer.getVersionComponentCount() - 1];
 
 					for (int i = 0; i < semVer.getVersionComponentCount() - 1; i++) {
@@ -83,6 +84,21 @@ public final class VersionPredicateParser {
 					}
 
 					version = new SemanticVersionImpl(newComponents, "", semVer.getBuildKey().orElse(null));
+
+					int compCount = semVer.getVersionComponentCount();
+
+					if (compCount <= 1) {
+						throw new IllegalStateException("invalid component count "+compCount+" for version "+semVer);
+					} else if (compCount <= 3) {
+						operator = compCount == 2 ? VersionComparisonOperator.SAME_TO_NEXT_MAJOR : VersionComparisonOperator.SAME_TO_NEXT_MINOR;
+					} else {
+						predicateList.add(new SingleVersionPredicate(VersionComparisonOperator.GREATER_EQUAL, version));
+
+						newComponents = newComponents.clone();
+						newComponents[newComponents.length - 1]++;
+						version = new SemanticVersionImpl(newComponents, "", null);
+						operator = VersionComparisonOperator.LESS;
+					}
 				}
 			} else if (!operator.isMinInclusive() && !operator.isMaxInclusive()) {
 				throw new VersionParsingException("Invalid predicate: "+predicate+", version ranges need to be semantic version compatible to use operators that exclude the bound!");

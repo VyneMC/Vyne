@@ -36,6 +36,8 @@ import java.util.StringTokenizer;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
 
+import net.fabricmc.loader.impl.util.FileSystemUtil.AccessMode;
+
 public final class ManifestUtil {
 	public static Manifest readManifest(Class<?> cls) throws IOException, URISyntaxException {
 		CodeSource cs = cls.getProtectionDomain().getCodeSource();
@@ -59,7 +61,7 @@ public final class ManifestUtil {
 				return ((JarURLConnection) connection).getManifest();
 			}
 
-			try (FileSystemUtil.FileSystemDelegate jarFs = FileSystemUtil.getJarFileSystem(path, false)) {
+			try (FileSystemUtil.FileSystemDelegate jarFs = FileSystemUtil.getJarFileSystem(path, AccessMode.READ_ONLY)) {
 				return readManifestFromBasePath(jarFs.get().getRootDirectories().iterator().next());
 			}
 		}
@@ -69,7 +71,7 @@ public final class ManifestUtil {
 		if (Files.isDirectory(codeSource)) {
 			return readManifestFromBasePath(codeSource);
 		} else {
-			try (FileSystemUtil.FileSystemDelegate jarFs = FileSystemUtil.getJarFileSystem(codeSource, false)) {
+			try (FileSystemUtil.FileSystemDelegate jarFs = FileSystemUtil.getJarFileSystem(codeSource, AccessMode.READ_ONLY)) {
 				return readManifestFromBasePath(jarFs.get().getRootDirectories().iterator().next());
 			}
 		}

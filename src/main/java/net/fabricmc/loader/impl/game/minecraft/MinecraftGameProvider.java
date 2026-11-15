@@ -165,6 +165,9 @@ public class MinecraftGameProvider implements GameProvider {
 				|| className.startsWith("com.mojang.minecraft.")
 				|| className.startsWith("com.mojang.rubydung.")
 				|| className.startsWith("com.mojang.blaze3d.")
+				|| className.startsWith("com.mojang.renderpearl.")
+				|| className.startsWith("com.mojang.math.")
+				|| className.startsWith("com.mojang.realmsclient.")
 				|| className.indexOf('.') < 0;
 
 		if (isMinecraftClass) {

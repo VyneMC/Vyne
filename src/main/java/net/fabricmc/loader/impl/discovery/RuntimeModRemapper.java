@@ -53,6 +53,7 @@ import net.fabricmc.loader.impl.launch.FabricLauncher;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import net.fabricmc.loader.impl.launch.MappingConfiguration;
 import net.fabricmc.loader.impl.util.FileSystemUtil;
+import net.fabricmc.loader.impl.util.FileSystemUtil.AccessMode;
 import net.fabricmc.loader.impl.util.ManifestUtil;
 import net.fabricmc.loader.impl.util.SystemProperties;
 import net.fabricmc.loader.impl.util.log.Log;
@@ -119,7 +120,7 @@ public final class RuntimeModRemapper {
 				if (classTweaker != null) {
 					info.classTweakerPath = classTweaker;
 
-					try (FileSystemUtil.FileSystemDelegate jarFs = FileSystemUtil.getJarFileSystem(info.inputPath, false)) {
+					try (FileSystemUtil.FileSystemDelegate jarFs = FileSystemUtil.getJarFileSystem(info.inputPath, AccessMode.READ_ONLY)) {
 						FileSystem fs = jarFs.get();
 						info.classTweaker = Files.readAllBytes(fs.getPath(classTweaker));
 					} catch (Throwable t) {
@@ -163,7 +164,7 @@ public final class RuntimeModRemapper {
 				RemapInfo info = infoMap.get(mod);
 				OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(info.outputPath).build();
 
-				FileSystemUtil.FileSystemDelegate delegate = FileSystemUtil.getJarFileSystem(info.inputPath, false);
+				FileSystemUtil.FileSystemDelegate delegate = FileSystemUtil.getJarFileSystem(info.inputPath, AccessMode.READ_ONLY);
 
 				if (delegate.get() == null) {
 					throw new RuntimeException("Could not open JAR file " + info.inputPath.getFileName() + " for NIO reading!");
@@ -193,7 +194,7 @@ public final class RuntimeModRemapper {
 				info.outputConsumerPath.close();
 
 				if (info.classTweakerPath != null) {
-					try (FileSystemUtil.FileSystemDelegate jarFs = FileSystemUtil.getJarFileSystem(info.outputPath, false)) {
+					try (FileSystemUtil.FileSystemDelegate jarFs = FileSystemUtil.getJarFileSystem(info.outputPath, AccessMode.READ_WRITE)) {
 						FileSystem fs = jarFs.get();
 
 						Files.delete(fs.getPath(info.classTweakerPath));

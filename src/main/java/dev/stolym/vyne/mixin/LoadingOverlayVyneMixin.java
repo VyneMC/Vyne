@@ -10,7 +10,8 @@ import net.minecraft.class_332;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import java.util.function.IntSupplier;
 
@@ -22,19 +23,21 @@ public abstract class LoadingOverlayVyneMixin {
     @Unique
     private float[] vyne$handoffLogo;
 
-    @Redirect(method = "method_25394",
+    @WrapOperation(method = "method_25394",
             at = @At(value = "INVOKE", target = "Ljava/util/function/IntSupplier;getAsInt()I"))
-    private int vyne$background(IntSupplier original) {
+    private int vyne$background(IntSupplier supplier, Operation<Integer> original) {
+        original.call(supplier);
         return VyneLoadingOverlay.background();
     }
 
-    @Redirect(method = "method_25394",
+    @WrapOperation(method = "method_25394",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/class_332;method_25293(Lnet/minecraft/class_2960;IIIIFFIIII)V"))
     private void vyne$logo(class_332 graphics, class_2960 texture, int x, int y, int width, int height,
-                           float u, float v, int regionWidth, int regionHeight, int textureWidth, int textureHeight) {
+                           float u, float v, int regionWidth, int regionHeight, int textureWidth, int textureHeight,
+                           Operation<Void> original) {
         if (v > 1f) {
             if (!VyneLoadingOverlay.isActive()) {
-                graphics.method_25293(texture, x, y, width, height, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
+                original.call(graphics, texture, x, y, width, height, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
             }
             return;
         }
@@ -44,7 +47,7 @@ public abstract class LoadingOverlayVyneMixin {
             vyne$handoffLogo = dev.stolym.vyne.ui.VyneLoadingScreen.consumeHandoffLogo();
         }
         if (!VyneLoadingOverlay.drawLogo(graphics, x, y, width, height, now - vyne$animationStart, vyne$handoffLogo)) {
-            graphics.method_25293(texture, x, y, width, height, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
+            original.call(graphics, texture, x, y, width, height, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
         }
     }
 }

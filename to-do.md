@@ -80,8 +80,14 @@ See [docs/dev/small-fixes.md](docs/dev/small-fixes.md) for the full list. Highli
 - [x] `classLoadCheck` skips the optional `commons-compress` codecs (xz, brotli, zstd, 7z, pack200) bundled for `jbsdiff`
 - [x] `./gradlew build` on a fresh clone generates what it needs (no generated sources in git)
 - [x] Comforts 9.0.5 in a mixed pack (with Fabric API and Lithium): blocks place, items exist, 0 ERROR lines. Fixes: payload and late registry events posted once per bus; `RegistryUnlock` around `RegisterEvent`; `NewRegistryEvent` and the server lifecycle events fired on the compatibility path (SpectreLib loads its configs on them); full `FMLConfig` stand-in; `ICancellableEvent`; `VyneRegistryInjector` uses 1.21.1's `register(key, value, RegistrationInfo)` and checks registration by value; removed a redirect that sent every `getConnectedDirection` call to `FaceAttachedHorizontalDirectionalBlock`; converter and remap caches bumped
-- [ ] Title screen: Mods button replaces the Realms button (and leaves the Options screen)
-- [ ] Mods screen: open Fabric mods' config screens through their `modmenu` entrypoint (`ModMenuApi.getModConfigScreenFactory`), with Mod Menu's API interfaces provided when Mod Menu is not installed
+- [x] Title screen: Mods button replaces the Realms button (and left the Options screen); skipped when Mod Menu is installed
+- [x] Mods screen: Fabric mods' config screens through their `modmenu` entrypoint; Vyne's copy of Mod Menu's API interfaces is mounted only when Mod Menu is not installed (Capes)
+- [x] Fabric Loader base updated from 0.19.1 to 0.20.1 (upstream changes ported, Mixin 0.17.5, MixinExtras 0.5.5, tiny-remapper 0.15.0, mapping-io 0.9.1, class-tweaker 0.3.0, ASM 9.10.1); mods requiring loader 0.19.5+ (Fabric Language Kotlin 1.14) load
+- [x] Default NeoForge version 21.1.265 (was 21.1.233), matching the patch layer; an older version stored in `.vyne/vyne.properties` no longer pins it (JEI 19.70 needs 21.1.238+)
+- [x] Jar-in-jar: bundled jars listed in `META-INF/jarjar/metadata.json` are found wherever they are stored (Skin Layers 3D keeps them in `META-INF/jars/`)
+- [x] A mod that fails to construct ends the phase with a `ModLoadingException`, so NeoForge writes the crash report its error screen opens
+- [x] Loading overlay mixin uses `@WrapOperation` so splash-screen mods (Puzzle) can change the same calls
+- [x] Every push to `dev-1.21.1` builds, tests and publishes a GitHub pre-release (`.github/workflows/dev-build.yml`)
 - [ ] Early window: log why it did not open (`glfwInit` / `glfwCreateWindow` failures return silently)
 - [ ] Installer: notes point at `.minecraft/mods` instead of Prism's `minecraft/mods`; the Fabric Loader component is left next to Vyne
 

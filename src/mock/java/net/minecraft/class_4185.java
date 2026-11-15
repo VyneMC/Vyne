@@ -14,6 +14,12 @@ public class class_4185 implements class_364 {
 
     public static class_7840 method_46430(class_2561 message, class_4241 onPress) { return null; }
 
+    public int method_46426() { return 0; }
+    public int method_46427() { return 0; }
+    public int method_25368() { return 0; }
+    public int method_25364() { return 0; }
+    public class_2561 method_25369() { return null; }
+
     public interface class_4241 {
         void onPress(class_4185 button);
     }

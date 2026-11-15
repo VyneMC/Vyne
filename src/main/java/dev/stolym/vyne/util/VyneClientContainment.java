@@ -45,7 +45,6 @@ public final class VyneClientContainment {
     }
 
     private static boolean isNeverAbsorb(Throwable t) {
-        return t instanceof OutOfMemoryError
-            || t instanceof ThreadDeath;
+        return t instanceof OutOfMemoryError;
     }
 }

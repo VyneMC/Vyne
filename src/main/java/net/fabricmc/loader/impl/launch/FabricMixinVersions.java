@@ -35,6 +35,8 @@ public class FabricMixinVersions {
 	private static final Map<Integer, String> minLoaderVersions = new HashMap<>();
 
 	static {
+		addVersion("0.20.0", FabricUtil.COMPATIBILITY_0_17_5);
+		addVersion("0.19.4", FabricUtil.COMPATIBILITY_0_17_4);
     addVersion("0.19.1", FabricUtil.COMPATIBILITY_0_17_1); 
     addVersion("0.19.0", FabricUtil.COMPATIBILITY_0_17_1); 
     addVersion("0.18.4", FabricUtil.COMPATIBILITY_0_17_0);

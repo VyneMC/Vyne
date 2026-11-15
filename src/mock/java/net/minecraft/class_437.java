@@ -20,4 +20,6 @@ public abstract class class_437 implements class_364 {
     public void method_25394(class_332 graphics, int mouseX, int mouseY, float delta) { }
     public void method_25419() { }
     public <T extends class_364> T method_37063(T widget) { return widget; }
+    public java.util.List<? extends class_364> method_25396() { return java.util.List.of(); }
+    public void method_37066(class_364 widget) { }
 }

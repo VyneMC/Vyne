@@ -19,6 +19,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 public final class VyneGameJar {
+    private static final String MOD_MENU_API = "com/terraformersmc/modmenu/api/";
     private static volatile Path prepared;
 
     private VyneGameJar() {}
@@ -33,14 +34,20 @@ public final class VyneGameJar {
 
     public static synchronized Path prepare() throws IOException {
         if (prepared != null) return prepared;
+        prepared = extract("vyne-game", VyneGameJar::isGameSide);
+        return prepared;
+    }
+
+    public static synchronized Path prepareModMenuApi() throws IOException {
+        return extract("modmenu-api", name -> name.startsWith(MOD_MENU_API) && name.endsWith(".class"));
+    }
+
+    private static Path extract(String cacheName, java.util.function.Predicate<String> include) throws IOException {
         Path self = vyneJar();
-        if (!Files.isRegularFile(self)) {
-            prepared = self;
-            return self;
-        }
+        if (!Files.isRegularFile(self)) return self;
         String key = Files.size(self) + ":" + Files.getLastModifiedTime(self).toMillis();
         Path dir = Path.of(System.getProperty("vyne.gameDir", ".")).toAbsolutePath().normalize()
-                .resolve(".vyne").resolve("cache").resolve("vyne-game");
+                .resolve(".vyne").resolve("cache").resolve(cacheName);
         Path out = dir.resolve(Integer.toHexString(key.hashCode()) + ".jar");
         if (!Files.isRegularFile(out)) {
             Files.createDirectories(dir);
@@ -48,7 +55,7 @@ public final class VyneGameJar {
             try (ZipFile in = new ZipFile(self.toFile());
                  ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(tmp))) {
                 for (ZipEntry entry : Collections.list(in.entries())) {
-                    if (entry.isDirectory() || !isGameSide(entry.getName())) continue;
+                    if (entry.isDirectory() || !include.test(entry.getName())) continue;
                     zos.putNextEntry(new ZipEntry(entry.getName()));
                     try (InputStream data = in.getInputStream(entry)) {
                         data.transferTo(zos);
@@ -63,7 +70,6 @@ public final class VyneGameJar {
                 }
             }
         }
-        prepared = out;
         return out;
     }
 

@@ -59,6 +59,7 @@ public final class SystemProperties {
 	public static final String REMAP_CLASSPATH_FILE = "fabric.remapClasspathFile";
 
 	public static final String PATH_GROUPS = "fabric.classPathGroups";
+	public static final String DISABLE_ENVIRONMENT_STRIP = "fabric.disableEnvironmentStrip";
 
 	public static final String FIX_PACKAGE_ACCESS = "fabric.fixPackageAccess";
 

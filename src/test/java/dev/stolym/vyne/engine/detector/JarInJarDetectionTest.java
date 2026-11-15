@@ -71,6 +71,27 @@ class JarInJarDetectionTest {
     }
 
     @Test
+    void bundlesListedInMetadataOutsideJarjarFolderAreFound() throws IOException {
+        Path mods = Files.createDirectories(gameDir.resolve("mods"));
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ZipOutputStream zip = new ZipOutputStream(bytes)) {
+            zip.putNextEntry(new ZipEntry("META-INF/neoforge.mods.toml"));
+            zip.write(("modLoader=\"javafml\"\nloaderVersion=\"[1,)\"\nlicense=\"MIT\"\n[[mods]]\nmodId=\"skins\"\nversion=\"1.0\"\n")
+                    .getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
+            zip.putNextEntry(new ZipEntry("META-INF/jarjar/metadata.json"));
+            zip.write("{\"jars\":[{\"path\":\"META-INF/jars/transition-1.0.jar\"}]}".getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
+            zip.putNextEntry(new ZipEntry("META-INF/jars/transition-1.0.jar"));
+            zip.write(neoforgeJar("transition", "1.0", Map.of()));
+            zip.closeEntry();
+        }
+        Files.write(mods.resolve("skins.jar"), bytes.toByteArray());
+
+        assertEquals("1.0", versions(scan()).get("transition"));
+    }
+
+    @Test
     void nestedBundlesAreFollowed() throws IOException {
         Path mods = Files.createDirectories(gameDir.resolve("mods"));
         byte[] inner = neoforgeJar("innerlib", "2.0", Map.of());

@@ -67,6 +67,10 @@ public final class VyneModLoader {
             }
         }
         dispatchParallelEvent("construct", syncExecutor, parallelExecutor, periodicTask, FMLConstructModEvent::new);
+        List<ModLoadingIssue> errors = ISSUES.stream()
+                .filter(issue -> issue.severity() == ModLoadingIssue.Severity.ERROR)
+                .toList();
+        if (!errors.isEmpty()) throw new net.neoforged.fml.ModLoadingException(errors);
     }
 
     private static int registerSubscribers(VyneModContainer container, Dist dist, ClassLoader loader) {

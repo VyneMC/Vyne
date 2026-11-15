@@ -10,4 +10,5 @@ package net.minecraft;
 
 public interface class_2561 {
     static class_5250 method_43470(String text) { return null; }
+    static class_5250 method_43471(String key) { return null; }
 }

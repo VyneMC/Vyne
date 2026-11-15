@@ -1,20 +1,22 @@
 {
   "schemaVersion": 1,
   "id": "fabricloader",
-  "name": "Fabric Loader",
-  "version": "0.19.1",
+  "name": "Vyne",
+  "version": "0.20.1",
   "environment": "*",
-  "description": "The base mod loader.",
+  "description": "Mod loader for Fabric and NeoForge mods. Based on Fabric Loader 0.20.1, whose id and version it keeps so Fabric mods' dependencies resolve.",
   "contact": {
-    "homepage": "https://fabricmc.net",
-    "irc": "ircs://irc.esper.net:6697/fabric",
-    "issues": "https://github.com/FabricMC/fabric-loader/issues",
-    "sources": "https://github.com/FabricMC/fabric-loader"
+    "homepage": "https://github.com/VyneMC/Vyne",
+    "issues": "https://github.com/VyneMC/Vyne/issues",
+    "sources": "https://github.com/VyneMC/Vyne"
   },
-  "license": "Apache-2.0",
-  "icon": "assets/fabricloader/icon.png",
+  "license": "GPL-3.0",
+  "icon": "assets/vyne/icon.png",
   "authors": [
-    "FabricMC"
+    "Stolym Studios"
+  ],
+  "contributors": [
+    "FabricMC (Fabric Loader)"
   ],
   "entrypoints": {
     "main": [

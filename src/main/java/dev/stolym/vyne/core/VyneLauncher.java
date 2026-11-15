@@ -28,7 +28,7 @@ import net.fabricmc.loader.impl.launch.knot.Knot;
 public final class VyneLauncher {
     public static final String VERSION = "0.1.0-alpha";
     public static final String TARGET_MC = "1.21.1";
-    public static final String DEFAULT_NEOFORGE = "21.1.233";
+    public static final String DEFAULT_NEOFORGE = "21.1.265";
 
     private static final java.util.Set<String> hardDisabledModIds =
         new java.util.HashSet<>();
