@@ -60,15 +60,32 @@ dependencies {
     hookDecompiler 'org.vineflower:vineflower:1.10.1'
 }
 
+tasks.register('installHookNeoForge', JavaExec) {
+    group = 'vyne'
+    description = 'Installs NeoForge\'s patched game for the hook generator, without regenerating the hook surface.'
+    dependsOn tasks.named('toolsClasses')
+    classpath = sourceSets.tools.runtimeClasspath
+    mainClass = 'dev.stolym.vyne.tools.hooks.InstallNeoForge'
+    def work = layout.buildDirectory.dir('hook-inventory').get().asFile
+    systemProperty 'vyne.gameDir', work.absolutePath
+    workingDir = work
+    inputs.property('neoforgeVersion', project.hook_neoforge_version)
+    outputs.file(new File(work, ".vyne/neoforge/${project.hook_neoforge_version}/client/install.properties"))
+    doFirst { work.mkdirs() }
+    args project.hook_neoforge_version
+}
+
 tasks.register('decompileHookClasses', JavaExec) {
     group = 'vyne'
     description = 'Decompiles the vanilla classes NeoForge changes (from NeoForge\'s patched game) for the hook generator.'
-    dependsOn 'hookSurface'
+    dependsOn 'installHookNeoForge'
     classpath = configurations.hookDecompiler
     mainClass = 'org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler'
     def work = layout.buildDirectory.dir('hook-inventory').get().asFile
     def input = new File(work, 'decompile-input')
     def output = new File(work, 'decompiled')
+    inputs.file("src/main/resources/vyne/hooks/neoforge-${project.hook_neoforge_version}/surface.tsv")
+    inputs.property('neoforgeVersion', project.hook_neoforge_version)
     outputs.dir(output)
     doFirst {
         delete input, output
@@ -99,10 +116,19 @@ tasks.register('decompileHookClasses', JavaExec) {
 tasks.register('generateHookBodies', JavaExec) {
     group = 'vyne'
     description = 'Generates Vyne mixins with the bodies of the methods NeoForge adds to vanilla (src/hooks/generated).'
-    dependsOn tasks.named('toolsClasses'), 'minecraftHookedOpenJar'
+    dependsOn tasks.named('toolsClasses'), 'minecraftHookedOpenJar', 'decompileHookClasses'
     classpath = sourceSets.tools.runtimeClasspath
     mainClass = 'dev.stolym.vyne.tools.hooks.HookBodies'
     def work = layout.buildDirectory.dir('hook-inventory').get().asFile
+    inputs.files(sourceSets.tools.runtimeClasspath)
+    inputs.dir(new File(work, 'decompiled'))
+    inputs.file("src/main/resources/vyne/hooks/neoforge-${project.hook_neoforge_version}/surface.tsv")
+    inputs.file("src/main/resources/vyne/hooks/neoforge-${project.hook_neoforge_version}/accesstransformer.cfg")
+    inputs.file('src/hooks/generated/hook-exclusions.txt')
+    outputs.dir('src/hooks/generated/java')
+    outputs.file('src/hooks/generated/resources/vyne.hooks.generated.mixins.json')
+    outputs.upToDateWhen { !project.hasProperty('hookErrors') }
+    doFirst { delete 'src/hooks/generated/java' }
     doFirst {
         def errors = project.findProperty('hookErrors')
         args = [file("src/main/resources/vyne/hooks/neoforge-${project.hook_neoforge_version}/surface.tsv").absolutePath,

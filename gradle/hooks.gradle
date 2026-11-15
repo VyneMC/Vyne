@@ -25,6 +25,14 @@ afterEvaluate {
             configurations.neoforgeLibraries + configurations.hooksMixin
 }
 
+tasks.named('compileHooksJava') {
+    dependsOn 'generateHookBodies'
+}
+
+tasks.named('processHooksResources') {
+    dependsOn 'generateHookBodies'
+}
+
 tasks.register('hooksJar', Jar) {
     archiveBaseName = 'vyne-hooks-mojang'
     destinationDirectory = layout.buildDirectory.dir('hooks-jar')
