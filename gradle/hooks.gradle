@@ -1,0 +1,53 @@
+sourceSets {
+    hooks {
+        java {
+            srcDirs = ['src/hooks/java']
+        }
+        resources {
+            srcDirs = ['src/hooks/resources']
+        }
+    }
+}
+
+configurations {
+    hooksMixin {
+        transitive = false
+    }
+}
+
+dependencies {
+    hooksMixin 'net.fabricmc:sponge-mixin:0.17.1+mixin.0.8.7'
+    hooksMixin 'io.github.llamalad7:mixinextras-fabric:0.4.0'
+}
+
+afterEvaluate {
+    sourceSets.hooks.compileClasspath = project.ext.minecraftHooked + sourceSets.neoforge.output +
+            configurations.neoforgeLibraries + configurations.hooksMixin
+}
+
+tasks.register('hooksJar', Jar) {
+    archiveBaseName = 'vyne-hooks-mojang'
+    destinationDirectory = layout.buildDirectory.dir('hooks-jar')
+    from sourceSets.hooks.output
+}
+
+def hooksRuntimeJar = layout.buildDirectory.file('hooks-jar/vyne-hooks.jar').get().asFile
+
+tasks.register('remapHooksJar', JavaExec) {
+    group = 'vyne'
+    description = 'Renames Vyne\'s hook mixins (written with Mojang names) to the current runtime names.'
+    dependsOn 'hooksJar', 'minecraftMojangJar', 'neoforgeJar', tasks.named('toolsClasses')
+    classpath = sourceSets.tools.runtimeClasspath
+    mainClass = 'dev.stolym.vyne.tools.minecraft.RemapToRuntime'
+    def work = layout.buildDirectory.dir('minecraft').get().asFile
+    systemProperty 'vyne.gameDir', work.absolutePath
+    inputs.files(tasks.named('hooksJar'))
+    outputs.file(hooksRuntimeJar)
+    doFirst {
+        args = [project.minecraft_version,
+                tasks.named('hooksJar').get().archiveFile.get().asFile.absolutePath,
+                hooksRuntimeJar.absolutePath] +
+                project.ext.minecraftMojang.files.collect { it.absolutePath } +
+                [tasks.named('neoforgeJar').get().archiveFile.get().asFile.absolutePath]
+    }
+}

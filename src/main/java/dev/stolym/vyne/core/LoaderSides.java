@@ -25,6 +25,7 @@ public final class LoaderSides {
             "dev.stolym.vyne.loaders.RealNeoForgeApiMount",
             "dev.stolym.vyne.loaders.AccessTransformerBridge",
             "dev.stolym.vyne.mixin.MixinAnnotationRemapper",
+            "dev.stolym.vyne.hooks.HookSurface",
     };
 
     private static final String[] GAME_EXCEPTIONS = {

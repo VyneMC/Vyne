@@ -40,6 +40,10 @@ public final class VyneLauncher {
         return neoForgeApiJar;
     }
 
+    public static void useNeoForgeApiJar(Path jar) {
+        neoForgeApiJar = jar;
+    }
+
     public static boolean isHardDisabled(String modId) {
         return hardDisabledModIds.contains(modId);
     }

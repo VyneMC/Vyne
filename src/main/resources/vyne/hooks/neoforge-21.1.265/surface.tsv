@@ -69,12 +69,12 @@ net/minecraft/client/KeyMapping	method	<init>	(Ljava/lang/String;Lnet/neoforged/
 net/minecraft/client/KeyMapping	method	<init>	(Ljava/lang/String;Lnet/neoforged/neoforge/client/settings/IKeyConflictContext;Lcom/mojang/blaze3d/platform/InputConstants$Key;Ljava/lang/String;)V	1			
 net/minecraft/client/KeyMapping	method	<init>	(Ljava/lang/String;Lnet/neoforged/neoforge/client/settings/IKeyConflictContext;Lnet/neoforged/neoforge/client/settings/KeyModifier;Lcom/mojang/blaze3d/platform/InputConstants$Type;ILjava/lang/String;)V	1			
 net/minecraft/client/KeyMapping	method	<init>	(Ljava/lang/String;Lnet/neoforged/neoforge/client/settings/IKeyConflictContext;Lnet/neoforged/neoforge/client/settings/KeyModifier;Lcom/mojang/blaze3d/platform/InputConstants$Key;Ljava/lang/String;)V	1			
-net/minecraft/client/KeyMapping	method	getKey	()Lcom/mojang/blaze3d/platform/InputConstants$Key;	1			
-net/minecraft/client/KeyMapping	method	setKeyConflictContext	(Lnet/neoforged/neoforge/client/settings/IKeyConflictContext;)V	1			
-net/minecraft/client/KeyMapping	method	getKeyConflictContext	()Lnet/neoforged/neoforge/client/settings/IKeyConflictContext;	1			
-net/minecraft/client/KeyMapping	method	getDefaultKeyModifier	()Lnet/neoforged/neoforge/client/settings/KeyModifier;	1			
-net/minecraft/client/KeyMapping	method	getKeyModifier	()Lnet/neoforged/neoforge/client/settings/KeyModifier;	1			
-net/minecraft/client/KeyMapping	method	setKeyModifierAndCode	(Lnet/neoforged/neoforge/client/settings/KeyModifier;Lcom/mojang/blaze3d/platform/InputConstants$Key;)V	1			
+net/minecraft/client/KeyMapping	method	getKey	()Lcom/mojang/blaze3d/platform/InputConstants$Key;	1			override
+net/minecraft/client/KeyMapping	method	setKeyConflictContext	(Lnet/neoforged/neoforge/client/settings/IKeyConflictContext;)V	1			override
+net/minecraft/client/KeyMapping	method	getKeyConflictContext	()Lnet/neoforged/neoforge/client/settings/IKeyConflictContext;	1			override
+net/minecraft/client/KeyMapping	method	getDefaultKeyModifier	()Lnet/neoforged/neoforge/client/settings/KeyModifier;	1			override
+net/minecraft/client/KeyMapping	method	getKeyModifier	()Lnet/neoforged/neoforge/client/settings/KeyModifier;	1			override
+net/minecraft/client/KeyMapping	method	setKeyModifierAndCode	(Lnet/neoforged/neoforge/client/settings/KeyModifier;Lcom/mojang/blaze3d/platform/InputConstants$Key;)V	1			override
 net/minecraft/client/Minecraft	inner-access	net/minecraft/client/Minecraft$GameLoadCookie		24			
 net/minecraft/client/Minecraft	implements	net/neoforged/neoforge/client/extensions/IMinecraftExtension		0	Lnet/minecraft/util/thread/ReentrantBlockableEventLoop<Ljava/lang/Runnable;>;Lcom/mojang/blaze3d/platform/WindowEventHandler;Lnet/neoforged/neoforge/client/extensions/IMinecraftExtension;		
 net/minecraft/client/Minecraft	method	getItemColors	()Lnet/minecraft/client/color/item/ItemColors;	1			
@@ -94,10 +94,10 @@ net/minecraft/client/RecipeBookCategories	implements	net/neoforged/fml/common/as
 net/minecraft/client/RecipeBookCategories	field	itemIconsSupplier	Ljava/util/function/Supplier;	18	Ljava/util/function/Supplier<Ljava/util/List<Lnet/minecraft/world/item/ItemStack;>;>;		
 net/minecraft/client/RecipeBookCategories	method	<init>	(Ljava/lang/String;ILjava/util/function/Supplier;)V	2	(Ljava/util/function/Supplier<Ljava/util/List<Lnet/minecraft/world/item/ItemStack;>;>;)V		
 net/minecraft/client/RecipeBookCategories	method	getExtensionInfo	()Lnet/neoforged/fml/common/asm/enumextension/ExtensionInfo;	9			
-net/minecraft/client/ToggleKeyMapping	method	isDown	()Z	1			
+net/minecraft/client/ToggleKeyMapping	method	isDown	()Z	1			override
 net/minecraft/client/gui/Font	inner-access	net/minecraft/client/gui/Font$StringRenderOutput		0			
 net/minecraft/client/gui/Font	implements	net/neoforged/neoforge/client/extensions/IFontExtension		0			
-net/minecraft/client/gui/Font	method	self	()Lnet/minecraft/client/gui/Font;	1			
+net/minecraft/client/gui/Font	method	self	()Lnet/minecraft/client/gui/Font;	1			override
 net/minecraft/client/gui/Gui	inner-access	net/minecraft/client/gui/Gui$HeartType		16409			
 net/minecraft/client/gui/Gui	field-access	SPYGLASS_SCOPE_LOCATION	Lnet/minecraft/resources/ResourceLocation;	25			
 net/minecraft/client/gui/Gui	field	layerManager	Lnet/neoforged/neoforge/client/gui/GuiLayerManager;	18			
@@ -185,9 +185,9 @@ net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen	field	cur
 net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen	method	getCurrentPage	()Lnet/neoforged/neoforge/client/gui/CreativeTabsScreenPage;	1			
 net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen	method	setCurrentPage	(Lnet/neoforged/neoforge/client/gui/CreativeTabsScreenPage;)V	1			
 net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$ItemPickerMenu	inner-access	net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$CustomCreativeSlot		8			
-net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper	method	getSlotIndex	()I	1			
-net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper	method	isSameInventory	(Lnet/minecraft/world/inventory/Slot;)Z	1			
-net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper	method	setBackground	(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/world/inventory/Slot;	1			
+net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper	method	getSlotIndex	()I	1			override
+net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper	method	isSameInventory	(Lnet/minecraft/world/inventory/Slot;)Z	1			override
+net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper	method	setBackground	(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/world/inventory/Slot;	1			override
 net/minecraft/client/gui/screens/inventory/InventoryScreen	method	renderEntityInInventoryFollowsAngle	(Lnet/minecraft/client/gui/GuiGraphics;IIIIIFFFLnet/minecraft/world/entity/LivingEntity;)V	9			
 net/minecraft/client/gui/screens/inventory/MerchantScreen	inner-access	net/minecraft/client/gui/screens/inventory/MerchantScreen$TradeOfferButton		0			
 net/minecraft/client/gui/screens/inventory/tooltip/TooltipRenderUtil	method	renderTooltipBackground	(Lnet/minecraft/client/gui/GuiGraphics;IIIIIIIII)V	9			
@@ -233,32 +233,32 @@ net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl	inner-access	net
 net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl	inner-access	net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl$PackConfirmScreen		0			
 net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl	inner-access	net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl$PackConfirmScreen$PendingRequest		24			
 net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl	field	connectionType	Lnet/neoforged/neoforge/network/connection/ConnectionType;	4			
-net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl	method	getConnection	()Lnet/minecraft/network/Connection;	1			
+net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl	method	getConnection	()Lnet/minecraft/network/Connection;	1			override
 net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl$PackConfirmScreen	inner-access	net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl$PackConfirmScreen$PendingRequest		24			
 net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl$PackConfirmScreen$PendingRequest	inner-access	net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl$PackConfirmScreen		0			
 net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl	field	connectionType	Lnet/neoforged/neoforge/network/connection/ConnectionType;	2			
 net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl	field	initializedConnection	Z	2			
 net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl	field	failureReasons	Ljava/util/Map;	2	Ljava/util/Map<Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/network/chat/Component;>;		
-net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl	method	handleCustomPayload	(Lnet/minecraft/network/protocol/common/ClientboundCustomPayloadPacket;)V	1			
-net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl	method	createDisconnectScreen	(Lnet/minecraft/network/DisconnectionDetails;)Lnet/minecraft/client/gui/screens/Screen;	4			
-net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl	method	getConnectionType	()Lnet/neoforged/neoforge/network/connection/ConnectionType;	1			
+net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl	method	handleCustomPayload	(Lnet/minecraft/network/protocol/common/ClientboundCustomPayloadPacket;)V	1			override
+net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl	method	createDisconnectScreen	(Lnet/minecraft/network/DisconnectionDetails;)Lnet/minecraft/client/gui/screens/Screen;	4			override
+net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl	method	getConnectionType	()Lnet/neoforged/neoforge/network/connection/ConnectionType;	1			override
 net/minecraft/client/multiplayer/ClientLevel	inner-access	net/minecraft/client/multiplayer/ClientLevel$EntityCallbacks		16			
 net/minecraft/client/multiplayer/ClientLevel	field	partEntities	Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;	18	Lit/unimi/dsi/fastutil/ints/Int2ObjectMap<Lnet/neoforged/neoforge/entity/PartEntity<*>;>;		
 net/minecraft/client/multiplayer/ClientLevel	field	modelDataManager	Lnet/neoforged/neoforge/client/model/data/ModelDataManager;	18			
 net/minecraft/client/multiplayer/ClientLevel	field	dayTimeFraction	F	2			
 net/minecraft/client/multiplayer/ClientLevel	field	dayTimePerTick	F	2			
-net/minecraft/client/multiplayer/ClientLevel	method	getPartEntities	()Ljava/util/Collection;	1	()Ljava/util/Collection<Lnet/neoforged/neoforge/entity/PartEntity<*>;>;		
-net/minecraft/client/multiplayer/ClientLevel	method	getModelDataManager	()Lnet/neoforged/neoforge/client/model/data/ModelDataManager;	1			
+net/minecraft/client/multiplayer/ClientLevel	method	getPartEntities	()Ljava/util/Collection;	1	()Ljava/util/Collection<Lnet/neoforged/neoforge/entity/PartEntity<*>;>;		override
+net/minecraft/client/multiplayer/ClientLevel	method	getModelDataManager	()Lnet/neoforged/neoforge/client/model/data/ModelDataManager;	1			override
 net/minecraft/client/multiplayer/ClientLevel	method	getModelData	(Lnet/minecraft/core/BlockPos;)Lnet/neoforged/neoforge/client/model/data/ModelData;	1			
 net/minecraft/client/multiplayer/ClientLevel	method	getShade	(FFFZ)F	1			
-net/minecraft/client/multiplayer/ClientLevel	method	setDayTimeFraction	(F)V	1			
-net/minecraft/client/multiplayer/ClientLevel	method	getDayTimeFraction	()F	1			
-net/minecraft/client/multiplayer/ClientLevel	method	getDayTimePerTick	()F	1			
-net/minecraft/client/multiplayer/ClientLevel	method	setDayTimePerTick	(F)V	1			
+net/minecraft/client/multiplayer/ClientLevel	method	setDayTimeFraction	(F)V	1			override
+net/minecraft/client/multiplayer/ClientLevel	method	getDayTimeFraction	()F	1			override
+net/minecraft/client/multiplayer/ClientLevel	method	getDayTimePerTick	()F	1			override
+net/minecraft/client/multiplayer/ClientLevel	method	setDayTimePerTick	(F)V	1			override
 net/minecraft/client/multiplayer/ClientPacketListener	field-access	commands	Lcom/mojang/brigadier/CommandDispatcher;	1			
 net/minecraft/client/multiplayer/ClientPacketListener	field	connectionType	Lnet/neoforged/neoforge/network/connection/ConnectionType;	2			
 net/minecraft/client/multiplayer/ClientPacketListener	method	startWaitingForNewLevel	(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/gui/screens/ReceivingLevelScreen$Reason;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/resources/ResourceKey;)V	2	(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/gui/screens/ReceivingLevelScreen$Reason;Lnet/minecraft/resources/ResourceKey<Lnet/minecraft/world/level/Level;>;Lnet/minecraft/resources/ResourceKey<Lnet/minecraft/world/level/Level;>;)V		
-net/minecraft/client/multiplayer/ClientPacketListener	method	getConnectionType	()Lnet/neoforged/neoforge/network/connection/ConnectionType;	1			
+net/minecraft/client/multiplayer/ClientPacketListener	method	getConnectionType	()Lnet/neoforged/neoforge/network/connection/ConnectionType;	1			override
 net/minecraft/client/multiplayer/CommonListenerCookie	field	connectionType	Lnet/neoforged/neoforge/network/connection/ConnectionType;	18			
 net/minecraft/client/multiplayer/CommonListenerCookie	method	<init>	(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/client/telemetry/WorldSessionTelemetryManager;Lnet/minecraft/core/RegistryAccess$Frozen;Lnet/minecraft/world/flag/FeatureFlagSet;Ljava/lang/String;Lnet/minecraft/client/multiplayer/ServerData;Lnet/minecraft/client/gui/screens/Screen;Ljava/util/Map;Lnet/minecraft/client/gui/components/ChatComponent$State;ZLjava/util/Map;Lnet/minecraft/server/ServerLinks;Lnet/neoforged/neoforge/network/connection/ConnectionType;)V	1	(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/client/telemetry/WorldSessionTelemetryManager;Lnet/minecraft/core/RegistryAccess$Frozen;Lnet/minecraft/world/flag/FeatureFlagSet;Ljava/lang/String;Lnet/minecraft/client/multiplayer/ServerData;Lnet/minecraft/client/gui/screens/Screen;Ljava/util/Map<Lnet/minecraft/resources/ResourceLocation;[B>;Lnet/minecraft/client/gui/components/ChatComponent$State;ZLjava/util/Map<Ljava/lang/String;Ljava/lang/String;>;Lnet/minecraft/server/ServerLinks;Lnet/neoforged/neoforge/network/connection/ConnectionType;)V		
 net/minecraft/client/multiplayer/CommonListenerCookie	method	connectionType	()Lnet/neoforged/neoforge/network/connection/ConnectionType;	1			
@@ -287,9 +287,9 @@ net/minecraft/client/particle/FireworkParticles$Starter	method-access	createPart
 net/minecraft/client/particle/FireworkParticles$Starter	method-access	createParticleBall	(DILit/unimi/dsi/fastutil/ints/IntList;Lit/unimi/dsi/fastutil/ints/IntList;ZZ)V	1			
 net/minecraft/client/particle/FireworkParticles$Starter	method-access	createParticleShape	(D[[DLit/unimi/dsi/fastutil/ints/IntList;Lit/unimi/dsi/fastutil/ints/IntList;ZZZ)V	1			
 net/minecraft/client/particle/FireworkParticles$Starter	method-access	createParticleBurst	(Lit/unimi/dsi/fastutil/ints/IntList;Lit/unimi/dsi/fastutil/ints/IntList;ZZ)V	1			
-net/minecraft/client/particle/ItemPickupParticle	method	getRenderBoundingBox	(F)Lnet/minecraft/world/phys/AABB;	1			
+net/minecraft/client/particle/ItemPickupParticle	method	getRenderBoundingBox	(F)Lnet/minecraft/world/phys/AABB;	1			override
 net/minecraft/client/particle/MobAppearanceParticle	method-access	<init>	(Lnet/minecraft/client/multiplayer/ClientLevel;DDD)V	4			
-net/minecraft/client/particle/MobAppearanceParticle	method	getRenderBoundingBox	(F)Lnet/minecraft/world/phys/AABB;	1			
+net/minecraft/client/particle/MobAppearanceParticle	method	getRenderBoundingBox	(F)Lnet/minecraft/world/phys/AABB;	1			override
 net/minecraft/client/particle/Particle	method	getRenderBoundingBox	(F)Lnet/minecraft/world/phys/AABB;	1			
 net/minecraft/client/particle/Particle	method	getPos	()Lnet/minecraft/world/phys/Vec3;	1			
 net/minecraft/client/particle/ParticleEngine	inner-access	net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration		1545			
@@ -304,7 +304,7 @@ net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration	access		
 net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration	inner-access	net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration		1545			
 net/minecraft/client/particle/ParticleRenderType	method	isTranslucent	()Z	1			
 net/minecraft/client/particle/ReversePortalParticle	method-access	<init>	(Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDD)V	4			
-net/minecraft/client/particle/SingleQuadParticle	method	getRenderBoundingBox	(F)Lnet/minecraft/world/phys/AABB;	1			
+net/minecraft/client/particle/SingleQuadParticle	method	getRenderBoundingBox	(F)Lnet/minecraft/world/phys/AABB;	1			override
 net/minecraft/client/particle/TerrainParticle	method	updateSprite	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/client/particle/TerrainParticle;	1			
 net/minecraft/client/particle/VibrationSignalParticle	method-access	<init>	(Lnet/minecraft/client/multiplayer/ClientLevel;DDDLnet/minecraft/world/level/gameevent/PositionSource;I)V	4			
 net/minecraft/client/player/LocalPlayer	method-access	getPermissionLevel	()I	1			
@@ -548,7 +548,7 @@ net/minecraft/client/renderer/blockentity/BlockEntityRenderer	implements	net/neo
 net/minecraft/client/renderer/blockentity/BlockEntityRenderers	method-access	register	(Lnet/minecraft/world/level/block/entity/BlockEntityType;Lnet/minecraft/client/renderer/blockentity/BlockEntityRendererProvider;)V	9			
 net/minecraft/client/renderer/blockentity/BrushableBlockRenderer	method	getRenderBoundingBox	(Lnet/minecraft/world/level/block/entity/BrushableBlockEntity;)Lnet/minecraft/world/phys/AABB;	1			
 net/minecraft/client/renderer/blockentity/ChestRenderer	method	getMaterial	(Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/level/block/state/properties/ChestType;)Lnet/minecraft/client/resources/model/Material;	4	(TT;Lnet/minecraft/world/level/block/state/properties/ChestType;)Lnet/minecraft/client/resources/model/Material;		
-net/minecraft/client/renderer/blockentity/ChestRenderer	method	getRenderBoundingBox	(Lnet/minecraft/world/level/block/entity/BlockEntity;)Lnet/minecraft/world/phys/AABB;	1	(TT;)Lnet/minecraft/world/phys/AABB;		default
+net/minecraft/client/renderer/blockentity/ChestRenderer	method	getRenderBoundingBox	(Lnet/minecraft/world/level/block/entity/BlockEntity;)Lnet/minecraft/world/phys/AABB;	1	(TT;)Lnet/minecraft/world/phys/AABB;		override
 net/minecraft/client/renderer/blockentity/ConduitRenderer	method	getRenderBoundingBox	(Lnet/minecraft/world/level/block/entity/ConduitBlockEntity;)Lnet/minecraft/world/phys/AABB;	1			
 net/minecraft/client/renderer/blockentity/DecoratedPotRenderer	method	getRenderBoundingBox	(Lnet/minecraft/world/level/block/entity/DecoratedPotBlockEntity;)Lnet/minecraft/world/phys/AABB;	1			
 net/minecraft/client/renderer/blockentity/EnchantTableRenderer	method	getRenderBoundingBox	(Lnet/minecraft/world/level/block/entity/EnchantingTableBlockEntity;)Lnet/minecraft/world/phys/AABB;	1			
@@ -564,9 +564,9 @@ net/minecraft/client/renderer/blockentity/TheEndGatewayRenderer	method	getRender
 net/minecraft/client/renderer/blockentity/TrialSpawnerRenderer	method	getRenderBoundingBox	(Lnet/minecraft/world/level/block/entity/TrialSpawnerBlockEntity;)Lnet/minecraft/world/phys/AABB;	1			
 net/minecraft/client/renderer/chunk/RenderChunkRegion	field	modelDataSnapshot	Lit/unimi/dsi/fastutil/longs/Long2ObjectFunction;	18	Lit/unimi/dsi/fastutil/longs/Long2ObjectFunction<Lnet/neoforged/neoforge/client/model/data/ModelData;>;		
 net/minecraft/client/renderer/chunk/RenderChunkRegion	method	<init>	(Lnet/minecraft/world/level/Level;II[Lnet/minecraft/client/renderer/chunk/RenderChunk;Lit/unimi/dsi/fastutil/longs/Long2ObjectFunction;)V	0	(Lnet/minecraft/world/level/Level;II[Lnet/minecraft/client/renderer/chunk/RenderChunk;Lit/unimi/dsi/fastutil/longs/Long2ObjectFunction<Lnet/neoforged/neoforge/client/model/data/ModelData;>;)V		
-net/minecraft/client/renderer/chunk/RenderChunkRegion	method	getShade	(FFFZ)F	1			default
-net/minecraft/client/renderer/chunk/RenderChunkRegion	method	getModelData	(Lnet/minecraft/core/BlockPos;)Lnet/neoforged/neoforge/client/model/data/ModelData;	1			default
-net/minecraft/client/renderer/chunk/RenderChunkRegion	method	getAuxLightManager	(Lnet/minecraft/world/level/ChunkPos;)Lnet/neoforged/neoforge/common/world/AuxiliaryLightManager;	1			default
+net/minecraft/client/renderer/chunk/RenderChunkRegion	method	getShade	(FFFZ)F	1			override
+net/minecraft/client/renderer/chunk/RenderChunkRegion	method	getModelData	(Lnet/minecraft/core/BlockPos;)Lnet/neoforged/neoforge/client/model/data/ModelData;	1			override
+net/minecraft/client/renderer/chunk/RenderChunkRegion	method	getAuxLightManager	(Lnet/minecraft/world/level/ChunkPos;)Lnet/neoforged/neoforge/common/world/AuxiliaryLightManager;	1			override
 net/minecraft/client/renderer/chunk/RenderRegionCache	inner-access	net/minecraft/client/renderer/chunk/RenderRegionCache$ChunkInfo		24			
 net/minecraft/client/renderer/chunk/RenderRegionCache	method	createRegion	(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/SectionPos;Z)Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;	1			
 net/minecraft/client/renderer/chunk/SectionCompiler	method	compile	(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;	1	(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List<Lnet/neoforged/neoforge/client/event/AddSectionGeometryEvent$AdditionalSectionRenderer;>;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;		
@@ -631,8 +631,8 @@ net/minecraft/client/resources/SplashManager	field-access	SPLASHES_LOCATION	Lnet
 net/minecraft/client/resources/language/ClientLanguage	field	componentStorage	Ljava/util/Map;	18	Ljava/util/Map<Ljava/lang/String;Lnet/minecraft/network/chat/Component;>;		
 net/minecraft/client/resources/language/ClientLanguage	method	<init>	(Ljava/util/Map;ZLjava/util/Map;)V	2	(Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;ZLjava/util/Map<Ljava/lang/String;Lnet/minecraft/network/chat/Component;>;)V		
 net/minecraft/client/resources/language/ClientLanguage	method	appendFrom	(Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;)V	10	(Ljava/lang/String;Ljava/util/List<Lnet/minecraft/server/packs/resources/Resource;>;Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;Ljava/util/Map<Ljava/lang/String;Lnet/minecraft/network/chat/Component;>;)V		
-net/minecraft/client/resources/language/ClientLanguage	method	getLanguageData	()Ljava/util/Map;	1	()Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;		
-net/minecraft/client/resources/language/ClientLanguage	method	getComponent	(Ljava/lang/String;)Lnet/minecraft/network/chat/Component;	1			
+net/minecraft/client/resources/language/ClientLanguage	method	getLanguageData	()Ljava/util/Map;	1	()Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;		override
+net/minecraft/client/resources/language/ClientLanguage	method	getComponent	(Ljava/lang/String;)Lnet/minecraft/network/chat/Component;	1			override
 net/minecraft/client/resources/language/LanguageManager	field	javaLocale	Ljava/util/Locale;	2			
 net/minecraft/client/resources/language/LanguageManager	method	getJavaLocale	()Ljava/util/Locale;	1			
 net/minecraft/client/resources/model/BakedModel	method-concrete	getTransforms	()Lnet/minecraft/client/renderer/block/model/ItemTransforms;	131073			
@@ -641,10 +641,10 @@ net/minecraft/client/resources/model/ModelBaker	implements	net/neoforged/neoforg
 net/minecraft/client/resources/model/ModelBakery	inner-access	net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl		0			
 net/minecraft/client/resources/model/ModelBakery	inner-access	net/minecraft/client/resources/model/ModelBakery$BakedCacheKey		24			
 net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl	inner-access	net/minecraft/client/resources/model/ModelBakery$BakedCacheKey		24			
-net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl	method	getTopLevelModel	(Lnet/minecraft/client/resources/model/ModelResourceLocation;)Lnet/minecraft/client/resources/model/UnbakedModel;	1			
-net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl	method	getModelTextureGetter	()Ljava/util/function/Function;	1	()Ljava/util/function/Function<Lnet/minecraft/client/resources/model/Material;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;>;		
-net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl	method	bake	(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function;)Lnet/minecraft/client/resources/model/BakedModel;	1	(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function<Lnet/minecraft/client/resources/model/Material;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;>;)Lnet/minecraft/client/resources/model/BakedModel;		
-net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl	method	bakeUncached	(Lnet/minecraft/client/resources/model/UnbakedModel;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function;)Lnet/minecraft/client/resources/model/BakedModel;	1	(Lnet/minecraft/client/resources/model/UnbakedModel;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function<Lnet/minecraft/client/resources/model/Material;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;>;)Lnet/minecraft/client/resources/model/BakedModel;		
+net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl	method	getTopLevelModel	(Lnet/minecraft/client/resources/model/ModelResourceLocation;)Lnet/minecraft/client/resources/model/UnbakedModel;	1			override
+net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl	method	getModelTextureGetter	()Ljava/util/function/Function;	1	()Ljava/util/function/Function<Lnet/minecraft/client/resources/model/Material;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;>;		override
+net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl	method	bake	(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function;)Lnet/minecraft/client/resources/model/BakedModel;	1	(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function<Lnet/minecraft/client/resources/model/Material;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;>;)Lnet/minecraft/client/resources/model/BakedModel;		override
+net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl	method	bakeUncached	(Lnet/minecraft/client/resources/model/UnbakedModel;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function;)Lnet/minecraft/client/resources/model/BakedModel;	1	(Lnet/minecraft/client/resources/model/UnbakedModel;Lnet/minecraft/client/resources/model/ModelState;Ljava/util/function/Function<Lnet/minecraft/client/resources/model/Material;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;>;)Lnet/minecraft/client/resources/model/BakedModel;		override
 net/minecraft/client/resources/model/ModelManager	inner-access	net/minecraft/client/resources/model/ModelManager$ReloadState		24			
 net/minecraft/client/resources/model/ModelManager	field	modelBakery	Lnet/minecraft/client/resources/model/ModelBakery;	2			
 net/minecraft/client/resources/model/ModelManager	method	getModelBakery	()Lnet/minecraft/client/resources/model/ModelBakery;	1			
@@ -654,27 +654,27 @@ net/minecraft/client/resources/model/ModelState	implements	net/neoforged/neoforg
 net/minecraft/client/resources/model/MultiPartBakedModel	implements	net/neoforged/neoforge/client/model/IDynamicBakedModel		0			
 net/minecraft/client/resources/model/MultiPartBakedModel	field	defaultModel	Lnet/minecraft/client/resources/model/BakedModel;	18			
 net/minecraft/client/resources/model/MultiPartBakedModel	method	getSelectors	(Lnet/minecraft/world/level/block/state/BlockState;)Ljava/util/BitSet;	1			
-net/minecraft/client/resources/model/MultiPartBakedModel	method	getQuads	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;	1	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List<Lnet/minecraft/client/renderer/block/model/BakedQuad;>;		default
-net/minecraft/client/resources/model/MultiPartBakedModel	method	useAmbientOcclusion	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Lnet/neoforged/neoforge/common/util/TriState;	1			default
-net/minecraft/client/resources/model/MultiPartBakedModel	method	getModelData	(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/neoforged/neoforge/client/model/data/ModelData;	1			default
-net/minecraft/client/resources/model/MultiPartBakedModel	method	getParticleIcon	(Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;	1			default
-net/minecraft/client/resources/model/MultiPartBakedModel	method	applyTransform	(Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Z)Lnet/minecraft/client/resources/model/BakedModel;	1			default
-net/minecraft/client/resources/model/MultiPartBakedModel	method	getRenderTypes	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/neoforged/neoforge/client/ChunkRenderTypeSet;	1			default
+net/minecraft/client/resources/model/MultiPartBakedModel	method	getQuads	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;	1	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List<Lnet/minecraft/client/renderer/block/model/BakedQuad;>;		override
+net/minecraft/client/resources/model/MultiPartBakedModel	method	useAmbientOcclusion	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Lnet/neoforged/neoforge/common/util/TriState;	1			override
+net/minecraft/client/resources/model/MultiPartBakedModel	method	getModelData	(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/neoforged/neoforge/client/model/data/ModelData;	1			override
+net/minecraft/client/resources/model/MultiPartBakedModel	method	getParticleIcon	(Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;	1			override
+net/minecraft/client/resources/model/MultiPartBakedModel	method	applyTransform	(Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Z)Lnet/minecraft/client/resources/model/BakedModel;	1			override
+net/minecraft/client/resources/model/MultiPartBakedModel	method	getRenderTypes	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/neoforged/neoforge/client/ChunkRenderTypeSet;	1			override
 net/minecraft/client/resources/model/SimpleBakedModel	field	blockRenderTypes	Lnet/neoforged/neoforge/client/ChunkRenderTypeSet;	20			
 net/minecraft/client/resources/model/SimpleBakedModel	field	itemRenderTypes	Ljava/util/List;	20	Ljava/util/List<Lnet/minecraft/client/renderer/RenderType;>;		
 net/minecraft/client/resources/model/SimpleBakedModel	field	fabulousItemRenderTypes	Ljava/util/List;	20	Ljava/util/List<Lnet/minecraft/client/renderer/RenderType;>;		
 net/minecraft/client/resources/model/SimpleBakedModel	method	<init>	(Ljava/util/List;Ljava/util/Map;ZZZLnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/block/model/ItemTransforms;Lnet/minecraft/client/renderer/block/model/ItemOverrides;Lnet/neoforged/neoforge/client/RenderTypeGroup;)V	1	(Ljava/util/List<Lnet/minecraft/client/renderer/block/model/BakedQuad;>;Ljava/util/Map<Lnet/minecraft/core/Direction;Ljava/util/List<Lnet/minecraft/client/renderer/block/model/BakedQuad;>;>;ZZZLnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/block/model/ItemTransforms;Lnet/minecraft/client/renderer/block/model/ItemOverrides;Lnet/neoforged/neoforge/client/RenderTypeGroup;)V		
-net/minecraft/client/resources/model/SimpleBakedModel	method	getRenderTypes	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/neoforged/neoforge/client/ChunkRenderTypeSet;	1			default
-net/minecraft/client/resources/model/SimpleBakedModel	method	getRenderTypes	(Lnet/minecraft/world/item/ItemStack;Z)Ljava/util/List;	1	(Lnet/minecraft/world/item/ItemStack;Z)Ljava/util/List<Lnet/minecraft/client/renderer/RenderType;>;		default
+net/minecraft/client/resources/model/SimpleBakedModel	method	getRenderTypes	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/neoforged/neoforge/client/ChunkRenderTypeSet;	1			override
+net/minecraft/client/resources/model/SimpleBakedModel	method	getRenderTypes	(Lnet/minecraft/world/item/ItemStack;Z)Ljava/util/List;	1	(Lnet/minecraft/world/item/ItemStack;Z)Ljava/util/List<Lnet/minecraft/client/renderer/RenderType;>;		override
 net/minecraft/client/resources/model/SimpleBakedModel$Builder	method-access	<init>	(ZZZLnet/minecraft/client/renderer/block/model/ItemTransforms;Lnet/minecraft/client/renderer/block/model/ItemOverrides;)V	1			
 net/minecraft/client/resources/model/SimpleBakedModel$Builder	method	build	(Lnet/neoforged/neoforge/client/RenderTypeGroup;)Lnet/minecraft/client/resources/model/BakedModel;	1			
 net/minecraft/client/resources/model/WeightedBakedModel	implements	net/neoforged/neoforge/client/model/IDynamicBakedModel		0			
-net/minecraft/client/resources/model/WeightedBakedModel	method	getQuads	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;	1	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List<Lnet/minecraft/client/renderer/block/model/BakedQuad;>;		default
-net/minecraft/client/resources/model/WeightedBakedModel	method	useAmbientOcclusion	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Lnet/neoforged/neoforge/common/util/TriState;	1			default
-net/minecraft/client/resources/model/WeightedBakedModel	method	getParticleIcon	(Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;	1			default
-net/minecraft/client/resources/model/WeightedBakedModel	method	applyTransform	(Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Z)Lnet/minecraft/client/resources/model/BakedModel;	1			default
-net/minecraft/client/resources/model/WeightedBakedModel	method	getRenderTypes	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/neoforged/neoforge/client/ChunkRenderTypeSet;	1			default
-net/minecraft/client/resources/model/WeightedBakedModel	method	getModelData	(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/neoforged/neoforge/client/model/data/ModelData;	1			default
+net/minecraft/client/resources/model/WeightedBakedModel	method	getQuads	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;	1	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List<Lnet/minecraft/client/renderer/block/model/BakedQuad;>;		override
+net/minecraft/client/resources/model/WeightedBakedModel	method	useAmbientOcclusion	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Lnet/neoforged/neoforge/common/util/TriState;	1			override
+net/minecraft/client/resources/model/WeightedBakedModel	method	getParticleIcon	(Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;	1			override
+net/minecraft/client/resources/model/WeightedBakedModel	method	applyTransform	(Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Z)Lnet/minecraft/client/resources/model/BakedModel;	1			override
+net/minecraft/client/resources/model/WeightedBakedModel	method	getRenderTypes	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/neoforged/neoforge/client/ChunkRenderTypeSet;	1			override
+net/minecraft/client/resources/model/WeightedBakedModel	method	getModelData	(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/neoforged/neoforge/client/model/data/ModelData;)Lnet/neoforged/neoforge/client/model/data/ModelData;	1			override
 net/minecraft/client/resources/sounds/SoundInstance	method	getStream	(Lnet/minecraft/client/sounds/SoundBufferLibrary;Lnet/minecraft/client/resources/sounds/Sound;Z)Ljava/util/concurrent/CompletableFuture;	1	(Lnet/minecraft/client/sounds/SoundBufferLibrary;Lnet/minecraft/client/resources/sounds/Sound;Z)Ljava/util/concurrent/CompletableFuture<Lnet/minecraft/client/sounds/AudioStream;>;		
 net/minecraft/client/sounds/SoundEngine	inner-access	net/minecraft/client/sounds/SoundEngine$DeviceCheckState		16408			
 net/minecraft/client/sounds/SoundEngine	field-access	soundManager	Lnet/minecraft/client/sounds/SoundManager;	17			
@@ -683,27 +683,27 @@ net/minecraft/commands/CommandSourceStack	implements	net/neoforged/neoforge/comm
 net/minecraft/commands/arguments/selector/EntitySelectorParser	method-access	finalizePredicates	()V	1			
 net/minecraft/commands/arguments/selector/EntitySelectorParser	method-access	parseOptions	()V	1			
 net/minecraft/commands/synchronization/ArgumentTypeInfos	method	registerByClass	(Ljava/lang/Class;Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;)Lnet/minecraft/commands/synchronization/ArgumentTypeInfo;	41	<A::Lcom/mojang/brigadier/arguments/ArgumentType<*>;T::Lnet/minecraft/commands/synchronization/ArgumentTypeInfo$Template<TA;>;I::Lnet/minecraft/commands/synchronization/ArgumentTypeInfo<TA;TT;>;>(Ljava/lang/Class<TA;>;TI;)TI;		
-net/minecraft/core/DefaultedMappedRegistry	method	getKeyOrNull	(Ljava/lang/Object;)Lnet/minecraft/resources/ResourceLocation;	1	(TT;)Lnet/minecraft/resources/ResourceLocation;		
+net/minecraft/core/DefaultedMappedRegistry	method	getKeyOrNull	(Ljava/lang/Object;)Lnet/minecraft/resources/ResourceLocation;	1	(TT;)Lnet/minecraft/resources/ResourceLocation;		override
 net/minecraft/core/Holder	implements	net/neoforged/neoforge/common/extensions/IHolderExtension		0	<T:Ljava/lang/Object;>Ljava/lang/Object;Lnet/neoforged/neoforge/common/extensions/IHolderExtension<TT;>;		
-net/minecraft/core/Holder$Reference	method	getData	(Lnet/neoforged/neoforge/registries/datamaps/DataMapType;)Ljava/lang/Object;	1	<A:Ljava/lang/Object;>(Lnet/neoforged/neoforge/registries/datamaps/DataMapType<TT;TA;>;)TA;		default
-net/minecraft/core/Holder$Reference	method	getKey	()Lnet/minecraft/resources/ResourceKey;	1	()Lnet/minecraft/resources/ResourceKey<TT;>;		default
-net/minecraft/core/Holder$Reference	method	hashCode	()I	1			
-net/minecraft/core/Holder$Reference	method	equals	(Ljava/lang/Object;)Z	1			
-net/minecraft/core/Holder$Reference	method	unwrapLookup	()Lnet/minecraft/core/HolderLookup$RegistryLookup;	1	()Lnet/minecraft/core/HolderLookup$RegistryLookup<TT;>;		default
+net/minecraft/core/Holder$Reference	method	getData	(Lnet/neoforged/neoforge/registries/datamaps/DataMapType;)Ljava/lang/Object;	1	<A:Ljava/lang/Object;>(Lnet/neoforged/neoforge/registries/datamaps/DataMapType<TT;TA;>;)TA;		override
+net/minecraft/core/Holder$Reference	method	getKey	()Lnet/minecraft/resources/ResourceKey;	1	()Lnet/minecraft/resources/ResourceKey<TT;>;		override
+net/minecraft/core/Holder$Reference	method	hashCode	()I	1			override
+net/minecraft/core/Holder$Reference	method	equals	(Ljava/lang/Object;)Z	1			override
+net/minecraft/core/Holder$Reference	method	unwrapLookup	()Lnet/minecraft/core/HolderLookup$RegistryLookup;	1	()Lnet/minecraft/core/HolderLookup$RegistryLookup<TT;>;		override
 net/minecraft/core/HolderLookup$Provider	implements	net/neoforged/neoforge/common/extensions/IHolderLookupProviderExtension		0			
 net/minecraft/core/HolderLookup$RegistryLookup	method	getData	(Lnet/neoforged/neoforge/registries/datamaps/DataMapType;Lnet/minecraft/resources/ResourceKey;)Ljava/lang/Object;	1	<A:Ljava/lang/Object;>(Lnet/neoforged/neoforge/registries/datamaps/DataMapType<TT;TA;>;Lnet/minecraft/resources/ResourceKey<TT;>;)TA;		
-net/minecraft/core/HolderLookup$RegistryLookup$Delegate	method	getData	(Lnet/neoforged/neoforge/registries/datamaps/DataMapType;Lnet/minecraft/resources/ResourceKey;)Ljava/lang/Object;	1	<A:Ljava/lang/Object;>(Lnet/neoforged/neoforge/registries/datamaps/DataMapType<TT;TA;>;Lnet/minecraft/resources/ResourceKey<TT;>;)TA;		default
+net/minecraft/core/HolderLookup$RegistryLookup$Delegate	method	getData	(Lnet/neoforged/neoforge/registries/datamaps/DataMapType;Lnet/minecraft/resources/ResourceKey;)Ljava/lang/Object;	1	<A:Ljava/lang/Object;>(Lnet/neoforged/neoforge/registries/datamaps/DataMapType<TT;TA;>;Lnet/minecraft/resources/ResourceKey<TT;>;)TA;		override
 net/minecraft/core/HolderSet	implements	net/neoforged/neoforge/common/extensions/IHolderSetExtension		0	<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/lang/Iterable<Lnet/minecraft/core/Holder<TT;>;>;Lnet/neoforged/neoforge/common/extensions/IHolderSetExtension<TT;>;		
 net/minecraft/core/HolderSet$Named	field	invalidationCallbacks	Ljava/util/List;	2	Ljava/util/List<Ljava/lang/Runnable;>;		
-net/minecraft/core/HolderSet$Named	method	addInvalidationListener	(Ljava/lang/Runnable;)V	1			
+net/minecraft/core/HolderSet$Named	method	addInvalidationListener	(Ljava/lang/Runnable;)V	1			override
 net/minecraft/core/MappedRegistry	extends	net/neoforged/neoforge/registries/BaseMappedRegistry	java/lang/Object	0	<T:Ljava/lang/Object;>Lnet/neoforged/neoforge/registries/BaseMappedRegistry<TT;>;Lnet/minecraft/core/WritableRegistry<TT;>;		
 net/minecraft/core/MappedRegistry	method	register	(ILnet/minecraft/resources/ResourceKey;Ljava/lang/Object;Lnet/minecraft/core/RegistrationInfo;)Lnet/minecraft/core/Holder$Reference;	1	(ILnet/minecraft/resources/ResourceKey<TT;>;TT;Lnet/minecraft/core/RegistrationInfo;)Lnet/minecraft/core/Holder$Reference<TT;>;		
-net/minecraft/core/MappedRegistry	method	unfreeze	()V	131073			
-net/minecraft/core/MappedRegistry	method	clear	(Z)V	4			
-net/minecraft/core/MappedRegistry	method	registerIdMapping	(Lnet/minecraft/resources/ResourceKey;I)V	4	(Lnet/minecraft/resources/ResourceKey<TT;>;I)V		
-net/minecraft/core/MappedRegistry	method	getId	(Lnet/minecraft/resources/ResourceLocation;)I	1			
-net/minecraft/core/MappedRegistry	method	getId	(Lnet/minecraft/resources/ResourceKey;)I	1	(Lnet/minecraft/resources/ResourceKey<TT;>;)I		
-net/minecraft/core/MappedRegistry	method	containsValue	(Ljava/lang/Object;)Z	1	(TT;)Z		
+net/minecraft/core/MappedRegistry	method	unfreeze	()V	131073			override
+net/minecraft/core/MappedRegistry	method	clear	(Z)V	4			override
+net/minecraft/core/MappedRegistry	method	registerIdMapping	(Lnet/minecraft/resources/ResourceKey;I)V	4	(Lnet/minecraft/resources/ResourceKey<TT;>;I)V		override
+net/minecraft/core/MappedRegistry	method	getId	(Lnet/minecraft/resources/ResourceLocation;)I	1			override
+net/minecraft/core/MappedRegistry	method	getId	(Lnet/minecraft/resources/ResourceKey;)I	1	(Lnet/minecraft/resources/ResourceKey<TT;>;)I		override
+net/minecraft/core/MappedRegistry	method	containsValue	(Ljava/lang/Object;)Z	1	(TT;)Z		override
 net/minecraft/core/NonNullList	method	codecOf	(Lcom/mojang/serialization/Codec;)Lcom/mojang/serialization/Codec;	9	<E:Ljava/lang/Object;>(Lcom/mojang/serialization/Codec<TE;>;)Lcom/mojang/serialization/Codec<Lnet/minecraft/core/NonNullList<TE;>;>;		
 net/minecraft/core/NonNullList	method	copyOf	(Ljava/util/Collection;)Lnet/minecraft/core/NonNullList;	9	<E:Ljava/lang/Object;>(Ljava/util/Collection<+TE;>;)Lnet/minecraft/core/NonNullList<TE;>;		
 net/minecraft/core/Registry	implements	net/neoforged/neoforge/registries/IRegistryExtension		0	<T:Ljava/lang/Object;>Ljava/lang/Object;Lcom/mojang/serialization/Keyable;Lnet/minecraft/core/IdMap<TT;>;Lnet/neoforged/neoforge/registries/IRegistryExtension<TT;>;		
@@ -735,10 +735,10 @@ net/minecraft/core/RegistrySetBuilder$RegistryStub	inner-access	net/minecraft/co
 net/minecraft/core/RegistrySetBuilder$RegistryStub	inner-access	net/minecraft/core/RegistrySetBuilder$RegistryContents		24			
 net/minecraft/core/RegistrySetBuilder$UniversalLookup	inner-access	net/minecraft/core/RegistrySetBuilder$EmptyTagLookup		1032			
 net/minecraft/core/RegistrySetBuilder$UniversalLookup	implements	net/minecraft/core/HolderLookup		0	Lnet/minecraft/core/RegistrySetBuilder$EmptyTagLookup<Ljava/lang/Object;>;Lnet/minecraft/core/HolderLookup<Ljava/lang/Object;>;		
-net/minecraft/core/RegistrySetBuilder$UniversalLookup	method	listElements	()Ljava/util/stream/Stream;	1	()Ljava/util/stream/Stream<Lnet/minecraft/core/Holder$Reference<Ljava/lang/Object;>;>;		
-net/minecraft/core/RegistrySetBuilder$UniversalLookup	method	listElementIds	()Ljava/util/stream/Stream;	1	()Ljava/util/stream/Stream<Lnet/minecraft/resources/ResourceKey<Ljava/lang/Object;>;>;		default
-net/minecraft/core/RegistrySetBuilder$UniversalLookup	method	listTags	()Ljava/util/stream/Stream;	1	()Ljava/util/stream/Stream<Lnet/minecraft/core/HolderSet$Named<Ljava/lang/Object;>;>;		
-net/minecraft/core/RegistrySetBuilder$UniversalLookup	method	listTagIds	()Ljava/util/stream/Stream;	1	()Ljava/util/stream/Stream<Lnet/minecraft/tags/TagKey<Ljava/lang/Object;>;>;		default
+net/minecraft/core/RegistrySetBuilder$UniversalLookup	method	listElements	()Ljava/util/stream/Stream;	1	()Ljava/util/stream/Stream<Lnet/minecraft/core/Holder$Reference<Ljava/lang/Object;>;>;		override
+net/minecraft/core/RegistrySetBuilder$UniversalLookup	method	listElementIds	()Ljava/util/stream/Stream;	1	()Ljava/util/stream/Stream<Lnet/minecraft/resources/ResourceKey<Ljava/lang/Object;>;>;		override
+net/minecraft/core/RegistrySetBuilder$UniversalLookup	method	listTags	()Ljava/util/stream/Stream;	1	()Ljava/util/stream/Stream<Lnet/minecraft/core/HolderSet$Named<Ljava/lang/Object;>;>;		override
+net/minecraft/core/RegistrySetBuilder$UniversalLookup	method	listTagIds	()Ljava/util/stream/Stream;	1	()Ljava/util/stream/Stream<Lnet/minecraft/tags/TagKey<Ljava/lang/Object;>;>;		override
 net/minecraft/core/RegistrySetBuilder$ValueAndHolder	inner-access	net/minecraft/core/RegistrySetBuilder$RegisteredValue		24			
 net/minecraft/core/component/DataComponentHolder	implements	net/neoforged/neoforge/common/extensions/IDataComponentHolderExtension		0			
 net/minecraft/core/component/DataComponentMap	inner-access	net/minecraft/core/component/DataComponentMap$Builder$SimpleMap		24			
@@ -852,7 +852,7 @@ net/minecraft/data/tags/IntrinsicHolderTagsProvider$IntrinsicTagAppender	inner-a
 net/minecraft/data/tags/IntrinsicHolderTagsProvider$IntrinsicTagAppender	inner-access	net/minecraft/data/tags/IntrinsicHolderTagsProvider$IntrinsicTagAppender		9			
 net/minecraft/data/tags/IntrinsicHolderTagsProvider$IntrinsicTagAppender	implements	net/neoforged/neoforge/common/extensions/IIntrinsicHolderTagAppenderExtension		0	<T:Ljava/lang/Object;>Lnet/minecraft/data/tags/TagsProvider$TagAppender<TT;>;Lnet/neoforged/neoforge/common/extensions/IIntrinsicHolderTagAppenderExtension<TT;>;		
 net/minecraft/data/tags/IntrinsicHolderTagsProvider$IntrinsicTagAppender	method	<init>	(Lnet/minecraft/tags/TagBuilder;Ljava/util/function/Function;Ljava/lang/String;)V	0	(Lnet/minecraft/tags/TagBuilder;Ljava/util/function/Function<TT;Lnet/minecraft/resources/ResourceKey<TT;>;>;Ljava/lang/String;)V		
-net/minecraft/data/tags/IntrinsicHolderTagsProvider$IntrinsicTagAppender	method	getKey	(Ljava/lang/Object;)Lnet/minecraft/resources/ResourceKey;	17	(TT;)Lnet/minecraft/resources/ResourceKey<TT;>;		
+net/minecraft/data/tags/IntrinsicHolderTagsProvider$IntrinsicTagAppender	method	getKey	(Ljava/lang/Object;)Lnet/minecraft/resources/ResourceKey;	17	(TT;)Lnet/minecraft/resources/ResourceKey<TT;>;		override
 net/minecraft/data/tags/ItemTagsProvider	method	<init>	(Lnet/minecraft/data/PackOutput;Ljava/util/concurrent/CompletableFuture;Ljava/util/concurrent/CompletableFuture;Ljava/lang/String;Lnet/neoforged/neoforge/common/data/ExistingFileHelper;)V	1	(Lnet/minecraft/data/PackOutput;Ljava/util/concurrent/CompletableFuture<Lnet/minecraft/core/HolderLookup$Provider;>;Ljava/util/concurrent/CompletableFuture<Lnet/minecraft/data/tags/TagsProvider$TagLookup<Lnet/minecraft/world/level/block/Block;>;>;Ljava/lang/String;Lnet/neoforged/neoforge/common/data/ExistingFileHelper;)V		
 net/minecraft/data/tags/ItemTagsProvider	method	<init>	(Lnet/minecraft/data/PackOutput;Ljava/util/concurrent/CompletableFuture;Ljava/util/concurrent/CompletableFuture;Ljava/util/concurrent/CompletableFuture;Ljava/lang/String;Lnet/neoforged/neoforge/common/data/ExistingFileHelper;)V	1	(Lnet/minecraft/data/PackOutput;Ljava/util/concurrent/CompletableFuture<Lnet/minecraft/core/HolderLookup$Provider;>;Ljava/util/concurrent/CompletableFuture<Lnet/minecraft/data/tags/TagsProvider$TagLookup<Lnet/minecraft/world/item/Item;>;>;Ljava/util/concurrent/CompletableFuture<Lnet/minecraft/data/tags/TagsProvider$TagLookup<Lnet/minecraft/world/level/block/Block;>;>;Ljava/lang/String;Lnet/neoforged/neoforge/common/data/ExistingFileHelper;)V		
 net/minecraft/data/tags/PaintingVariantTagsProvider	inner-access	net/minecraft/data/tags/TagsProvider$TagAppender		9			
@@ -1018,23 +1018,23 @@ net/minecraft/server/level/ServerEntity	method	sendPairingData	(Lnet/minecraft/s
 net/minecraft/server/level/ServerLevel	inner-access	net/minecraft/server/level/ServerLevel$EntityCallbacks		16			
 net/minecraft/server/level/ServerLevel	method-access	getEntities	()Lnet/minecraft/world/level/entity/LevelEntityGetter;	1			
 net/minecraft/server/level/ServerLevel	field	capListenerHolder	Lnet/neoforged/neoforge/capabilities/CapabilityListenerHolder;	18			
-net/minecraft/server/level/ServerLevel	method	getPartEntities	()Ljava/util/Collection;	1	()Ljava/util/Collection<Lnet/neoforged/neoforge/entity/PartEntity<*>;>;		
-net/minecraft/server/level/ServerLevel	method	syncData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)V	17	(Lnet/neoforged/neoforge/attachment/AttachmentType<*>;)V		
-net/minecraft/server/level/ServerLevel	method	invalidateCapabilities	(Lnet/minecraft/core/BlockPos;)V	1			
-net/minecraft/server/level/ServerLevel	method	invalidateCapabilities	(Lnet/minecraft/world/level/ChunkPos;)V	1			
+net/minecraft/server/level/ServerLevel	method	getPartEntities	()Ljava/util/Collection;	1	()Ljava/util/Collection<Lnet/neoforged/neoforge/entity/PartEntity<*>;>;		override
+net/minecraft/server/level/ServerLevel	method	syncData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)V	17	(Lnet/neoforged/neoforge/attachment/AttachmentType<*>;)V		override
+net/minecraft/server/level/ServerLevel	method	invalidateCapabilities	(Lnet/minecraft/core/BlockPos;)V	1			override
+net/minecraft/server/level/ServerLevel	method	invalidateCapabilities	(Lnet/minecraft/world/level/ChunkPos;)V	1			override
 net/minecraft/server/level/ServerLevel	method	registerCapabilityListener	(Lnet/minecraft/core/BlockPos;Lnet/neoforged/neoforge/capabilities/ICapabilityInvalidationListener;)V	1			
 net/minecraft/server/level/ServerLevel	method	cleanCapabilityListenerReferences	()V	1			
-net/minecraft/server/level/ServerLevel	method	setDayTimeFraction	(F)V	1			
-net/minecraft/server/level/ServerLevel	method	getDayTimeFraction	()F	1			
-net/minecraft/server/level/ServerLevel	method	getDayTimePerTick	()F	1			
-net/minecraft/server/level/ServerLevel	method	setDayTimePerTick	(F)V	1			
+net/minecraft/server/level/ServerLevel	method	setDayTimeFraction	(F)V	1			override
+net/minecraft/server/level/ServerLevel	method	getDayTimeFraction	()F	1			override
+net/minecraft/server/level/ServerLevel	method	getDayTimePerTick	()F	1			override
+net/minecraft/server/level/ServerLevel	method	setDayTimePerTick	(F)V	1			override
 net/minecraft/server/level/ServerPlayer	inner-access	net/minecraft/server/level/ServerPlayer$RespawnPosAngle		25			
 net/minecraft/server/level/ServerPlayer	method-access	checkRidingStatistics	(DDD)V	1			
 net/minecraft/server/level/ServerPlayer	field	tabListHeader	Lnet/minecraft/network/chat/Component;	2			
 net/minecraft/server/level/ServerPlayer	field	tabListFooter	Lnet/minecraft/network/chat/Component;	2			
 net/minecraft/server/level/ServerPlayer	field	hasTabListName	Z	2			
 net/minecraft/server/level/ServerPlayer	field	tabListDisplayName	Lnet/minecraft/network/chat/Component;	2			
-net/minecraft/server/level/ServerPlayer	method	openMenu	(Lnet/minecraft/world/MenuProvider;Ljava/util/function/Consumer;)Ljava/util/OptionalInt;	1	(Lnet/minecraft/world/MenuProvider;Ljava/util/function/Consumer<Lnet/minecraft/network/RegistryFriendlyByteBuf;>;)Ljava/util/OptionalInt;		
+net/minecraft/server/level/ServerPlayer	method	openMenu	(Lnet/minecraft/world/MenuProvider;Ljava/util/function/Consumer;)Ljava/util/OptionalInt;	1	(Lnet/minecraft/world/MenuProvider;Ljava/util/function/Consumer<Lnet/minecraft/network/RegistryFriendlyByteBuf;>;)Ljava/util/OptionalInt;		override
 net/minecraft/server/level/ServerPlayer	method	getLanguage	()Ljava/lang/String;	1			
 net/minecraft/server/level/ServerPlayer	method	getTabListHeader	()Lnet/minecraft/network/chat/Component;	1			
 net/minecraft/server/level/ServerPlayer	method	setTabListHeader	(Lnet/minecraft/network/chat/Component;)V	1			
@@ -1055,13 +1055,13 @@ net/minecraft/server/network/CommonListenerCookie	method	connectionType	()Lnet/n
 net/minecraft/server/network/ConfigurationTask$Type	method	<init>	(Lnet/minecraft/resources/ResourceLocation;)V	1			
 net/minecraft/server/network/ServerCommonPacketListenerImpl	field	connectionType	Lnet/neoforged/neoforge/network/connection/ConnectionType;	4			
 net/minecraft/server/network/ServerCommonPacketListenerImpl	method	createCookie	(Lnet/minecraft/server/level/ClientInformation;Lnet/neoforged/neoforge/network/connection/ConnectionType;)Lnet/minecraft/server/network/CommonListenerCookie;	4			
-net/minecraft/server/network/ServerCommonPacketListenerImpl	method	getConnection	()Lnet/minecraft/network/Connection;	1			
-net/minecraft/server/network/ServerCommonPacketListenerImpl	method	getMainThreadEventLoop	()Lnet/minecraft/util/thread/ReentrantBlockableEventLoop;	1	()Lnet/minecraft/util/thread/ReentrantBlockableEventLoop<*>;		
-net/minecraft/server/network/ServerCommonPacketListenerImpl	method	getConnectionType	()Lnet/neoforged/neoforge/network/connection/ConnectionType;	1			
+net/minecraft/server/network/ServerCommonPacketListenerImpl	method	getConnection	()Lnet/minecraft/network/Connection;	1			override
+net/minecraft/server/network/ServerCommonPacketListenerImpl	method	getMainThreadEventLoop	()Lnet/minecraft/util/thread/ReentrantBlockableEventLoop;	1	()Lnet/minecraft/util/thread/ReentrantBlockableEventLoop<*>;		override
+net/minecraft/server/network/ServerCommonPacketListenerImpl	method	getConnectionType	()Lnet/neoforged/neoforge/network/connection/ConnectionType;	1			override
 net/minecraft/server/network/ServerConfigurationPacketListenerImpl	method-access	finishCurrentTask	(Lnet/minecraft/server/network/ConfigurationTask$Type;)V	1			
 net/minecraft/server/network/ServerConfigurationPacketListenerImpl	method	runConfiguration	()V	2			
-net/minecraft/server/network/ServerConfigurationPacketListenerImpl	method	handleCustomPayload	(Lnet/minecraft/network/protocol/common/ServerboundCustomPayloadPacket;)V	1			
-net/minecraft/server/network/ServerConfigurationPacketListenerImpl	method	handlePong	(Lnet/minecraft/network/protocol/common/ServerboundPongPacket;)V	1			
+net/minecraft/server/network/ServerConfigurationPacketListenerImpl	method	handleCustomPayload	(Lnet/minecraft/network/protocol/common/ServerboundCustomPayloadPacket;)V	1			override
+net/minecraft/server/network/ServerConfigurationPacketListenerImpl	method	handlePong	(Lnet/minecraft/network/protocol/common/ServerboundPongPacket;)V	1			override
 net/minecraft/server/network/ServerConnectionListener	inner-access	net/minecraft/server/network/ServerConnectionListener$LatencySimulator		8			
 net/minecraft/server/network/ServerConnectionListener	inner-access	net/minecraft/server/network/ServerConnectionListener$LatencySimulator$DelayedMessage		8			
 net/minecraft/server/network/ServerConnectionListener	field	READ_TIMEOUT	I	26			
@@ -1071,7 +1071,7 @@ net/minecraft/server/network/ServerGamePacketListenerImpl	inner-access	net/minec
 net/minecraft/server/network/ServerGamePacketListenerImpl	method	resyncPlayerWithVehicle	(Lnet/minecraft/world/entity/Entity;)V	2			
 net/minecraft/server/network/ServerStatusPacketListenerImpl	field	statusCache	Ljava/lang/String;	18			
 net/minecraft/server/network/ServerStatusPacketListenerImpl	method	<init>	(Lnet/minecraft/network/protocol/status/ServerStatus;Lnet/minecraft/network/Connection;Ljava/lang/String;)V	1			
-net/minecraft/server/packs/AbstractPackResources	method	toString	()Ljava/lang/String;	1			
+net/minecraft/server/packs/AbstractPackResources	method	toString	()Ljava/lang/String;	1			override
 net/minecraft/server/packs/OverlayMetadataSection	field	NEOFORGE_TYPE	Lnet/minecraft/server/packs/metadata/MetadataSectionType;	25	Lnet/minecraft/server/packs/metadata/MetadataSectionType<Lnet/minecraft/server/packs/OverlayMetadataSection;>;		
 net/minecraft/server/packs/OverlayMetadataSection$OverlayEntry	field-access	CODEC	Lcom/mojang/serialization/Codec;	25			
 net/minecraft/server/packs/PackResources	implements	net/neoforged/neoforge/common/extensions/IPackResourcesExtension		0			
@@ -1187,22 +1187,22 @@ net/minecraft/world/entity/Entity	field	forgeFluidTypeOnEyes	Lnet/neoforged/neof
 net/minecraft/world/entity/Entity	method	playCombinationStepSounds	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)V	4			
 net/minecraft/world/entity/Entity	method	playMuffledStepSound	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)V	4			
 net/minecraft/world/entity/Entity	method	updateFluidHeightAndDoFluidPushing	()V	1			
-net/minecraft/world/entity/Entity	method	captureDrops	()Ljava/util/Collection;	1	()Ljava/util/Collection<Lnet/minecraft/world/entity/item/ItemEntity;>;		
-net/minecraft/world/entity/Entity	method	captureDrops	(Ljava/util/Collection;)Ljava/util/Collection;	1	(Ljava/util/Collection<Lnet/minecraft/world/entity/item/ItemEntity;>;)Ljava/util/Collection<Lnet/minecraft/world/entity/item/ItemEntity;>;		
-net/minecraft/world/entity/Entity	method	getPersistentData	()Lnet/minecraft/nbt/CompoundTag;	1			
-net/minecraft/world/entity/Entity	method	canTrample	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;F)Z	1			
-net/minecraft/world/entity/Entity	method	isAddedToLevel	()Z	17			
-net/minecraft/world/entity/Entity	method	onAddedToLevel	()V	1			
-net/minecraft/world/entity/Entity	method	onRemovedFromLevel	()V	1			
-net/minecraft/world/entity/Entity	method	revive	()V	1			
+net/minecraft/world/entity/Entity	method	captureDrops	()Ljava/util/Collection;	1	()Ljava/util/Collection<Lnet/minecraft/world/entity/item/ItemEntity;>;		override
+net/minecraft/world/entity/Entity	method	captureDrops	(Ljava/util/Collection;)Ljava/util/Collection;	1	(Ljava/util/Collection<Lnet/minecraft/world/entity/item/ItemEntity;>;)Ljava/util/Collection<Lnet/minecraft/world/entity/item/ItemEntity;>;		override
+net/minecraft/world/entity/Entity	method	getPersistentData	()Lnet/minecraft/nbt/CompoundTag;	1			override
+net/minecraft/world/entity/Entity	method	canTrample	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;F)Z	1			override
+net/minecraft/world/entity/Entity	method	isAddedToLevel	()Z	17			override
+net/minecraft/world/entity/Entity	method	onAddedToLevel	()V	1			override
+net/minecraft/world/entity/Entity	method	onRemovedFromLevel	()V	1			override
+net/minecraft/world/entity/Entity	method	revive	()V	1			override
 net/minecraft/world/entity/Entity	method	setFluidTypeHeight	(Lnet/neoforged/neoforge/fluids/FluidType;D)V	20			
-net/minecraft/world/entity/Entity	method	getFluidTypeHeight	(Lnet/neoforged/neoforge/fluids/FluidType;)D	17			
-net/minecraft/world/entity/Entity	method	isInFluidType	(Ljava/util/function/BiPredicate;Z)Z	17	(Ljava/util/function/BiPredicate<Lnet/neoforged/neoforge/fluids/FluidType;Ljava/lang/Double;>;Z)Z		
-net/minecraft/world/entity/Entity	method	isInFluidType	()Z	17			
-net/minecraft/world/entity/Entity	method	getEyeInFluidType	()Lnet/neoforged/neoforge/fluids/FluidType;	17			
-net/minecraft/world/entity/Entity	method	getMaxHeightFluidType	()Lnet/neoforged/neoforge/fluids/FluidType;	1			
-net/minecraft/world/entity/Entity	method	setData	(Lnet/neoforged/neoforge/attachment/AttachmentType;Ljava/lang/Object;)Ljava/lang/Object;	17	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;TT;)TT;		
-net/minecraft/world/entity/Entity	method	syncData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)V	17	(Lnet/neoforged/neoforge/attachment/AttachmentType<*>;)V		
+net/minecraft/world/entity/Entity	method	getFluidTypeHeight	(Lnet/neoforged/neoforge/fluids/FluidType;)D	17			override
+net/minecraft/world/entity/Entity	method	isInFluidType	(Ljava/util/function/BiPredicate;Z)Z	17	(Ljava/util/function/BiPredicate<Lnet/neoforged/neoforge/fluids/FluidType;Ljava/lang/Double;>;Z)Z		override
+net/minecraft/world/entity/Entity	method	isInFluidType	()Z	17			override
+net/minecraft/world/entity/Entity	method	getEyeInFluidType	()Lnet/neoforged/neoforge/fluids/FluidType;	17			override
+net/minecraft/world/entity/Entity	method	getMaxHeightFluidType	()Lnet/neoforged/neoforge/fluids/FluidType;	1			override
+net/minecraft/world/entity/Entity	method	setData	(Lnet/neoforged/neoforge/attachment/AttachmentType;Ljava/lang/Object;)Ljava/lang/Object;	17	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;TT;)TT;		override
+net/minecraft/world/entity/Entity	method	syncData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)V	17	(Lnet/neoforged/neoforge/attachment/AttachmentType<*>;)V		override
 net/minecraft/world/entity/Entity	method	getCapability	(Lnet/neoforged/neoforge/capabilities/EntityCapability;Ljava/lang/Object;)Ljava/lang/Object;	17	<T:Ljava/lang/Object;C:Ljava/lang/Object;>(Lnet/neoforged/neoforge/capabilities/EntityCapability<TT;TC;>;TC;)TT;		
 net/minecraft/world/entity/Entity	method	getCapability	(Lnet/neoforged/neoforge/capabilities/EntityCapability;)Ljava/lang/Object;	17	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/capabilities/EntityCapability<TT;Ljava/lang/Void;>;)TT;		
 net/minecraft/world/entity/EntityType	field	trackDeltasSupplier	Ljava/util/function/Predicate;	18	Ljava/util/function/Predicate<Lnet/minecraft/world/entity/EntityType<*>;>;		
@@ -1234,7 +1234,7 @@ net/minecraft/world/entity/Mob	field-access	targetSelector	Lnet/minecraft/world/
 net/minecraft/world/entity/Mob	field	spawnType	Lnet/minecraft/world/entity/MobSpawnType;	2			
 net/minecraft/world/entity/Mob	field	spawnCancelled	Z	2			
 net/minecraft/world/entity/Mob	method	jumpInLiquidInternal	(Ljava/lang/Runnable;)V	2			
-net/minecraft/world/entity/Mob	method	jumpInFluid	(Lnet/neoforged/neoforge/fluids/FluidType;)V	1			
+net/minecraft/world/entity/Mob	method	jumpInFluid	(Lnet/neoforged/neoforge/fluids/FluidType;)V	1			override
 net/minecraft/world/entity/Mob	method	getSpawnType	()Lnet/minecraft/world/entity/MobSpawnType;	17			
 net/minecraft/world/entity/Mob	method	isSpawnCancelled	()Z	17			
 net/minecraft/world/entity/Mob	method	setSpawnCancelled	(Z)V	17			
@@ -1248,7 +1248,7 @@ net/minecraft/world/entity/ai/attributes/Attribute	implements	net/neoforged/neof
 net/minecraft/world/entity/ai/attributes/Attribute	field	MERGED_RED	Lnet/minecraft/network/chat/TextColor;	28			
 net/minecraft/world/entity/ai/attributes/Attribute	field	MERGED_BLUE	Lnet/minecraft/network/chat/TextColor;	28			
 net/minecraft/world/entity/ai/attributes/Attribute	field	MERGED_GRAY	Lnet/minecraft/network/chat/TextColor;	28			
-net/minecraft/world/entity/ai/attributes/Attribute	method	getMergedStyle	(Z)Lnet/minecraft/network/chat/TextColor;	1			
+net/minecraft/world/entity/ai/attributes/Attribute	method	getMergedStyle	(Z)Lnet/minecraft/network/chat/TextColor;	1			override
 net/minecraft/world/entity/ai/attributes/AttributeSupplier$Builder	field	others	Ljava/util/List;	18	Ljava/util/List<Lnet/minecraft/world/entity/ai/attributes/AttributeSupplier$Builder;>;		
 net/minecraft/world/entity/ai/attributes/AttributeSupplier$Builder	method	<init>	(Lnet/minecraft/world/entity/ai/attributes/AttributeSupplier;)V	1			
 net/minecraft/world/entity/ai/attributes/AttributeSupplier$Builder	method	combine	(Lnet/minecraft/world/entity/ai/attributes/AttributeSupplier$Builder;)V	1			
@@ -1317,9 +1317,9 @@ net/minecraft/world/entity/animal/camel/Camel	inner-access	net/minecraft/world/e
 net/minecraft/world/entity/animal/horse/AbstractHorse	method	getInventory	()Lnet/minecraft/world/Container;	1			
 net/minecraft/world/entity/boss/EnderDragonPart	extends	net/neoforged/neoforge/entity/PartEntity	net/minecraft/world/entity/Entity	0	Lnet/neoforged/neoforge/entity/PartEntity<Lnet/minecraft/world/entity/boss/enderdragon/EnderDragon;>;		
 net/minecraft/world/entity/boss/enderdragon/EnderDragon	field	unlimitedLastHurtByPlayer	Lnet/minecraft/world/entity/player/Player;	2			
-net/minecraft/world/entity/boss/enderdragon/EnderDragon	method	setId	(I)V	1			
-net/minecraft/world/entity/boss/enderdragon/EnderDragon	method	isMultipartEntity	()Z	1			
-net/minecraft/world/entity/boss/enderdragon/EnderDragon	method	getParts	()[Lnet/neoforged/neoforge/entity/PartEntity;	1	()[Lnet/neoforged/neoforge/entity/PartEntity<*>;		
+net/minecraft/world/entity/boss/enderdragon/EnderDragon	method	setId	(I)V	1			override
+net/minecraft/world/entity/boss/enderdragon/EnderDragon	method	isMultipartEntity	()Z	1			override
+net/minecraft/world/entity/boss/enderdragon/EnderDragon	method	getParts	()[Lnet/neoforged/neoforge/entity/PartEntity;	1	()[Lnet/neoforged/neoforge/entity/PartEntity<*>;		override
 net/minecraft/world/entity/boss/wither/WitherBoss	inner-access	net/minecraft/world/entity/boss/wither/WitherBoss$WitherDoNothingGoal		0			
 net/minecraft/world/entity/item/ItemEntity	field	lifespan	I	1			
 net/minecraft/world/entity/item/ItemEntity	method	getTarget	()Ljava/util/UUID;	1			
@@ -1334,7 +1334,7 @@ net/minecraft/world/entity/monster/Evoker	inner-access	net/minecraft/world/entit
 net/minecraft/world/entity/monster/Illusioner	inner-access	net/minecraft/world/entity/monster/Illusioner$IllusionerMirrorSpellGoal		0			
 net/minecraft/world/entity/monster/Illusioner	inner-access	net/minecraft/world/entity/monster/Illusioner$IllusionerBlindnessSpellGoal		0			
 net/minecraft/world/entity/monster/MagmaCube	method	jumpInLiquidInternal	(Ljava/util/function/BooleanSupplier;Ljava/lang/Runnable;)V	2			
-net/minecraft/world/entity/monster/MagmaCube	method	jumpInFluid	(Lnet/neoforged/neoforge/fluids/FluidType;)V	1			
+net/minecraft/world/entity/monster/MagmaCube	method	jumpInFluid	(Lnet/neoforged/neoforge/fluids/FluidType;)V	1			override
 net/minecraft/world/entity/monster/Shulker	inner-access	net/minecraft/world/entity/monster/Shulker$ShulkerLookControl		0			
 net/minecraft/world/entity/monster/Shulker	inner-access	net/minecraft/world/entity/monster/Shulker$ShulkerAttackGoal		0			
 net/minecraft/world/entity/monster/Shulker	inner-access	net/minecraft/world/entity/monster/Shulker$ShulkerPeekGoal		0			
@@ -1409,7 +1409,7 @@ net/minecraft/world/entity/player/Player	method	getSuffixes	()Ljava/util/Collect
 net/minecraft/world/entity/player/Player	method	refreshDisplayName	()V	1			
 net/minecraft/world/entity/player/Player	method	setForcedPose	(Lnet/minecraft/world/entity/Pose;)V	1			
 net/minecraft/world/entity/player/Player	method	getForcedPose	()Lnet/minecraft/world/entity/Pose;	1			
-net/minecraft/world/entity/projectile/FireworkRocketEntity	method	onHit	(Lnet/minecraft/world/phys/HitResult;)V	4			
+net/minecraft/world/entity/projectile/FireworkRocketEntity	method	onHit	(Lnet/minecraft/world/phys/HitResult;)V	4			override
 net/minecraft/world/entity/projectile/FishingHook	inner-access	net/minecraft/world/entity/projectile/FishingHook$FishHookState		16408			
 net/minecraft/world/entity/projectile/FishingHook	inner-access	net/minecraft/world/entity/projectile/FishingHook$OpenWaterType		16408			
 net/minecraft/world/entity/projectile/Projectile	method-access	<init>	(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V	4			
@@ -1432,18 +1432,18 @@ net/minecraft/world/entity/vehicle/AbstractMinecart	field	maxSpeedAirVertical	F	
 net/minecraft/world/entity/vehicle/AbstractMinecart	field	dragAir	D	2			
 net/minecraft/world/entity/vehicle/AbstractMinecart	method	getCollisionHandler	()Lnet/neoforged/neoforge/common/IMinecartCollisionHandler;	1			
 net/minecraft/world/entity/vehicle/AbstractMinecart	method	registerCollisionHandler	(Lnet/neoforged/neoforge/common/IMinecartCollisionHandler;)V	9			
-net/minecraft/world/entity/vehicle/AbstractMinecart	method	canUseRail	()Z	1			
-net/minecraft/world/entity/vehicle/AbstractMinecart	method	setCanUseRail	(Z)V	1			
-net/minecraft/world/entity/vehicle/AbstractMinecart	method	getCurrentCartSpeedCapOnRail	()F	1			
-net/minecraft/world/entity/vehicle/AbstractMinecart	method	setCurrentCartSpeedCapOnRail	(F)V	1			
-net/minecraft/world/entity/vehicle/AbstractMinecart	method	getMaxSpeedWithRail	()D	1			
-net/minecraft/world/entity/vehicle/AbstractMinecart	method	getMaxSpeedAirLateral	()F	1			
-net/minecraft/world/entity/vehicle/AbstractMinecart	method	setMaxSpeedAirLateral	(F)V	1			
-net/minecraft/world/entity/vehicle/AbstractMinecart	method	getMaxSpeedAirVertical	()F	1			
-net/minecraft/world/entity/vehicle/AbstractMinecart	method	setMaxSpeedAirVertical	(F)V	1			
-net/minecraft/world/entity/vehicle/AbstractMinecart	method	getDragAir	()D	1			
-net/minecraft/world/entity/vehicle/AbstractMinecart	method	setDragAir	(D)V	1			
-net/minecraft/world/entity/vehicle/AbstractMinecart	method	moveMinecartOnRail	(Lnet/minecraft/core/BlockPos;)V	1			
+net/minecraft/world/entity/vehicle/AbstractMinecart	method	canUseRail	()Z	1			override
+net/minecraft/world/entity/vehicle/AbstractMinecart	method	setCanUseRail	(Z)V	1			override
+net/minecraft/world/entity/vehicle/AbstractMinecart	method	getCurrentCartSpeedCapOnRail	()F	1			override
+net/minecraft/world/entity/vehicle/AbstractMinecart	method	setCurrentCartSpeedCapOnRail	(F)V	1			override
+net/minecraft/world/entity/vehicle/AbstractMinecart	method	getMaxSpeedWithRail	()D	1			override
+net/minecraft/world/entity/vehicle/AbstractMinecart	method	getMaxSpeedAirLateral	()F	1			override
+net/minecraft/world/entity/vehicle/AbstractMinecart	method	setMaxSpeedAirLateral	(F)V	1			override
+net/minecraft/world/entity/vehicle/AbstractMinecart	method	getMaxSpeedAirVertical	()F	1			override
+net/minecraft/world/entity/vehicle/AbstractMinecart	method	setMaxSpeedAirVertical	(F)V	1			override
+net/minecraft/world/entity/vehicle/AbstractMinecart	method	getDragAir	()D	1			override
+net/minecraft/world/entity/vehicle/AbstractMinecart	method	setDragAir	(D)V	1			override
+net/minecraft/world/entity/vehicle/AbstractMinecart	method	moveMinecartOnRail	(Lnet/minecraft/core/BlockPos;)V	1			override
 net/minecraft/world/entity/vehicle/Boat	implements	net/neoforged/neoforge/common/extensions/IBoatExtension		0	Lnet/minecraft/world/entity/vehicle/VehicleEntity;Lnet/minecraft/world/entity/Leashable;Lnet/minecraft/world/entity/VariantHolder<Lnet/minecraft/world/entity/vehicle/Boat$Type;>;Lnet/neoforged/neoforge/common/extensions/IBoatExtension;		
 net/minecraft/world/entity/vehicle/Boat$Type	implements	net/neoforged/fml/common/asm/enumextension/IExtensibleEnum		0	Ljava/lang/Enum<Lnet/minecraft/world/entity/vehicle/Boat$Type;>;Lnet/minecraft/util/StringRepresentable;Lnet/neoforged/fml/common/asm/enumextension/IExtensibleEnum;		
 net/minecraft/world/entity/vehicle/Boat$Type	field	planksSupplier	Ljava/util/function/Supplier;	18	Ljava/util/function/Supplier<Lnet/minecraft/world/level/block/Block;>;		
@@ -1456,7 +1456,7 @@ net/minecraft/world/entity/vehicle/Boat$Type	method	<init>	(Ljava/lang/String;IL
 net/minecraft/world/entity/vehicle/Boat$Type	method	getSticks	()Lnet/minecraft/world/item/Item;	1			
 net/minecraft/world/entity/vehicle/Boat$Type	method	isRaft	()Z	1			
 net/minecraft/world/entity/vehicle/Boat$Type	method	getExtensionInfo	()Lnet/neoforged/fml/common/asm/enumextension/ExtensionInfo;	9			
-net/minecraft/world/entity/vehicle/MinecartFurnace	method	getMaxCartSpeedOnRail	()F	1			
+net/minecraft/world/entity/vehicle/MinecartFurnace	method	getMaxCartSpeedOnRail	()F	1			override
 net/minecraft/world/flag/FeatureFlag	field	extMaskIndex	I	16			
 net/minecraft/world/flag/FeatureFlag	field	modded	Z	16			
 net/minecraft/world/flag/FeatureFlag	method	<init>	(Lnet/minecraft/world/flag/FeatureFlagUniverse;IIZ)V	0			
@@ -1505,10 +1505,10 @@ net/minecraft/world/item/BlockItem	method	getPlaceSound	(Lnet/minecraft/world/le
 net/minecraft/world/item/BlockItem	method	removeFromBlockToItemMap	(Ljava/util/Map;Lnet/minecraft/world/item/Item;)V	131073	(Ljava/util/Map<Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/item/Item;>;Lnet/minecraft/world/item/Item;)V		
 net/minecraft/world/item/BoneMealItem	method	applyBonemeal	(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Z	9			
 net/minecraft/world/item/BrushItem	inner-access	net/minecraft/world/item/BrushItem$DustParticlesDelta		24			
-net/minecraft/world/item/BrushItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			
+net/minecraft/world/item/BrushItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			override
 net/minecraft/world/item/BrushItem$DustParticlesDelta	method-access	<init>	(DDD)V	0			
 net/minecraft/world/item/BucketItem	field-access	content	Lnet/minecraft/world/level/material/Fluid;	17			
-net/minecraft/world/item/BucketItem	method	emptyContents	(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/BlockHitResult;Lnet/minecraft/world/item/ItemStack;)Z	1			default
+net/minecraft/world/item/BucketItem	method	emptyContents	(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/BlockHitResult;Lnet/minecraft/world/item/ItemStack;)Z	1			override
 net/minecraft/world/item/BucketItem	method	canBlockContainFluid	(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z	4			
 net/minecraft/world/item/CreativeModeTab	inner-access	net/minecraft/world/item/CreativeModeTab$ItemDisplayBuilder		8			
 net/minecraft/world/item/CreativeModeTab	inner-access	net/minecraft/world/item/CreativeModeTab$TabVisibility		16409			
@@ -1563,18 +1563,18 @@ net/minecraft/world/item/DyeColor	field	dyedTag	Lnet/minecraft/tags/TagKey;	18	L
 net/minecraft/world/item/DyeColor	method	getTag	()Lnet/minecraft/tags/TagKey;	1	()Lnet/minecraft/tags/TagKey<Lnet/minecraft/world/item/Item;>;		
 net/minecraft/world/item/DyeColor	method	getDyedTag	()Lnet/minecraft/tags/TagKey;	1	()Lnet/minecraft/tags/TagKey<Lnet/minecraft/world/item/Item;>;		
 net/minecraft/world/item/DyeColor	method	getColor	(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/DyeColor;	9			
-net/minecraft/world/item/ElytraItem	method	canElytraFly	(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;)Z	1			
-net/minecraft/world/item/ElytraItem	method	elytraFlightTick	(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;I)Z	1			
-net/minecraft/world/item/FireChargeItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			
-net/minecraft/world/item/FishingRodItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			
-net/minecraft/world/item/FlintAndSteelItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			
+net/minecraft/world/item/ElytraItem	method	canElytraFly	(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;)Z	1			override
+net/minecraft/world/item/ElytraItem	method	elytraFlightTick	(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;I)Z	1			override
+net/minecraft/world/item/FireChargeItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			override
+net/minecraft/world/item/FishingRodItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			override
+net/minecraft/world/item/FlintAndSteelItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			override
 net/minecraft/world/item/HoeItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			
 net/minecraft/world/item/Item	field-access	components	Lnet/minecraft/core/component/DataComponentMap;	2			
 net/minecraft/world/item/Item	method-access	getPlayerPOVHitResult	(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/ClipContext$Fluid;)Lnet/minecraft/world/phys/BlockHitResult;	9			
 net/minecraft/world/item/Item	implements	net/neoforged/neoforge/common/extensions/IItemExtension		0			
 net/minecraft/world/item/Item	field	canRepair	Z	20			
 net/minecraft/world/item/Item	method	modifyDefaultComponentsFrom	(Lnet/minecraft/core/component/DataComponentPatch;)V	131073			
-net/minecraft/world/item/Item	method	isRepairable	(Lnet/minecraft/world/item/ItemStack;)Z	1			
+net/minecraft/world/item/Item	method	isRepairable	(Lnet/minecraft/world/item/ItemStack;)Z	1			override
 net/minecraft/world/item/Item	method	initializeClient	(Ljava/util/function/Consumer;)V	131073	(Ljava/util/function/Consumer<Lnet/neoforged/neoforge/client/extensions/common/IClientItemExtensions;>;)V		
 net/minecraft/world/item/Item$Properties	implements	net/neoforged/neoforge/common/extensions/IItemPropertiesExtensions		0			
 net/minecraft/world/item/Item$Properties	field	canRepair	Z	2			
@@ -1592,7 +1592,7 @@ net/minecraft/world/item/ItemStack	method-access	addToTooltip	(Lnet/minecraft/co
 net/minecraft/world/item/ItemStack	implements	net/neoforged/neoforge/common/MutableDataComponentHolder		0			
 net/minecraft/world/item/ItemStack	implements	net/neoforged/neoforge/common/extensions/IItemStackExtension		0			
 net/minecraft/world/item/ItemStack	method	isComponentsPatchEmpty	()Z	1			
-net/minecraft/world/item/ItemStack	method	onItemUseFirst	(Lnet/minecraft/world/item/context/UseOnContext;)Lnet/minecraft/world/InteractionResult;	1			default
+net/minecraft/world/item/ItemStack	method	onItemUseFirst	(Lnet/minecraft/world/item/context/UseOnContext;)Lnet/minecraft/world/InteractionResult;	1			override
 net/minecraft/world/item/ItemStack	method	onItemUse	(Lnet/minecraft/world/item/context/UseOnContext;Ljava/util/function/Function;)Lnet/minecraft/world/InteractionResult;	2	(Lnet/minecraft/world/item/context/UseOnContext;Ljava/util/function/Function<Lnet/minecraft/world/item/context/UseOnContext;Lnet/minecraft/world/InteractionResult;>;)Lnet/minecraft/world/InteractionResult;		
 net/minecraft/world/item/ItemStack	method	hurtAndBreak	(ILnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Consumer;)V	1	(ILnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Consumer<Lnet/minecraft/world/item/Item;>;)V		
 net/minecraft/world/item/ItemStack	method	getTagEnchantments	()Lnet/minecraft/world/item/enchantment/ItemEnchantments;	1			
@@ -1607,22 +1607,22 @@ net/minecraft/world/item/Rarity	field	styleModifier	Ljava/util/function/UnaryOpe
 net/minecraft/world/item/Rarity	method	<init>	(Ljava/lang/String;IILjava/lang/String;Ljava/util/function/UnaryOperator;)V	2	(ILjava/lang/String;Ljava/util/function/UnaryOperator<Lnet/minecraft/network/chat/Style;>;)V		
 net/minecraft/world/item/Rarity	method	getStyleModifier	()Ljava/util/function/UnaryOperator;	1	()Ljava/util/function/UnaryOperator<Lnet/minecraft/network/chat/Style;>;		
 net/minecraft/world/item/Rarity	method	getExtensionInfo	()Lnet/neoforged/fml/common/asm/enumextension/ExtensionInfo;	9			
-net/minecraft/world/item/ShearsItem	method	interactLivingEntity	(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;	1			
-net/minecraft/world/item/ShearsItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			
-net/minecraft/world/item/ShieldItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			
+net/minecraft/world/item/ShearsItem	method	interactLivingEntity	(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;	1			override
+net/minecraft/world/item/ShearsItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			override
+net/minecraft/world/item/ShieldItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			override
 net/minecraft/world/item/ShovelItem	method	getShovelPathingState	(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/world/level/block/state/BlockState;	9			
 net/minecraft/world/item/ShovelItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			
-net/minecraft/world/item/SolidBucketItem	method	getPlaceSound	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Lnet/minecraft/sounds/SoundEvent;	4			
+net/minecraft/world/item/SolidBucketItem	method	getPlaceSound	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Lnet/minecraft/sounds/SoundEvent;	4			override
 net/minecraft/world/item/SpawnEggItem	method	getDefaultType	()Lnet/minecraft/world/entity/EntityType;	4	()Lnet/minecraft/world/entity/EntityType<*>;		
-net/minecraft/world/item/SpyglassItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			
-net/minecraft/world/item/StandingAndWallBlockItem	method	removeFromBlockToItemMap	(Ljava/util/Map;Lnet/minecraft/world/item/Item;)V	131073	(Ljava/util/Map<Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/item/Item;>;Lnet/minecraft/world/item/Item;)V		
+net/minecraft/world/item/SpyglassItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			override
+net/minecraft/world/item/StandingAndWallBlockItem	method	removeFromBlockToItemMap	(Ljava/util/Map;Lnet/minecraft/world/item/Item;)V	131073	(Ljava/util/Map<Lnet/minecraft/world/level/block/Block;Lnet/minecraft/world/item/Item;>;Lnet/minecraft/world/item/Item;)V		override
 net/minecraft/world/item/SwordItem	method-access	createToolProperties	()Lnet/minecraft/world/item/component/Tool;	9			
 net/minecraft/world/item/SwordItem	method	<init>	(Lnet/minecraft/world/item/Tier;Lnet/minecraft/world/item/Item$Properties;Lnet/minecraft/world/item/component/Tool;)V	1			
 net/minecraft/world/item/SwordItem	method	createAttributes	(Lnet/minecraft/world/item/Tier;FF)Lnet/minecraft/world/item/component/ItemAttributeModifiers;	9			
 net/minecraft/world/item/SwordItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			
 net/minecraft/world/item/Tiers	method	getTag	()Lnet/minecraft/tags/TagKey;	1	()Lnet/minecraft/tags/TagKey<Lnet/minecraft/world/level/block/Block;>;		
 net/minecraft/world/item/TooltipFlag	implements	net/neoforged/neoforge/common/extensions/TooltipFlagExtension		0			
-net/minecraft/world/item/TridentItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			
+net/minecraft/world/item/TridentItem	method	canPerformAction	(Lnet/minecraft/world/item/ItemStack;Lnet/neoforged/neoforge/common/ItemAbility;)Z	1			override
 net/minecraft/world/item/UseAnim	field	CUSTOM	Lnet/minecraft/world/item/UseAnim;	16409			
 net/minecraft/world/item/alchemy/PotionBrewing	inner-access	net/minecraft/world/item/alchemy/PotionBrewing$Mix		24			
 net/minecraft/world/item/alchemy/PotionBrewing	field	registry	Lnet/neoforged/neoforge/common/brewing/BrewingRecipeRegistry;	18			
@@ -1650,7 +1650,7 @@ net/minecraft/world/item/crafting/Ingredient	field	LIST_CODEC	Lcom/mojang/serial
 net/minecraft/world/item/crafting/Ingredient	field	LIST_CODEC_NONEMPTY	Lcom/mojang/serialization/Codec;	25	Lcom/mojang/serialization/Codec<Ljava/util/List<Lnet/minecraft/world/item/crafting/Ingredient;>;>;		
 net/minecraft/world/item/crafting/Ingredient	method	<init>	(Lnet/neoforged/neoforge/common/crafting/ICustomIngredient;)V	1			
 net/minecraft/world/item/crafting/Ingredient	method	hasNoItems	()Z	1			
-net/minecraft/world/item/crafting/Ingredient	method	hashCode	()I	1			
+net/minecraft/world/item/crafting/Ingredient	method	hashCode	()I	1			override
 net/minecraft/world/item/crafting/Ingredient	method	getValues	()[Lnet/minecraft/world/item/crafting/Ingredient$Value;	1			
 net/minecraft/world/item/crafting/Ingredient	method	isSimple	()Z	1			
 net/minecraft/world/item/crafting/Ingredient	method	getCustomIngredient	()Lnet/neoforged/neoforge/common/crafting/ICustomIngredient;	1			
@@ -1703,7 +1703,7 @@ net/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentInSlotVisitor	
 net/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor	access			1537			
 net/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor	inner-access	net/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor		1545			
 net/minecraft/world/level/BaseSpawner	implements	net/neoforged/neoforge/common/extensions/IOwnedSpawner		0			
-net/minecraft/world/level/BaseSpawner	method	getOwner	()Lcom/mojang/datafixers/util/Either;	1	()Lcom/mojang/datafixers/util/Either<Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;>;		
+net/minecraft/world/level/BaseSpawner	method	getOwner	()Lcom/mojang/datafixers/util/Either;	1	()Lcom/mojang/datafixers/util/Either<Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;>;		override
 net/minecraft/world/level/BlockAndTintGetter	implements	net/neoforged/neoforge/common/extensions/IBlockAndTintGetterExtension		0			
 net/minecraft/world/level/BlockGetter	implements	net/neoforged/neoforge/common/extensions/IBlockGetterExtension		0			
 net/minecraft/world/level/DataPackConfig	method	addModPacks	(Ljava/util/List;)V	1	(Ljava/util/List<Ljava/lang/String;>;)V		
@@ -1725,8 +1725,8 @@ net/minecraft/world/level/Level	field	pendingFreshBlockEntities	Ljava/util/Array
 net/minecraft/world/level/Level	field	maxEntityRadius	D	2			
 net/minecraft/world/level/Level	method	markAndNotifyBlock	(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/chunk/LevelChunk;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;II)V	1			
 net/minecraft/world/level/Level	method	addFreshBlockEntities	(Ljava/util/Collection;)V	1	(Ljava/util/Collection<Lnet/minecraft/world/level/block/entity/BlockEntity;>;)V		
-net/minecraft/world/level/Level	method	getMaxEntityRadius	()D	1			
-net/minecraft/world/level/Level	method	increaseMaxEntityRadius	(D)D	1			
+net/minecraft/world/level/Level	method	getMaxEntityRadius	()D	1			override
+net/minecraft/world/level/Level	method	increaseMaxEntityRadius	(D)D	1			override
 net/minecraft/world/level/Level	method	setDayTimeFraction	(F)V	1025			
 net/minecraft/world/level/Level	method	getDayTimeFraction	()F	1025			
 net/minecraft/world/level/Level	method	getDayTimePerTick	()F	1025			
@@ -1776,12 +1776,12 @@ net/minecraft/world/level/biome/MobSpawnSettings	method	getEntityTypes	()Ljava/u
 net/minecraft/world/level/biome/MobSpawnSettings$Builder	field-access	spawners	Ljava/util/Map;	20			
 net/minecraft/world/level/biome/MobSpawnSettings$Builder	field-access	mobSpawnCosts	Ljava/util/Map;	20			
 net/minecraft/world/level/biome/MobSpawnSettings$Builder	field-access	creatureGenerationProbability	F	4			
-net/minecraft/world/level/block/AbstractCauldronBlock	method	onPlace	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V	1			
-net/minecraft/world/level/block/AbstractCauldronBlock	method	onRemove	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V	1			
+net/minecraft/world/level/block/AbstractCauldronBlock	method	onPlace	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V	1			override
+net/minecraft/world/level/block/AbstractCauldronBlock	method	onRemove	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V	1			override
 net/minecraft/world/level/block/AttachedStemBlock	method-access	<init>	(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V	1			
 net/minecraft/world/level/block/BaseRailBlock	implements	net/neoforged/neoforge/common/extensions/IBaseRailBlockExtension		0			
-net/minecraft/world/level/block/BaseRailBlock	method	isFlexibleRail	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z	1			
-net/minecraft/world/level/block/BaseRailBlock	method	getRailDirection	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/vehicle/AbstractMinecart;)Lnet/minecraft/world/level/block/state/properties/RailShape;	1			
+net/minecraft/world/level/block/BaseRailBlock	method	isFlexibleRail	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z	1			override
+net/minecraft/world/level/block/BaseRailBlock	method	getRailDirection	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/vehicle/AbstractMinecart;)Lnet/minecraft/world/level/block/state/properties/RailShape;	1			override
 net/minecraft/world/level/block/BigDripleafBlock	method-access	<init>	(Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V	1			
 net/minecraft/world/level/block/Block	method-access	popExperience	(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;I)V	1			
 net/minecraft/world/level/block/Block	implements	net/neoforged/neoforge/common/extensions/IBlockExtension		0			
@@ -1802,7 +1802,7 @@ net/minecraft/world/level/block/ComparatorBlock	method	onNeighborChange	(Lnet/mi
 net/minecraft/world/level/block/ComposterBlock	inner-access	net/minecraft/world/level/block/ComposterBlock$OutputContainer		8			
 net/minecraft/world/level/block/ComposterBlock	inner-access	net/minecraft/world/level/block/ComposterBlock$InputContainer		8			
 net/minecraft/world/level/block/ComposterBlock	inner-access	net/minecraft/world/level/block/ComposterBlock$EmptyContainer		8			
-net/minecraft/world/level/block/ComposterBlock	method	onRemove	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V	4			
+net/minecraft/world/level/block/ComposterBlock	method	onRemove	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V	4			override
 net/minecraft/world/level/block/ComposterBlock	method	getValue	(Lnet/minecraft/world/item/ItemStack;)F	9			
 net/minecraft/world/level/block/ConcretePowderBlock	method	shouldSolidify	(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;)Z	10			
 net/minecraft/world/level/block/ConcretePowderBlock	method	touchesLiquid	(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z	10			
@@ -1813,7 +1813,7 @@ net/minecraft/world/level/block/DeadBushBlock	method-access	<init>	(Lnet/minecra
 net/minecraft/world/level/block/DeadBushBlock	implements	net/neoforged/neoforge/common/IShearable		0			
 net/minecraft/world/level/block/DetectorRailBlock	method	registerDefaultState	()V	4			
 net/minecraft/world/level/block/DoorBlock	method-access	<init>	(Lnet/minecraft/world/level/block/state/properties/BlockSetType;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V	1			
-net/minecraft/world/level/block/DropExperienceBlock	method	getExpDrop	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)I	1			
+net/minecraft/world/level/block/DropExperienceBlock	method	getExpDrop	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)I	1			override
 net/minecraft/world/level/block/EnchantingTableBlock	method-access	<init>	(Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V	1			
 net/minecraft/world/level/block/FarmBlock	method-access	<init>	(Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V	1			
 net/minecraft/world/level/block/FenceGateBlock	field	openSound	Lnet/minecraft/sounds/SoundEvent;	17			
@@ -1847,7 +1847,7 @@ net/minecraft/world/level/block/PoweredRailBlock	method	isActivatorRail	()Z	1
 net/minecraft/world/level/block/PumpkinBlock	method-access	<init>	(Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V	1			
 net/minecraft/world/level/block/RailBlock	method-access	<init>	(Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V	1			
 net/minecraft/world/level/block/RailState	field	canMakeSlopes	Z	18			
-net/minecraft/world/level/block/RedStoneOreBlock	method	getExpDrop	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)I	1			
+net/minecraft/world/level/block/RedStoneOreBlock	method	getExpDrop	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)I	1			override
 net/minecraft/world/level/block/SaplingBlock	method-access	<init>	(Lnet/minecraft/world/level/block/grower/TreeGrower;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V	1			
 net/minecraft/world/level/block/SculkCatalystBlock	method	getExpDrop	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)I	1			
 net/minecraft/world/level/block/SculkSensorBlock	method	getExpDrop	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)I	1			
@@ -1861,7 +1861,7 @@ net/minecraft/world/level/block/StemBlock	method-access	<init>	(Lnet/minecraft/r
 net/minecraft/world/level/block/SugarCaneBlock	method-access	<init>	(Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V	1			
 net/minecraft/world/level/block/TallGrassBlock	method-access	<init>	(Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V	1			
 net/minecraft/world/level/block/TallGrassBlock	implements	net/neoforged/neoforge/common/IShearable		0			
-net/minecraft/world/level/block/TntBlock	method	onCaughtFire	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/world/entity/LivingEntity;)V	1			
+net/minecraft/world/level/block/TntBlock	method	onCaughtFire	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/world/entity/LivingEntity;)V	1			override
 net/minecraft/world/level/block/TrapDoorBlock	method-access	<init>	(Lnet/minecraft/world/level/block/state/properties/BlockSetType;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V	1			
 net/minecraft/world/level/block/TrapDoorBlock	method	isLadder	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/LivingEntity;)Z	1			
 net/minecraft/world/level/block/VineBlock	implements	net/neoforged/neoforge/common/IShearable		0			
@@ -1876,10 +1876,10 @@ net/minecraft/world/level/block/entity/BlockEntity	extends	net/neoforged/neoforg
 net/minecraft/world/level/block/entity/BlockEntity	inner-access	net/minecraft/world/level/block/entity/BlockEntity$ComponentHelper		8			
 net/minecraft/world/level/block/entity/BlockEntity	implements	net/neoforged/neoforge/common/extensions/IBlockEntityExtension		0			
 net/minecraft/world/level/block/entity/BlockEntity	field	customPersistentData	Lnet/minecraft/nbt/CompoundTag;	2			
-net/minecraft/world/level/block/entity/BlockEntity	method	getPersistentData	()Lnet/minecraft/nbt/CompoundTag;	1			
-net/minecraft/world/level/block/entity/BlockEntity	method	setData	(Lnet/neoforged/neoforge/attachment/AttachmentType;Ljava/lang/Object;)Ljava/lang/Object;	17	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;TT;)TT;		
-net/minecraft/world/level/block/entity/BlockEntity	method	removeData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)Ljava/lang/Object;	17	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;)TT;		
-net/minecraft/world/level/block/entity/BlockEntity	method	syncData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)V	17	(Lnet/neoforged/neoforge/attachment/AttachmentType<*>;)V		
+net/minecraft/world/level/block/entity/BlockEntity	method	getPersistentData	()Lnet/minecraft/nbt/CompoundTag;	1			override
+net/minecraft/world/level/block/entity/BlockEntity	method	setData	(Lnet/neoforged/neoforge/attachment/AttachmentType;Ljava/lang/Object;)Ljava/lang/Object;	17	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;TT;)TT;		override
+net/minecraft/world/level/block/entity/BlockEntity	method	removeData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)Ljava/lang/Object;	17	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;)TT;		override
+net/minecraft/world/level/block/entity/BlockEntity	method	syncData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)V	17	(Lnet/neoforged/neoforge/attachment/AttachmentType<*>;)V		override
 net/minecraft/world/level/block/entity/BlockEntity$DataComponentInput	method	get	(Ljava/util/function/Supplier;)Ljava/lang/Object;	1	<T:Ljava/lang/Object;>(Ljava/util/function/Supplier<+Lnet/minecraft/core/component/DataComponentType<TT;>;>;)TT;		
 net/minecraft/world/level/block/entity/BlockEntity$DataComponentInput	method	getOrDefault	(Ljava/util/function/Supplier;Ljava/lang/Object;)Ljava/lang/Object;	1	<T:Ljava/lang/Object;>(Ljava/util/function/Supplier<+Lnet/minecraft/core/component/DataComponentType<TT;>;>;TT;)TT;		
 net/minecraft/world/level/block/entity/BlockEntityType	inner-access	net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier		1545			
@@ -1892,7 +1892,7 @@ net/minecraft/world/level/block/entity/HopperBlockEntity	method-access	setCooldo
 net/minecraft/world/level/block/entity/HopperBlockEntity	method-access	isOnCustomCooldown	()Z	1			
 net/minecraft/world/level/block/entity/HopperBlockEntity	method	getLastUpdateTime	()J	1			
 net/minecraft/world/level/block/entity/trialspawner/TrialSpawner	implements	net/neoforged/neoforge/common/extensions/IOwnedSpawner		0			
-net/minecraft/world/level/block/entity/trialspawner/TrialSpawner	method	getOwner	()Lcom/mojang/datafixers/util/Either;	1	()Lcom/mojang/datafixers/util/Either<Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;>;		
+net/minecraft/world/level/block/entity/trialspawner/TrialSpawner	method	getOwner	()Lcom/mojang/datafixers/util/Either;	1	()Lcom/mojang/datafixers/util/Either<Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;>;		override
 net/minecraft/world/level/block/piston/PistonBaseBlock	method	rotate	(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Rotation;)Lnet/minecraft/world/level/block/state/BlockState;	1			
 net/minecraft/world/level/block/state/BlockBehaviour	inner-access	net/minecraft/world/level/block/state/BlockBehaviour$BlockStateBase$Cache		24			
 net/minecraft/world/level/block/state/BlockBehaviour	method-access	propertiesCodec	()Lcom/mojang/serialization/codecs/RecordCodecBuilder;	9			
@@ -1906,12 +1906,12 @@ net/minecraft/world/level/chunk/ChunkAccess	implements	net/neoforged/neoforge/at
 net/minecraft/world/level/chunk/ChunkAccess	field	attachmentHolder	Lnet/neoforged/neoforge/attachment/AttachmentHolder$AsField;	18			
 net/minecraft/world/level/chunk/ChunkAccess	method	findBlocks	(Ljava/util/function/BiPredicate;Ljava/util/function/BiConsumer;)V	131073	(Ljava/util/function/BiPredicate<Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;>;Ljava/util/function/BiConsumer<Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;>;)V		
 net/minecraft/world/level/chunk/ChunkAccess	method	findBlocks	(Ljava/util/function/Predicate;Ljava/util/function/BiPredicate;Ljava/util/function/BiConsumer;)V	1	(Ljava/util/function/Predicate<Lnet/minecraft/world/level/block/state/BlockState;>;Ljava/util/function/BiPredicate<Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;>;Ljava/util/function/BiConsumer<Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;>;)V		
-net/minecraft/world/level/chunk/ChunkAccess	method	hasAttachments	()Z	1			
-net/minecraft/world/level/chunk/ChunkAccess	method	hasData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)Z	1	(Lnet/neoforged/neoforge/attachment/AttachmentType<*>;)Z		
-net/minecraft/world/level/chunk/ChunkAccess	method	getData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)Ljava/lang/Object;	1	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;)TT;		
-net/minecraft/world/level/chunk/ChunkAccess	method	getExistingDataOrNull	(Lnet/neoforged/neoforge/attachment/AttachmentType;)Ljava/lang/Object;	1	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;)TT;		default
-net/minecraft/world/level/chunk/ChunkAccess	method	setData	(Lnet/neoforged/neoforge/attachment/AttachmentType;Ljava/lang/Object;)Ljava/lang/Object;	1	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;TT;)TT;		
-net/minecraft/world/level/chunk/ChunkAccess	method	removeData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)Ljava/lang/Object;	1	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;)TT;		
+net/minecraft/world/level/chunk/ChunkAccess	method	hasAttachments	()Z	1			override
+net/minecraft/world/level/chunk/ChunkAccess	method	hasData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)Z	1	(Lnet/neoforged/neoforge/attachment/AttachmentType<*>;)Z		override
+net/minecraft/world/level/chunk/ChunkAccess	method	getData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)Ljava/lang/Object;	1	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;)TT;		override
+net/minecraft/world/level/chunk/ChunkAccess	method	getExistingDataOrNull	(Lnet/neoforged/neoforge/attachment/AttachmentType;)Ljava/lang/Object;	1	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;)TT;		override
+net/minecraft/world/level/chunk/ChunkAccess	method	setData	(Lnet/neoforged/neoforge/attachment/AttachmentType;Ljava/lang/Object;)Ljava/lang/Object;	1	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;TT;)TT;		override
+net/minecraft/world/level/chunk/ChunkAccess	method	removeData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)Ljava/lang/Object;	1	<T:Ljava/lang/Object;>(Lnet/neoforged/neoforge/attachment/AttachmentType<TT;>;)TT;		override
 net/minecraft/world/level/chunk/ChunkAccess	method	writeAttachmentsToNBT	(Lnet/minecraft/core/HolderLookup$Provider;)Lnet/minecraft/nbt/CompoundTag;	17			
 net/minecraft/world/level/chunk/ChunkAccess	method	readAttachmentsFromNBT	(Lnet/minecraft/core/HolderLookup$Provider;Lnet/minecraft/nbt/CompoundTag;)V	17			
 net/minecraft/world/level/chunk/ChunkAccess	method	getAttachmentHolder	()Lnet/neoforged/neoforge/attachment/AttachmentHolder$AsField;	1			
@@ -1925,7 +1925,7 @@ net/minecraft/world/level/chunk/LevelChunk	inner-access	net/minecraft/world/leve
 net/minecraft/world/level/chunk/LevelChunk	implements	net/neoforged/neoforge/attachment/IAttachmentHolder		0			
 net/minecraft/world/level/chunk/LevelChunk	field	auxLightManager	Lnet/neoforged/neoforge/common/world/LevelChunkAuxiliaryLightManager;	18			
 net/minecraft/world/level/chunk/LevelChunk	method	getAuxLightManager	(Lnet/minecraft/world/level/ChunkPos;)Lnet/neoforged/neoforge/common/world/LevelChunkAuxiliaryLightManager;	1			
-net/minecraft/world/level/chunk/LevelChunk	method	syncData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)V	17	(Lnet/neoforged/neoforge/attachment/AttachmentType<*>;)V		default
+net/minecraft/world/level/chunk/LevelChunk	method	syncData	(Lnet/neoforged/neoforge/attachment/AttachmentType;)V	17	(Lnet/neoforged/neoforge/attachment/AttachmentType<*>;)V		override
 net/minecraft/world/level/chunk/PalettedContainer	inner-access	net/minecraft/world/level/chunk/PalettedContainer$Data		24			
 net/minecraft/world/level/chunk/PalettedContainer	inner-access	net/minecraft/world/level/chunk/PalettedContainer$Configuration		24			
 net/minecraft/world/level/chunk/PalettedContainer$Configuration	inner-access	net/minecraft/world/level/chunk/PalettedContainer$Data		24			
@@ -1963,19 +1963,19 @@ net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate	me
 net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate	method	processBlockInfos	(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings;Ljava/util/List;Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate;)Ljava/util/List;	9	(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings;Ljava/util/List<Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate$StructureBlockInfo;>;Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate;)Ljava/util/List<Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate$StructureBlockInfo;>;		
 net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate	method	processEntityInfos	(Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings;Ljava/util/List;)Ljava/util/List;	9	(Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings;Ljava/util/List<Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate$StructureEntityInfo;>;)Ljava/util/List<Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate$StructureEntityInfo;>;		
 net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate	method	addEntitiesToWorld	(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings;)V	2			
-net/minecraft/world/level/material/FlowingFluid	method	canConvertToSource	(Lnet/minecraft/world/level/material/FluidState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z	1			
+net/minecraft/world/level/material/FlowingFluid	method	canConvertToSource	(Lnet/minecraft/world/level/material/FluidState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z	1			override
 net/minecraft/world/level/material/Fluid	implements	net/neoforged/neoforge/common/extensions/IFluidExtension		0			
 net/minecraft/world/level/material/Fluid	field	forgeFluidType	Lnet/neoforged/neoforge/fluids/FluidType;	2			
-net/minecraft/world/level/material/Fluid	method	toString	()Ljava/lang/String;	1			
-net/minecraft/world/level/material/Fluid	method	getFluidType	()Lnet/neoforged/neoforge/fluids/FluidType;	1			
+net/minecraft/world/level/material/Fluid	method	toString	()Ljava/lang/String;	1			override
+net/minecraft/world/level/material/Fluid	method	getFluidType	()Lnet/neoforged/neoforge/fluids/FluidType;	1			override
 net/minecraft/world/level/material/FluidState	implements	net/neoforged/neoforge/common/extensions/IFluidStateExtension		0	Lnet/minecraft/world/level/block/state/StateHolder<Lnet/minecraft/world/level/material/Fluid;Lnet/minecraft/world/level/material/FluidState;>;Lnet/neoforged/neoforge/common/extensions/IFluidStateExtension;		
 net/minecraft/world/level/material/LavaFluid	method	isFlammable	(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z	2			
 net/minecraft/world/level/pathfinder/PathfindingContext	method	currentEvalPos	()Lnet/minecraft/core/BlockPos;	0			
 net/minecraft/world/level/saveddata/SavedData$Factory	method	<init>	(Ljava/util/function/Supplier;Ljava/util/function/BiFunction;)V	1	(Ljava/util/function/Supplier<TT;>;Ljava/util/function/BiFunction<Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/core/HolderLookup$Provider;TT;>;)V		
-net/minecraft/world/level/storage/DerivedLevelData	method	getDayTimeFraction	()F	1			
-net/minecraft/world/level/storage/DerivedLevelData	method	getDayTimePerTick	()F	1			
-net/minecraft/world/level/storage/DerivedLevelData	method	setDayTimeFraction	(F)V	1			
-net/minecraft/world/level/storage/DerivedLevelData	method	setDayTimePerTick	(F)V	1			
+net/minecraft/world/level/storage/DerivedLevelData	method	getDayTimeFraction	()F	1			override
+net/minecraft/world/level/storage/DerivedLevelData	method	getDayTimePerTick	()F	1			override
+net/minecraft/world/level/storage/DerivedLevelData	method	setDayTimeFraction	(F)V	1			override
+net/minecraft/world/level/storage/DerivedLevelData	method	setDayTimePerTick	(F)V	1			override
 net/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess	method	readAdditionalLevelSaveData	(Z)V	1			
 net/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess	method	getWorldDir	()Ljava/nio/file/Path;	1			
 net/minecraft/world/level/storage/PlayerDataStorage	method	getPlayerDir	()Ljava/io/File;	1			
@@ -1984,10 +1984,10 @@ net/minecraft/world/level/storage/PrimaryLevelData	field	dayTimeFraction	F	2
 net/minecraft/world/level/storage/PrimaryLevelData	field	dayTimePerTick	F	2			
 net/minecraft/world/level/storage/PrimaryLevelData	method	hasConfirmedExperimentalWarning	()Z	1			
 net/minecraft/world/level/storage/PrimaryLevelData	method	withConfirmedWarning	(Z)Lnet/minecraft/world/level/storage/PrimaryLevelData;	1			
-net/minecraft/world/level/storage/PrimaryLevelData	method	getDayTimeFraction	()F	1			
-net/minecraft/world/level/storage/PrimaryLevelData	method	getDayTimePerTick	()F	1			
-net/minecraft/world/level/storage/PrimaryLevelData	method	setDayTimeFraction	(F)V	1			
-net/minecraft/world/level/storage/PrimaryLevelData	method	setDayTimePerTick	(F)V	1			
+net/minecraft/world/level/storage/PrimaryLevelData	method	getDayTimeFraction	()F	1			override
+net/minecraft/world/level/storage/PrimaryLevelData	method	getDayTimePerTick	()F	1			override
+net/minecraft/world/level/storage/PrimaryLevelData	method	setDayTimeFraction	(F)V	1			override
+net/minecraft/world/level/storage/PrimaryLevelData	method	setDayTimePerTick	(F)V	1			override
 net/minecraft/world/level/storage/ServerLevelData	method	getDayTimeFraction	()F	1025			
 net/minecraft/world/level/storage/ServerLevelData	method	getDayTimePerTick	()F	1025			
 net/minecraft/world/level/storage/ServerLevelData	method	setDayTimeFraction	(F)V	1025			

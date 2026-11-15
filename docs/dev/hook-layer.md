@@ -32,6 +32,17 @@ Where Fabric API also changes the spot, the Vyne hook fires Fabric API's event t
 
 Progress is measurable: every surface method still throwing "Vyne hook not implemented yet" is a hook to write, and the inventory lists every behaviour change.
 
+## Hooks mode (in progress)
+
+`-Dvyne.hooks=true` runs a NeoForge-only pack on Vyne's hook layer instead of NeoForge's patched game:
+
+1. `VanillaGame` builds vanilla Minecraft with Mojang names for the side being launched (client or server jar plus Mojang's mappings), cached.
+2. `HookedGame` applies the hook surface to the classes it touches. At runtime, methods that override an inherited method are left out (the inherited one keeps working), static initializers are never stubbed, and access rows only widen visibility and remove `final`.
+3. The hooked classes, Vyne's NeoForge copy (`META-INF/vyne/neoforge.jar` inside the Vyne jar) and the NeoForge mods go through the same exact rename as patched mode and are served the same way, until runtime names become Mojang names (Phase 6b).
+4. Behaviour hooks are mixins in `src/hooks/java` written with Mojang names, compiled against the hooked jar, renamed to runtime names at build time (`./gradlew remapHooksJar`) and applied only in hooks mode (`vyne.hooks.mixins.json`, `HooksMixinPlugin`).
+
+First hook: `MainHooks` starts NeoForge's server lifecycle where NeoForge's own patch does. NeoForge's mod loading then runs on vanilla Minecraft; it stops at the first method NeoForge adds that has no body yet.
+
 ## Vyne's copy of the NeoForge API
 
-`src/neoforge/` is NeoForge 21.1.265's API source and resources, unchanged so far, with NeoForge's LGPL-2.1 headers. It compiles against `minecraftHooked` plus NeoForge's libraries (`gradle/neoforge.gradle`). It is not shipped yet: until Vyne's hooks run it, NeoForge-only packs use the temporary patched mode.
+`src/neoforge/` is NeoForge 21.1.265's API source and resources, unchanged so far, with NeoForge's LGPL-2.1 headers. It compiles against `minecraftHooked` plus NeoForge's libraries (`gradle/neoforge.gradle`). It ships inside the Vyne jar and is used in hooks mode; until Vyne's hooks run it completely, NeoForge-only packs use the temporary patched mode by default.

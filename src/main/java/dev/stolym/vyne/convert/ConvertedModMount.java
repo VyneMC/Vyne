@@ -34,7 +34,9 @@ public final class ConvertedModMount {
         boolean neoForgeMods = mods != null && mods.stream()
                 .anyMatch(mod -> mod.getLoaderType() == DetectedMod.LoaderType.NEOFORGE);
         boolean fabricMods = mods != null && mods.stream()
-                .anyMatch(mod -> mod.getLoaderType() == DetectedMod.LoaderType.FABRIC);
+                .anyMatch(mod -> mod.getLoaderType() == DetectedMod.LoaderType.FABRIC && !isVyne(mod));
+        boolean hooks = Boolean.getBoolean("vyne.hooks");
+        if (hooks) version = HookedGame.SURFACE_VERSION;
         if (version == null || version.isBlank() || !neoForgeMods) return;
         if (fabricMods) {
             VyneLogger.info("[PatchedGame] Fabric and NeoForge mods together: using the compatibility path");
@@ -43,8 +45,18 @@ public final class ConvertedModMount {
         try {
             Path base = Path.of(System.getProperty("vyne.gameDir", ".")).toAbsolutePath().normalize();
             NeoForgeInstall neoForge = NeoForgeInstall.ensure(version, dedicatedServer, base);
+            Path cacheRoot = base.resolve(".vyne").resolve("cache");
+            Path game = neoForge.patchedGame();
+            Path vanilla = neoForge.vanillaGame();
+            if (hooks) {
+                vanilla = VanillaGame.mojang(VyneLauncher.TARGET_MC, dedicatedServer, cacheRoot);
+                game = HookedGame.build(vanilla, HookedGame.surface(), cacheRoot.resolve("hooked")
+                        .resolve(Integer.toHexString(HookedGame.fingerprint()) + "-" + (dedicatedServer ? "server" : "client") + ".jar"));
+                VyneLauncher.useNeoForgeApiJar(HookedGame.vyneNeoForge(cacheRoot));
+                VyneLogger.info("[Hooks] Running vanilla Minecraft with Vyne's hooks and Vyne's NeoForge API");
+            }
             List<Path> classpath = new ArrayList<>();
-            classpath.add(neoForge.vanillaGame());
+            classpath.add(vanilla);
             Path neoApi = VyneLauncher.getNeoForgeApiJar();
             if (neoApi != null) classpath.add(neoApi);
             classpath.add(neoForge.fml());
@@ -69,10 +81,11 @@ public final class ConvertedModMount {
             Path cache = Path.of(System.getProperty("vyne.gameDir", ".")).toAbsolutePath().normalize()
                     .resolve(".vyne").resolve("cache").resolve("patched");
             dev.stolym.vyne.ui.VyneLoadingScreen.update("Preparing NeoForge's game (first launch only)", 50);
-            PatchedGameBuilder.Result result = PatchedGameBuilder.build(neoForge.patchedGame(), inputs, classpath,
+            PatchedGameBuilder.Result result = PatchedGameBuilder.build(game, inputs, classpath,
                     dev.stolym.vyne.mappings.MojmapDownloader.getIntermediaryPath(mc),
                     dev.stolym.vyne.mappings.MojmapDownloader.getMojmapPath(mc), cache, dedicatedServer);
             dev.stolym.vyne.core.VyneMode.enablePatchedGame();
+            if (hooks) dev.stolym.vyne.core.VyneMode.enableHooks();
             GameOverlay.install(result.game());
             for (int i = 0; i < inputs.size(); i++) {
                 ModConverter.registerConverted(inputs.get(i), indexSources.get(i), result.converted().get(inputs.get(i)));
@@ -162,6 +175,16 @@ public final class ConvertedModMount {
             VyneLogger.info("[PatchedGame] NeoForge's FML mounted: " + loader.getFileName());
         } catch (Throwable t) {
             VyneLogger.error("[PatchedGame] Could not mount NeoForge's FML: " + t, t);
+        }
+    }
+
+    private static boolean isVyne(DetectedMod mod) {
+        if ("fabricloader".equals(mod.getModId()) || "vyne".equals(mod.getModId())) return true;
+        try {
+            Path self = Path.of(VyneLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            return mod.getJarPath() != null && Files.isSameFile(self, mod.getJarPath());
+        } catch (Exception e) {
+            return false;
         }
     }
 

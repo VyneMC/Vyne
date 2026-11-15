@@ -40,8 +40,11 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
 - [~] Phase 5: Vyne's hook layer and NeoForge API (design: `docs/dev/hook-layer.md`)
   - [x] Hook surface (structure NeoForge adds to vanilla) as Vyne data: `surface.tsv` + `accesstransformer.cfg`, applied by `HookSurface`; `./gradlew minecraftHookedJar`
   - [x] Vyne's copy of NeoForge 21.1.265's API source in `src/neoforge/` (LGPL headers kept, credited); compiles with Gradle against vanilla + the hook surface (1495 classes)
-  - [ ] Runtime transformer that applies the hook surface to the game's classes
-  - [ ] Load Vyne's NeoForge copy instead of NeoForge's jar (converted to runtime names until Phase 6b)
+  - [x] Hooks mode (`-Dvyne.hooks=true`, NeoForge-only packs): vanilla with Mojang names (`VanillaGame`, client or server) + the hook surface (`HookedGame`, 591 server classes) renamed in the same exact pass as Vyne's NeoForge copy and the mods, served like patched mode
+  - [x] Vyne's NeoForge copy shipped inside the Vyne jar (`META-INF/vyne/neoforge.jar`) and used instead of NeoForge's jar
+  - [x] `hooks` source set: Vyne's behaviour hooks as mixins with Mojang names, renamed at build time (`remapHooksJar`), applied only in hooks mode (`vyne.hooks.mixins.json`)
+  - [x] First hook: server `Main` starts NeoForge's lifecycle (`MainHooks`); NeoForge's mod loading runs on vanilla + Vyne hooks
+  - [ ] Bodies for the methods NeoForge adds (684 stubs, e.g. `BlockTags.create`, `Language.loadFromJson`); NeoForge's own mod constructs
   - [ ] Vyne mixins for the behaviour hooks the test mods need first (lifecycle, registries, extension interfaces, client setup, key mappings)
   - [ ] NeoForge-only scenarios pass with patched mode off
 - [ ] Phase 6: Vyne's copy of Fabric API on the hook layer; block-break hook end to end; mixed scenario passes; delete patched mode and the legacy NeoForge path (imitation classes in `net/neoforged` and `net/minecraftforge`, `engine/dynamic` and `vyne-bridges.json`, registry and event bridging, `vyne.accesswidener`, ~26 imitation mixins, `BridgeClassLoader`)

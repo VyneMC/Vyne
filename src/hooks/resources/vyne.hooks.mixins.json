@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "dev.stolym.vyne.hooks.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "plugin": "dev.stolym.vyne.hooks.HooksMixinPlugin",
+  "server": [
+    "server.MainHooks"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

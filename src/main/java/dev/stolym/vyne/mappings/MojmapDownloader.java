@@ -126,6 +126,40 @@ public final class MojmapDownloader {
         return cached;
     }
 
+    public static Path getServerJar(String mcVersion) throws Exception {
+        Path cached = CACHE_DIR.resolve("server-" + mcVersion + ".jar");
+        if (Files.exists(cached)) return cached;
+        Download server = findDownload(fetchVersionMeta(mcVersion), "server");
+        if (server == null) {
+            throw new IllegalStateException("No server jar found in version meta for " + mcVersion);
+        }
+        VyneLogger.info("[MojmapDownloader] Downloading Minecraft server jar (cached after this)...");
+        byte[] bundler = downloadVerified(server.url(), server.sha1());
+        byte[] inner = null;
+        try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(bundler))) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (entry.getName().startsWith("META-INF/versions/") && entry.getName().endsWith(".jar")) {
+                    inner = zis.readAllBytes();
+                    break;
+                }
+            }
+        }
+        writeAtomically(cached, inner != null ? inner : bundler);
+        return cached;
+    }
+
+    public static Path getServerMojmapPath(String mcVersion) throws Exception {
+        Path cached = CACHE_DIR.resolve("server-" + mcVersion + ".txt");
+        if (Files.exists(cached)) return cached;
+        Download mappings = findDownload(fetchVersionMeta(mcVersion), "server_mappings");
+        if (mappings == null) {
+            throw new IllegalStateException("No server mappings found in version meta for " + mcVersion);
+        }
+        writeAtomically(cached, downloadVerified(mappings.url(), mappings.sha1()));
+        return cached;
+    }
+
     record Download(String url, String sha1) {}
 
     static String findVersionUrl(String manifestJson, String version) {

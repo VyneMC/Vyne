@@ -21,6 +21,16 @@ shadowJar {
     into 'META-INF/vyne/bootstrap'
     }
 
+    dependsOn tasks.named('remapHooksJar')
+    from(zipTree(layout.buildDirectory.file('hooks-jar/vyne-hooks.jar'))) {
+        exclude 'META-INF/MANIFEST.MF'
+    }
+
+    from(tasks.named('neoforgeJar').flatMap { it.archiveFile }) {
+        into 'META-INF/vyne'
+        rename { 'neoforge.jar' }
+    }
+
     manifest {
         attributes(
             'Main-Class': 'dev.stolym.vyne.core.VyneLauncher',

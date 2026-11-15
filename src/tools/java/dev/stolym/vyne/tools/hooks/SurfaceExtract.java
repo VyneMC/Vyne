@@ -112,7 +112,7 @@ public final class SurfaceExtract {
                 for (MethodNode m : now.methods) {
                     if (oldMethods.contains(m.name + m.desc) || (m.access & Opcodes.ACC_SYNTHETIC) != 0) continue;
                     String exceptions = m.exceptions == null ? "" : String.join(" ", m.exceptions);
-                    String flags = defaults.contains(m.name + m.desc) ? "default" : "";
+                    String flags = defaults.contains(m.name + m.desc) ? "override" : "";
                     w.println(now.name + "\tmethod\t" + m.name + "\t" + m.desc + "\t" + m.access + "\t" + nz(m.signature)
                             + "\t" + exceptions + "\t" + flags);
                     methods++;
@@ -126,18 +126,38 @@ public final class SurfaceExtract {
     private static Set<String> defaults(ClassNode type, Map<String, ClassNode> api, Map<String, ClassNode> game) {
         Set<String> out = new HashSet<>();
         ArrayDeque<String> queue = new ArrayDeque<>(type.interfaces);
+        if (type.superName != null) queue.add(type.superName);
         Set<String> seen = new HashSet<>();
         while (!queue.isEmpty()) {
             String name = queue.poll();
             if (!seen.add(name)) continue;
             ClassNode node = api.containsKey(name) ? api.get(name) : game.get(name);
-            if (node == null) continue;
+            if (node == null) {
+                inheritedFromJdk(name, out);
+                continue;
+            }
             for (MethodNode m : node.methods) {
-                if ((m.access & (Opcodes.ACC_ABSTRACT | Opcodes.ACC_STATIC)) == 0) out.add(m.name + m.desc);
+                if ((m.access & (Opcodes.ACC_STATIC | Opcodes.ACC_PRIVATE)) == 0 && !m.name.startsWith("<")) out.add(m.name + m.desc);
             }
             queue.addAll(node.interfaces);
+            if (node.superName != null) queue.add(node.superName);
         }
         return out;
+    }
+
+    private static void inheritedFromJdk(String internalName, Set<String> out) {
+        try {
+            Class<?> type = Class.forName(internalName.replace('/', '.'), false, ClassLoader.getPlatformClassLoader());
+            for (Class<?> c = type; c != null; c = c.getSuperclass()) {
+                for (java.lang.reflect.Method m : c.getDeclaredMethods()) {
+                    if (!java.lang.reflect.Modifier.isStatic(m.getModifiers()) && !java.lang.reflect.Modifier.isPrivate(m.getModifiers())) {
+                        out.add(m.getName() + org.objectweb.asm.Type.getMethodDescriptor(m));
+                    }
+                }
+            }
+            for (Class<?> i : type.getInterfaces()) inheritedFromJdk(i.getName().replace('.', '/'), out);
+        } catch (ClassNotFoundException | LinkageError ignored) {
+        }
     }
 
     private static boolean anonymous(String name) {

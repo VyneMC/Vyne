@@ -51,3 +51,12 @@ tasks.named('compileNeoforgeJava') {
     options.encoding = 'UTF-8'
     options.compilerArgs += ['-proc:none', '-nowarn', '-Xlint:none']
 }
+
+tasks.register('neoforgeJar', Jar) {
+    group = 'vyne'
+    description = 'Vyne\'s copy of the NeoForge API, shipped inside the Vyne jar.'
+    archiveBaseName = 'vyne-neoforge'
+    archiveVersion = project.hook_neoforge_version
+    destinationDirectory = layout.buildDirectory.dir('neoforge-jar')
+    from sourceSets.neoforge.output
+}

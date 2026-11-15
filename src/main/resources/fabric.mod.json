@@ -25,6 +25,7 @@
     ]
   },
   "mixins": [
+    "vyne.hooks.mixins.json",
     "vyne.mixins.json"
   ],
   "accessWidener": "vyne.accesswidener"

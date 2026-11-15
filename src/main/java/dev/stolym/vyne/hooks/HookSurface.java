@@ -29,7 +29,7 @@ import java.util.Map;
 
 public final class HookSurface {
     public record Member(String owner, String kind, String name, String desc, int access, String signature,
-                         String[] exceptions, boolean overridesDefault) {}
+                         String[] exceptions, boolean overrides) {}
 
     private record AccessRule(String access, boolean unfinal, String member) {}
 
@@ -45,7 +45,7 @@ public final class HookSurface {
                 if (line.isBlank() || line.startsWith("class\t")) continue;
                 String[] p = line.split("\t", -1);
                 Member member = new Member(p[0], p[1], p[2], p[3], Integer.parseInt(p[4]),
-                        p[5].isEmpty() ? null : p[5], p[6].isEmpty() ? null : p[6].split(" "), "default".equals(p[7]));
+                        p[5].isEmpty() ? null : p[5], p[6].isEmpty() ? null : p[6].split(" "), "override".equals(p[7]) || "default".equals(p[7]));
                 out.members.computeIfAbsent(member.owner(), k -> new ArrayList<>()).add(member);
             }
         }
@@ -94,13 +94,13 @@ public final class HookSurface {
                     }
                 }
                 case "access" -> {
-                    node.access = member.access();
+                    node.access = widenTo(node.access, member.access());
                     changed = true;
                 }
                 case "inner-access" -> {
                     for (InnerClassNode inner : node.innerClasses) {
                         if (inner.name.equals(member.name())) {
-                            inner.access = member.access();
+                            inner.access = widenTo(inner.access, member.access());
                             changed = true;
                         }
                     }
@@ -108,7 +108,7 @@ public final class HookSurface {
                 case "field-access" -> {
                     for (FieldNode field : node.fields) {
                         if (field.name.equals(member.name()) && field.desc.equals(member.desc())) {
-                            field.access = member.access();
+                            field.access = widenTo(field.access, member.access());
                             changed = true;
                         }
                     }
@@ -116,7 +116,7 @@ public final class HookSurface {
                 case "method-access" -> {
                     for (MethodNode method : node.methods) {
                         if (method.name.equals(member.name()) && method.desc.equals(member.desc())) {
-                            method.access = member.access();
+                            method.access = widenTo(method.access, member.access());
                             changed = true;
                         }
                     }
@@ -127,7 +127,7 @@ public final class HookSurface {
                                 && (method.access & Opcodes.ACC_ABSTRACT) != 0) {
                             MethodNode body = stub(node, new Member(member.owner(), "method", member.name(), member.desc(),
                                     member.access(), method.signature, null, false));
-                            method.access = member.access();
+                            method.access = widenTo(method.access, member.access()) & ~Opcodes.ACC_ABSTRACT;
                             method.instructions = body.instructions;
                             method.maxLocals = body.maxLocals;
                             method.maxStack = body.maxStack;
@@ -149,7 +149,8 @@ public final class HookSurface {
                     }
                 }
                 case "method" -> {
-                    if (!stubMethods && member.overridesDefault()) continue;
+                    if (member.name().equals("<clinit>")) continue;
+                    if (!stubMethods && member.overrides()) continue;
                     if (node.methods.stream().noneMatch(m -> m.name.equals(member.name()) && m.desc.equals(member.desc()))) {
                         node.methods.add(stub(node, member));
                         changed = true;
@@ -166,10 +167,18 @@ public final class HookSurface {
         node.superName = to;
         for (MethodNode method : node.methods) {
             if (!method.name.equals("<init>")) continue;
+            int pending = 0;
             for (org.objectweb.asm.tree.AbstractInsnNode insn : method.instructions) {
-                if (insn instanceof MethodInsnNode call && call.getOpcode() == Opcodes.INVOKESPECIAL
+                if (insn.getOpcode() == Opcodes.NEW && ((TypeInsnNode) insn).desc.equals(from)) {
+                    pending++;
+                } else if (insn instanceof MethodInsnNode call && call.getOpcode() == Opcodes.INVOKESPECIAL
                         && call.name.equals("<init>") && call.owner.equals(from)) {
-                    call.owner = to;
+                    if (pending > 0) {
+                        pending--;
+                    } else {
+                        call.owner = to;
+                        break;
+                    }
                 }
             }
         }
@@ -217,6 +226,13 @@ public final class HookSurface {
             }
         }
         return changed;
+    }
+
+    private static int widenTo(int current, int target) {
+        int mask = Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED | Opcodes.ACC_PRIVATE;
+        int out = (current & ~mask) | (target & mask);
+        if ((target & Opcodes.ACC_FINAL) == 0) out &= ~Opcodes.ACC_FINAL;
+        return out;
     }
 
     private static int widen(int current, AccessRule rule) {
