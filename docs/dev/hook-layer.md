@@ -46,3 +46,9 @@ First hook: `MainHooks` starts NeoForge's server lifecycle where NeoForge's own 
 ## Vyne's copy of the NeoForge API
 
 `src/neoforge/` is NeoForge 21.1.265's API source and resources, unchanged so far, with NeoForge's LGPL-2.1 headers. It compiles against `minecraftHooked` plus NeoForge's libraries (`gradle/neoforge.gradle`). It ships inside the Vyne jar and is used in hooks mode; until Vyne's hooks run it completely, NeoForge-only packs use the temporary patched mode by default.
+
+## Updating NeoForge
+
+Mods almost always declare a minimum NeoForge version (`[21.1.0,)`), so shipping the newest 21.1.x satisfies nearly every 1.21.1 mod; a mod that pins an upper bound is listed in the compatibility table.
+
+Measured between NeoForge 21.1.233 and 21.1.265 (32 releases): 24 of 956 API source files changed and 4 were added (about 300 lines); 10 of 768 patched vanilla classes changed and 4 were added. An update is: regenerate the inventory and the surface, merge NeoForge's API changes into Vyne's copy, regenerate the generated hook bodies, review the hand-written hooks on the spots the diff lists (plan, Phase 9). A new Minecraft version is a port, as for every loader.
