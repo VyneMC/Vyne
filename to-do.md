@@ -27,7 +27,7 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
 
 ## Done: Phase 3, hook inventory (2026-11-15)
 
-- [x] `./gradlew hookInventory` (source in `src/hooks/java`, not shipped), docs in `docs/dev/hook-inventory.md`
+- [x] `./gradlew hookInventory` (source in `src/tools/java`, not shipped), docs in `docs/dev/hook-inventory.md`
 - [x] Per vanilla class and method: what NeoForge changes (`method~`, `method+`, `method-`, `field+`, `implements`, `class+`) with the NeoForge references added and the vanilla references removed
 - [x] Recompilation noise filtered (compare behaviour, not bytecode layout: 2466 methods only recompiled); renumbered lambdas paired
 - [x] Every Fabric API injection into Minecraft with injector kind, `@At` point, module and mixin
@@ -36,9 +36,10 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
 
 ## Next
 
-- [ ] Phase 4: Mojang-named compile jar; port Vyne's code to Mojang names; delete the Minecraft stand-ins
+- [x] Phase 4: `./gradlew minecraftMojangJar` (vanilla client with Mojang names) and the `minecraftMojang` compile classpath with Minecraft's libraries; a probe using entities, blocks, codecs, Brigadier and the dedicated server compiles (2026-11-15)
 - [ ] Phase 5: Vyne's copy of NeoForge's API source (own source set, LGPL notice); Vyne transformers per spot, starting with what the test mods need; NeoForge-only scenarios pass with patched mode off
 - [ ] Phase 6: Vyne's copy of Fabric API on the hook layer; block-break hook end to end; mixed scenario passes; delete patched mode and the legacy NeoForge path (imitation classes in `net/neoforged` and `net/minecraftforge`, `engine/dynamic` and `vyne-bridges.json`, registry and event bridging, `vyne.accesswidener`, ~26 imitation mixins, `BridgeClassLoader`)
+- [ ] Phase 6b: Mojang names at runtime; port the remaining Vyne code; delete the Minecraft stand-ins
 - [ ] Phase 7: mixin duplicate/collision detection; content-mod smoke scenarios
 - [ ] Phase 8: Guard redesign (points 1 to 5 in the design doc)
 - [ ] Phase 9: inventory diff per NeoForge / Fabric API release

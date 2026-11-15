@@ -1,7 +1,7 @@
 sourceSets {
-    hooks {
+    tools {
         java {
-            srcDirs = ['src/hooks/java']
+            srcDirs = ['src/tools/java']
         }
         compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
         runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
@@ -21,8 +21,8 @@ dependencies {
 tasks.register('hookInventory', JavaExec) {
     group = 'vyne'
     description = 'Lists every spot NeoForge and Fabric API change in vanilla Minecraft (data/hooks/).'
-    dependsOn tasks.named('hooksClasses')
-    classpath = sourceSets.hooks.runtimeClasspath
+    dependsOn tasks.named('toolsClasses')
+    classpath = sourceSets.tools.runtimeClasspath
     mainClass = 'dev.stolym.vyne.tools.hooks.HookInventory'
     def work = layout.buildDirectory.dir('hook-inventory').get().asFile
     systemProperty 'vyne.gameDir', work.absolutePath

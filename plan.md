@@ -86,16 +86,15 @@ NeoForge's own patched game behind Vyne's loader. Not the long-term design (see 
 - Output: a data file per NeoForge / Fabric API version, grouped by spot in the game, showing which spots both change.
 - **Gate (passed):** `./gradlew hookInventory` writes `data/hooks/` for NeoForge 21.1.265 and Fabric API 0.116.17: 938 vanilla classes changed by NeoForge, 211 methods changed by both (the earlier name-only measurement said 209). See `docs/dev/hook-inventory.md`.
 
-### Phase 4: Mojang names at runtime
+### Phase 4: Compile against real Minecraft with Mojang names (done 2026-11-15)
 
-- Build step: a Mojang-named Minecraft jar for compiling Vyne.
-- Port Vyne's own code to Mojang names; delete the Minecraft stand-ins and the mixins the new design no longer needs.
-- Fabric mods and Fabric API converted once from Intermediary; NeoForge's API source and NeoForge mods need no renaming.
-- **Gate:** client and server run vanilla with Mojang names; Fabric-only smoke scenario passes with converted Fabric mods.
+- `./gradlew minecraftMojangJar` builds the vanilla client with Mojang names (`build/minecraft/`); `gradle/minecraft.gradle` declares Minecraft's own libraries from Mojang's version manifest and exposes the whole compile classpath as `minecraftMojang`.
+- **Gate (passed):** code using entities, blocks, codecs, Brigadier and the dedicated server compiles against it.
+- Switching the *runtime* to Mojang names (and porting Vyne's own code, deleting the Minecraft stand-ins) moved to Phase 6b: most of the code that would need porting is the legacy NeoForge path Phase 6 deletes.
 
 ### Phase 5: Vyne's hook layer and Vyne's NeoForge API
 
-- Vyne's copy of NeoForge's API source in the repo (own source set), compiled against vanilla and Vyne's hook layer; the parts of FML that mods call are provided by Vyne's loader.
+- Vyne's copy of NeoForge's API source in the repo (own source set), compiled against `minecraftMojang` and Vyne's hook layer; the parts of FML that mods call are provided by Vyne's loader. Until Phase 6b it is converted once to the current runtime names, like the NeoForge API jar today.
 - Vyne transformers for each spot in the inventory: add NeoForge's extension interfaces to vanilla classes and insert the event calls, one transformer per spot, ready to fire Fabric API's events from the same hook.
 - Order: what the test mods need first (lifecycle, registries, extension interfaces, client setup, key mappings), then by how many mods use a spot.
 - **Gate:** the NeoForge-only smoke scenarios and the client reach `Done` / the title screen on vanilla plus Vyne's hooks, with patched mode off.
@@ -105,6 +104,12 @@ NeoForge's own patched game behind Vyne's loader. Not the long-term design (see 
 - Vyne's copy of Fabric API; for spots NeoForge also changes, its mixins replaced by Vyne hooks; its other mixins kept as they are.
 - First shared hook end to end: block breaking fires both `PlayerBlockBreakEvents` and `BlockEvent.BreakEvent`; cancelling either cancels the break.
 - **Gate:** the mixed smoke scenario passes; a Fabric test mod and a NeoForge test mod both receive and can cancel the shared events. Patched mode and the legacy NeoForge path are deleted.
+
+### Phase 6b: Mojang names at runtime
+
+- Port what is left of Vyne's code to Mojang names; delete the Minecraft stand-ins and the mixins the new design no longer needs.
+- Fabric mods and Fabric API converted once from Intermediary; Vyne's NeoForge API copy and NeoForge mods need no renaming.
+- **Gate:** client and server run vanilla with Mojang names; all smoke scenarios pass.
 
 ### Phase 7: Mod compatibility
 

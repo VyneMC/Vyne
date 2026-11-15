@@ -14,7 +14,7 @@ Versions come from `gradle.properties` (`minecraft_version`, `hook_neoforge_vers
 2. downloads Fabric API from Fabric's Maven and the Intermediary and Mojang mappings;
 3. writes the files below to `data/hooks/`.
 
-After the first run (about 40 s for the installer), it takes about 10 s. The tool's code is in `src/hooks/java` and is not part of the Vyne jar.
+After the first run (about 40 s for the installer), it takes about 10 s. The tool's code is in `src/tools/java` and is not part of the Vyne jar.
 
 ## Files
 

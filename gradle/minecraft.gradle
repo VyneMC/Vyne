@@ -1,0 +1,46 @@
+import groovy.json.JsonSlurper
+
+def minecraftDir = layout.buildDirectory.dir('minecraft').get().asFile
+def versionJson = new File(minecraftDir, "${project.minecraft_version}.json")
+if (!versionJson.isFile()) {
+    minecraftDir.mkdirs()
+    def manifest = new JsonSlurper().parse(new URL('https://piston-meta.mojang.com/mc/game/version_manifest_v2.json'))
+    def entry = manifest.versions.find { it.id == project.minecraft_version }
+    if (entry == null) throw new GradleException("Minecraft ${project.minecraft_version} is not in Mojang's version manifest")
+    versionJson.text = new URL(entry.url).text
+}
+def versionMeta = new JsonSlurper().parse(versionJson)
+
+configurations {
+    minecraftLibraries {
+        transitive = false
+    }
+}
+
+dependencies {
+    versionMeta.libraries.each { library ->
+        if (library.name.split(':').length == 3) minecraftLibraries library.name
+    }
+}
+
+def mojangJar = new File(minecraftDir, "minecraft-${project.minecraft_version}-mojang.jar")
+
+tasks.register('minecraftMojangJar', JavaExec) {
+    group = 'vyne'
+    description = 'Builds the Minecraft client jar with Mojang names, for compiling against.'
+    dependsOn tasks.named('toolsClasses')
+    classpath = sourceSets.tools.runtimeClasspath
+    mainClass = 'dev.stolym.vyne.tools.minecraft.MojangJar'
+    systemProperty 'vyne.gameDir', minecraftDir.absolutePath
+    workingDir = minecraftDir
+    args project.minecraft_version, mojangJar.absolutePath
+    outputs.file(mojangJar)
+    maxHeapSize = '2G'
+}
+
+ext.minecraftMojang = files(mojangJar) { builtBy 'minecraftMojangJar' } + configurations.minecraftLibraries
+
+tasks.register('printMinecraftClasspath') {
+    dependsOn 'minecraftMojangJar'
+    doLast { println "MCCP=" + project.ext.minecraftMojang.files.join(File.pathSeparator) }
+}
