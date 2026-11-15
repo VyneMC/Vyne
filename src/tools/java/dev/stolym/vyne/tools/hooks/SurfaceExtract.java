@@ -110,7 +110,16 @@ public final class SurfaceExtract {
                 for (MethodNode m : before.methods) oldMethods.add(m.name + m.desc);
                 Set<String> defaults = defaults(now, api, patched);
                 for (MethodNode m : now.methods) {
-                    if (oldMethods.contains(m.name + m.desc) || (m.access & Opcodes.ACC_SYNTHETIC) != 0) continue;
+                    if (oldMethods.contains(m.name + m.desc)) continue;
+                    if ((m.access & Opcodes.ACC_BRIDGE) != 0) {
+                        String target = bridgeTarget(m);
+                        if (target != null) {
+                            w.println(now.name + "\tbridge\t" + m.name + "\t" + m.desc + "\t" + m.access + "\t" + target + "\t\t");
+                            methods++;
+                        }
+                        continue;
+                    }
+                    if ((m.access & Opcodes.ACC_SYNTHETIC) != 0) continue;
                     String exceptions = m.exceptions == null ? "" : String.join(" ", m.exceptions);
                     String flags = defaults.contains(m.name + m.desc) ? "override" : "";
                     w.println(now.name + "\tmethod\t" + m.name + "\t" + m.desc + "\t" + m.access + "\t" + nz(m.signature)
@@ -160,6 +169,16 @@ public final class SurfaceExtract {
         }
     }
 
+    private static String bridgeTarget(MethodNode bridge) {
+        for (org.objectweb.asm.tree.AbstractInsnNode insn : bridge.instructions) {
+            if (insn instanceof org.objectweb.asm.tree.MethodInsnNode call
+                    && (call.getOpcode() == Opcodes.INVOKEVIRTUAL || call.getOpcode() == Opcodes.INVOKEINTERFACE)) {
+                return call.name + call.desc;
+            }
+        }
+        return null;
+    }
+
     private static boolean anonymous(String name) {
         int dollar = name.lastIndexOf('$');
         return dollar >= 0 && dollar + 1 < name.length() && Character.isDigit(name.charAt(dollar + 1));
@@ -197,7 +216,7 @@ public final class SurfaceExtract {
                 if (minecraftOnly && !(name.startsWith("net/minecraft/") || name.startsWith("com/mojang/"))) continue;
                 try (InputStream in = zip.getInputStream(entry)) {
                     ClassNode node = new ClassNode();
-                    new ClassReader(in).accept(node, ClassReader.SKIP_CODE);
+                    new ClassReader(in).accept(node, minecraftOnly ? 0 : ClassReader.SKIP_CODE);
                     out.put(node.name, node);
                 }
             }

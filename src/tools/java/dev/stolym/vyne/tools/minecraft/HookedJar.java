@@ -22,11 +22,26 @@ import java.util.zip.ZipOutputStream;
 public final class HookedJar {
     private HookedJar() {}
 
+    private static int publicAccess(int access) {
+        return (access & ~(org.objectweb.asm.Opcodes.ACC_PRIVATE | org.objectweb.asm.Opcodes.ACC_PROTECTED))
+                | org.objectweb.asm.Opcodes.ACC_PUBLIC;
+    }
+
+    private static void openUp(ClassNode node) {
+        node.access = publicAccess(node.access);
+        for (org.objectweb.asm.tree.InnerClassNode inner : node.innerClasses) inner.access = publicAccess(inner.access);
+        for (org.objectweb.asm.tree.FieldNode field : node.fields) field.access = publicAccess(field.access);
+        for (org.objectweb.asm.tree.MethodNode method : node.methods) {
+            if (!method.name.equals("<clinit>")) method.access = publicAccess(method.access);
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         Path vanilla = Path.of(args[0]);
         Path surfaceFile = Path.of(args[1]);
         Path accessFile = Path.of(args[2]);
         Path out = Path.of(args[3]);
+        boolean open = args.length > 4 && args[4].equals("--open");
         HookSurface surface;
         try (InputStream s = Files.newInputStream(surfaceFile); InputStream a = Files.newInputStream(accessFile)) {
             surface = HookSurface.load(s, a);
@@ -42,10 +57,12 @@ public final class HookedJar {
                     bytes = in.readAllBytes();
                 }
                 String name = entry.getName();
-                if (name.endsWith(".class") && surface.touches(name.substring(0, name.length() - 6))) {
+                if (name.endsWith(".class") && (open || surface.touches(name.substring(0, name.length() - 6)))) {
                     ClassNode node = new ClassNode();
                     new ClassReader(bytes).accept(node, 0);
-                    if (surface.apply(node, true)) {
+                    boolean applied = surface.apply(node, true);
+                    if (open) openUp(node);
+                    if (applied || open) {
                         ClassWriter writer = new ClassWriter(0);
                         node.accept(writer);
                         bytes = writer.toByteArray();

@@ -135,6 +135,12 @@ public final class HookSurface {
                         }
                     }
                 }
+                case "bridge" -> {
+                    if (node.methods.stream().noneMatch(m -> m.name.equals(member.name()) && m.desc.equals(member.desc()))) {
+                        node.methods.add(bridge(node, member));
+                        changed = true;
+                    }
+                }
                 case "implements" -> {
                     if (!node.interfaces.contains(member.name())) {
                         node.interfaces.add(member.name());
@@ -245,6 +251,32 @@ public final class HookSurface {
         int out = (current & ~(Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED | Opcodes.ACC_PRIVATE)) | wanted;
         if (rule.unfinal()) out &= ~Opcodes.ACC_FINAL;
         return out;
+    }
+
+    private static MethodNode bridge(ClassNode owner, Member member) {
+        String target = member.signature();
+        int paren = target.indexOf('(');
+        String name = target.substring(0, paren);
+        String desc = target.substring(paren);
+        boolean isInterface = (owner.access & Opcodes.ACC_INTERFACE) != 0;
+        MethodNode method = new MethodNode(member.access(), member.name(), member.desc(), null, null);
+        method.instructions.add(new org.objectweb.asm.tree.VarInsnNode(Opcodes.ALOAD, 0));
+        Type[] from = Type.getArgumentTypes(member.desc());
+        Type[] to = Type.getArgumentTypes(desc);
+        int slot = 1;
+        for (int i = 0; i < from.length; i++) {
+            method.instructions.add(new org.objectweb.asm.tree.VarInsnNode(from[i].getOpcode(Opcodes.ILOAD), slot));
+            if (to[i].getSort() >= Type.ARRAY && !to[i].equals(from[i])) {
+                method.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, to[i].getInternalName()));
+            }
+            slot += from[i].getSize();
+        }
+        method.instructions.add(new MethodInsnNode(isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL,
+                owner.name, name, desc, isInterface));
+        method.instructions.add(new InsnNode(Type.getReturnType(member.desc()).getOpcode(Opcodes.IRETURN)));
+        method.maxLocals = slot;
+        method.maxStack = slot + 1;
+        return method;
     }
 
     private static MethodNode stub(ClassNode owner, Member member) {

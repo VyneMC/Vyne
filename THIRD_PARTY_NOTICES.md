@@ -33,6 +33,7 @@ Shadowed from `gradle/dependencies.gradle`:
 | `src/neoforge/` | Vyne's copy of the [NeoForge](https://github.com/neoforged/NeoForge) 21.1.265 API source and resources (from NeoForge's published sources jar). NeoForge's own headers are kept in every file. Vyne changes it to run on Vyne's hook layer. | LGPL-2.1-only (`Licenses/LICENSE_NEOFORGE`) |
 | `src/neoforge/java/net/neoforged/neoforge/common/LenientUnboundedMapCodec.java` | Part of NeoForge's source, originally from Microsoft's DataFixerUpper | MIT (header kept) |
 | `src/main/resources/vyne/hooks/neoforge-21.1.265/` | `accesstransformer.cfg` is NeoForge's access-transformer list; `surface.tsv` is generated from NeoForge's patched classes (the interfaces, fields, methods and access NeoForge adds to vanilla) | LGPL-2.1-only |
+| `src/hooks/generated/` | Vyne mixins generated from NeoForge 21.1.265's patched classes (decompiled with Vineflower): the bodies of the methods and the values of the fields NeoForge adds to vanilla. Each file says which class it comes from. | LGPL-2.1-only |
 | `data/hooks/` | Generated from NeoForge's patched classes and Fabric API's mixins (lists of names and signatures) | Facts about LGPL-2.1 / Apache-2.0 code |
 | `Licenses/` | Original license texts for Fabric, Forge, NeoForge and Vyne | n/a |
 
@@ -52,6 +53,8 @@ Shadowed from `gradle/dependencies.gradle`:
 | Mojang mappings and the Minecraft client jar | Mojang's official distribution | Mojang EULA / mapping license | Downloaded into `.vyne/mappings/` for remapping. Never bundled. |
 | Intermediary mappings | maven.fabricmc.net | CC0-1.0 | Downloaded into `.vyne/mappings/`. |
 | Minecraft's `ascii.png` font sheet | The installed Minecraft jar | Mojang EULA | Read from the game jar at runtime to draw Vyne's loading screen in Minecraft's font. Never bundled. |
+
+[Vineflower](https://github.com/Vineflower/vineflower) (Apache-2.0) is used only by the `decompileHookClasses` build task and is not bundled.
 
 Launchwrapper (`net.minecraft:launchwrapper`) is **not** bundled. Vyne compiles against it only for Fabric Loader's legacy launch adapter, which Minecraft 1.21.1 does not use.
 

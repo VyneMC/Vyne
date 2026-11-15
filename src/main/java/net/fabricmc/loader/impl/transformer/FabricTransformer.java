@@ -39,7 +39,7 @@ public final class FabricTransformer {
 		boolean applyClassTweaker = transforms.contains(BuiltinTransform.CLASS_TWEAKS) && FabricLoaderImpl.INSTANCE.getClassTweaker().getTargets().contains(name.replace('.', '/'));
 
 		boolean vyneRemap = VyneRemapper.shouldRemap(name.replace('.', '/'));
-		boolean vyneWidenMcFields = name.replace('.', '/').startsWith("net/minecraft/");
+		boolean vyneWidenMcFields = name.replace('.', '/').startsWith("net/minecraft/") && !dev.stolym.vyne.core.VyneMode.hooks();
 
 		if (!transformAccess && !environmentStrip && !applyClassTweaker && !vyneRemap && !vyneWidenMcFields) {
 			return bytes;

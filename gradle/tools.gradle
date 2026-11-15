@@ -49,3 +49,68 @@ tasks.register('hookSurface', JavaExec) {
     args project.hook_neoforge_version,
             file("src/main/resources/vyne/hooks/neoforge-${project.hook_neoforge_version}/surface.tsv").absolutePath
 }
+
+configurations {
+    hookDecompiler {
+        transitive = false
+    }
+}
+
+dependencies {
+    hookDecompiler 'org.vineflower:vineflower:1.10.1'
+}
+
+tasks.register('decompileHookClasses', JavaExec) {
+    group = 'vyne'
+    description = 'Decompiles the vanilla classes NeoForge changes (from NeoForge\'s patched game) for the hook generator.'
+    dependsOn 'hookSurface'
+    classpath = configurations.hookDecompiler
+    mainClass = 'org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler'
+    def work = layout.buildDirectory.dir('hook-inventory').get().asFile
+    def input = new File(work, 'decompile-input')
+    def output = new File(work, 'decompiled')
+    outputs.dir(output)
+    doFirst {
+        delete input, output
+        input.mkdirs()
+        output.mkdirs()
+        def patched = fileTree(new File(work, ".vyne/neoforge/${project.hook_neoforge_version}/client")).matching {
+            include "neoforge-${project.hook_neoforge_version}-client.jar"
+        }.singleFile
+        def owners = file("src/main/resources/vyne/hooks/neoforge-${project.hook_neoforge_version}/surface.tsv")
+                .readLines().drop(1).collect { it.split('\t')[0] }.toSet()
+        copy {
+            from(zipTree(patched)) {
+                include { el ->
+                    if (el.directory) return true
+                    def name = el.relativePath.pathString
+                    if (!name.endsWith('.class')) return false
+                    def outer = name.substring(0, name.length() - 6)
+                    int dollar = outer.indexOf('$')
+                    owners.contains(outer) || (dollar > 0 && owners.contains(outer.substring(0, dollar)))
+                }
+            }
+            into input
+        }
+        args '-dgs=1', '-rsy=1', '-rbr=1', '-ind=    ', input.absolutePath, output.absolutePath
+    }
+}
+
+tasks.register('generateHookBodies', JavaExec) {
+    group = 'vyne'
+    description = 'Generates Vyne mixins with the bodies of the methods NeoForge adds to vanilla (src/hooks/generated).'
+    dependsOn tasks.named('toolsClasses'), 'minecraftHookedOpenJar'
+    classpath = sourceSets.tools.runtimeClasspath
+    mainClass = 'dev.stolym.vyne.tools.hooks.HookBodies'
+    def work = layout.buildDirectory.dir('hook-inventory').get().asFile
+    doFirst {
+        def errors = project.findProperty('hookErrors')
+        args = [file("src/main/resources/vyne/hooks/neoforge-${project.hook_neoforge_version}/surface.tsv").absolutePath,
+                new File(work, 'decompiled').absolutePath,
+                layout.buildDirectory.file("minecraft/minecraft-${project.minecraft_version}-hooked-open.jar").get().asFile.absolutePath,
+                file('src/hooks/generated/java').absolutePath,
+                file('src/hooks/generated/resources/vyne.hooks.generated.mixins.json').absolutePath,
+                file('src/hooks/generated/hook-exclusions.txt').absolutePath,
+                new File(work, 'hook-spans.tsv').absolutePath] + (errors ? [errors.toString()] : [])
+    }
+}

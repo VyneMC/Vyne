@@ -20,11 +20,27 @@ public final class RemapToRuntime {
         String version = args[0];
         Path in = Path.of(args[1]);
         Path out = Path.of(args[2]);
+        List<Path> inputs = new ArrayList<>(List.of(in));
+        List<Path> outputs = new ArrayList<>(List.of(out));
         List<Path> classpath = new ArrayList<>();
-        for (int i = 3; i < args.length; i++) classpath.add(Path.of(args[i]));
+        boolean hierarchy = true;
+        for (int i = 3; i < args.length; i++) {
+            if (args[i].equals("--")) {
+                hierarchy = false;
+            } else if (hierarchy) {
+                inputs.add(Path.of(args[i]));
+                outputs.add(out.resolveSibling("hierarchy-" + i + "-" + Path.of(args[i]).getFileName()));
+            } else {
+                classpath.add(Path.of(args[i]));
+            }
+        }
         Files.createDirectories(out.getParent());
-        ExactRemap.remap(List.of(in), List.of(out), classpath, ExactRemap.mappings(
-                MojmapDownloader.getIntermediaryPath(version), MojmapDownloader.getMojmapPath(version)));
+        try {
+            ExactRemap.remap(inputs, outputs, classpath, ExactRemap.mappings(
+                    MojmapDownloader.getIntermediaryPath(version), MojmapDownloader.getMojmapPath(version)));
+        } finally {
+            for (Path discard : outputs.subList(1, outputs.size())) Files.deleteIfExists(discard);
+        }
         System.out.println("Remapped to runtime names: " + out);
     }
 }

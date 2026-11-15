@@ -43,6 +43,16 @@ Progress is measurable: every surface method still throwing "Vyne hook not imple
 
 First hook: `MainHooks` starts NeoForge's server lifecycle where NeoForge's own patch does. NeoForge's mod loading then runs on vanilla Minecraft; it stops at the first method NeoForge adds that has no body yet.
 
+## Generated hooks
+
+The bodies of the methods NeoForge adds to vanilla, and the initial values of the fields it adds, are generated, then owned:
+
+1. `./gradlew decompileHookClasses` decompiles the vanilla classes NeoForge changes, from NeoForge's patched game, with Vineflower (a development-only Gradle dependency of the `tools` source set).
+2. `./gradlew generateHookBodies` writes one mixin per vanilla class into `src/hooks/generated/java` (config `vyne.hooks.generated.mixins.json`): each added method copied whole (`@Overwrite` of the surface stub, or merged when it overrides an inherited method), `@Shadow` for the members it uses, static field values in a `static {}` block, instance field values set when a constructor returns. The mixin extends the class's own superclass so inherited members resolve, and bare `this` becomes `((Target) (Object) this)`. It compiles against `minecraftHookedOpen`, the hooked jar with everything public, because mixin code is merged into the class at runtime.
+3. Members whose copied code does not compile are listed in `src/hooks/generated/hook-exclusions.txt` (run the generator with `-PhookErrors=<javac output>` until the hooks compile); methods it cannot find in the source (mostly accessors of record components NeoForge adds) are listed in `build/hook-inventory/hook-unmatched.txt`. Both lists, plus constructors NeoForge adds and changes, are the hand-written backlog in `src/hooks/java`.
+
+The generated files are committed and maintained as Vyne code; regenerate after a NeoForge update and review the diff.
+
 ## Vyne's copy of the NeoForge API
 
 `src/neoforge/` is NeoForge 21.1.265's API source and resources, unchanged so far, with NeoForge's LGPL-2.1 headers. It compiles against `minecraftHooked` plus NeoForge's libraries (`gradle/neoforge.gradle`). It ships inside the Vyne jar and is used in hooks mode; until Vyne's hooks run it completely, NeoForge-only packs use the temporary patched mode by default.

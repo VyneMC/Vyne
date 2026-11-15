@@ -1,10 +1,10 @@
 sourceSets {
     hooks {
         java {
-            srcDirs = ['src/hooks/java']
+            srcDirs = ['src/hooks/java', 'src/hooks/generated/java']
         }
         resources {
-            srcDirs = ['src/hooks/resources']
+            srcDirs = ['src/hooks/resources', 'src/hooks/generated/resources']
         }
     }
 }
@@ -21,7 +21,7 @@ dependencies {
 }
 
 afterEvaluate {
-    sourceSets.hooks.compileClasspath = project.ext.minecraftHooked + sourceSets.neoforge.output +
+    sourceSets.hooks.compileClasspath = project.ext.minecraftHookedOpen + sourceSets.neoforge.output +
             configurations.neoforgeLibraries + configurations.hooksMixin
 }
 
@@ -36,7 +36,7 @@ def hooksRuntimeJar = layout.buildDirectory.file('hooks-jar/vyne-hooks.jar').get
 tasks.register('remapHooksJar', JavaExec) {
     group = 'vyne'
     description = 'Renames Vyne\'s hook mixins (written with Mojang names) to the current runtime names.'
-    dependsOn 'hooksJar', 'minecraftMojangJar', 'neoforgeJar', tasks.named('toolsClasses')
+    dependsOn 'hooksJar', 'minecraftHookedJar', 'neoforgeJar', tasks.named('toolsClasses')
     classpath = sourceSets.tools.runtimeClasspath
     mainClass = 'dev.stolym.vyne.tools.minecraft.RemapToRuntime'
     def work = layout.buildDirectory.dir('minecraft').get().asFile
@@ -46,8 +46,10 @@ tasks.register('remapHooksJar', JavaExec) {
     doFirst {
         args = [project.minecraft_version,
                 tasks.named('hooksJar').get().archiveFile.get().asFile.absolutePath,
-                hooksRuntimeJar.absolutePath] +
-                project.ext.minecraftMojang.files.collect { it.absolutePath } +
-                [tasks.named('neoforgeJar').get().archiveFile.get().asFile.absolutePath]
+                hooksRuntimeJar.absolutePath,
+                layout.buildDirectory.file("minecraft/minecraft-${project.minecraft_version}-hooked.jar").get().asFile.absolutePath,
+                tasks.named('neoforgeJar').get().archiveFile.get().asFile.absolutePath, '--'] +
+                configurations.minecraftLibraries.files.collect { it.absolutePath } +
+                configurations.neoforgeLibraries.files.collect { it.absolutePath }
     }
 }

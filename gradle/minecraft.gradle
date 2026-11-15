@@ -67,3 +67,20 @@ tasks.register('printHookedClasspath') {
     dependsOn 'minecraftHookedJar'
     doLast { println "HKCP=" + project.ext.minecraftHooked.files.join(File.pathSeparator) }
 }
+
+def hookedOpenJar = new File(minecraftDir, "minecraft-${project.minecraft_version}-hooked-open.jar")
+
+tasks.register('minecraftHookedOpenJar', JavaExec) {
+    group = 'vyne'
+    description = 'The hooked Minecraft with every class and member public, for compiling Vyne\'s hook mixins.'
+    dependsOn 'minecraftMojangJar', tasks.named('toolsClasses')
+    classpath = sourceSets.tools.runtimeClasspath
+    mainClass = 'dev.stolym.vyne.tools.minecraft.HookedJar'
+    args mojangJar.absolutePath, new File(hookDir, 'surface.tsv').absolutePath,
+            new File(hookDir, 'accesstransformer.cfg').absolutePath, hookedOpenJar.absolutePath, '--open'
+    inputs.file(mojangJar)
+    inputs.dir(hookDir)
+    outputs.file(hookedOpenJar)
+}
+
+ext.minecraftHookedOpen = files(hookedOpenJar) { builtBy 'minecraftHookedOpenJar' } + configurations.minecraftLibraries

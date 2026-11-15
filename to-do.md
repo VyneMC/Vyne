@@ -44,7 +44,9 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
   - [x] Vyne's NeoForge copy shipped inside the Vyne jar (`META-INF/vyne/neoforge.jar`) and used instead of NeoForge's jar
   - [x] `hooks` source set: Vyne's behaviour hooks as mixins with Mojang names, renamed at build time (`remapHooksJar`), applied only in hooks mode (`vyne.hooks.mixins.json`)
   - [x] First hook: server `Main` starts NeoForge's lifecycle (`MainHooks`); NeoForge's mod loading runs on vanilla + Vyne hooks
-  - [ ] Bodies for the methods NeoForge adds (684 stubs, e.g. `BlockTags.create`, `Language.loadFromJson`); NeoForge's own mod constructs
+  - [x] Generated hooks: 318 mixins, 682 method bodies, 133 field initialisers from NeoForge's patched classes (`generateHookBodies`, Vineflower); all compile
+  - [x] In hooks mode NeoForge's lifecycle constructs every test mod (minecraft, neoforge, CraftPresence, UniLib, Mouse Tweaks) on vanilla + Vyne's hooks
+  - [~] Hand-written hooks for constructor changes and the exclusion / unmatched lists (first: `DyeColorTagHooks`; next: `CreativeModeTab.tabsBefore`)
   - [ ] Vyne mixins for the behaviour hooks the test mods need first (lifecycle, registries, extension interfaces, client setup, key mappings)
   - [ ] NeoForge-only scenarios pass with patched mode off
 - [ ] Phase 6: Vyne's copy of Fabric API on the hook layer; block-break hook end to end; mixed scenario passes; delete patched mode and the legacy NeoForge path (imitation classes in `net/neoforged` and `net/minecraftforge`, `engine/dynamic` and `vyne-bridges.json`, registry and event bridging, `vyne.accesswidener`, ~26 imitation mixins, `BridgeClassLoader`)
