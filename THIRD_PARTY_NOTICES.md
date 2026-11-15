@@ -24,12 +24,16 @@ Shadowed from `gradle/dependencies.gradle`:
 | SLF4J | 2.0.9 | MIT | Logging API |
 | Log4J (api, core, slf4j2-impl) | 2.22.0 | Apache-2.0 | Logging implementation |
 
-## Vendored or derived source in `src/main/java`
+## Vendored or derived source
 
 | Code | Origin | License |
 |---|---|---|
 | `net/fabricmc/loader/**` | Patched fork of [Fabric Loader](https://github.com/FabricMC/fabric-loader). Original headers are kept in forked files. | Apache-2.0 |
 | `net/minecraftforge/**`, `net/neoforged/**` | Vyne's own implementations of the parts of the Forge/NeoForge API surface Vyne must provide itself (loader integration, registries, events). Not copied source. Any copied source must keep its original header and be listed here. | GPL-3.0 (Vyne) |
+| `src/neoforge/` | Vyne's copy of the [NeoForge](https://github.com/neoforged/NeoForge) 21.1.265 API source and resources (from NeoForge's published sources jar). NeoForge's own headers are kept in every file. Vyne changes it to run on Vyne's hook layer. | LGPL-2.1-only (`Licenses/LICENSE_NEOFORGE`) |
+| `src/neoforge/java/net/neoforged/neoforge/common/LenientUnboundedMapCodec.java` | Part of NeoForge's source, originally from Microsoft's DataFixerUpper | MIT (header kept) |
+| `src/main/resources/vyne/hooks/neoforge-21.1.265/` | `accesstransformer.cfg` is NeoForge's access-transformer list; `surface.tsv` is generated from NeoForge's patched classes (the interfaces, fields, methods and access NeoForge adds to vanilla) | LGPL-2.1-only |
+| `data/hooks/` | Generated from NeoForge's patched classes and Fabric API's mixins (lists of names and signatures) | Facts about LGPL-2.1 / Apache-2.0 code |
 | `Licenses/` | Original license texts for Fabric, Forge, NeoForge and Vyne | n/a |
 
 ## Images

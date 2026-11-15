@@ -1,0 +1,53 @@
+sourceSets {
+    neoforge {
+        java {
+            srcDirs = ['src/neoforge/java']
+        }
+        resources {
+            srcDirs = ['src/neoforge/resources']
+        }
+    }
+}
+
+configurations {
+    neoforgeLibraries {
+        transitive = false
+    }
+}
+
+dependencies {
+    neoforgeLibraries 'net.neoforged.fancymodloader:loader:4.0.45'
+    neoforgeLibraries 'net.neoforged.fancymodloader:earlydisplay:4.0.45'
+    neoforgeLibraries 'net.neoforged.accesstransformers:at-modlauncher:10.0.1'
+    neoforgeLibraries 'net.neoforged:accesstransformers:10.0.1'
+    neoforgeLibraries 'net.neoforged:bus:8.0.5'
+    neoforgeLibraries 'net.neoforged:coremods:7.0.3'
+    neoforgeLibraries 'cpw.mods:modlauncher:11.0.5'
+    neoforgeLibraries 'cpw.mods:securejarhandler:3.0.8'
+    neoforgeLibraries 'com.electronwill.night-config:core:3.8.3'
+    neoforgeLibraries 'com.electronwill.night-config:toml:3.8.3'
+    neoforgeLibraries 'net.neoforged:JarJarSelector:0.4.1'
+    neoforgeLibraries 'net.neoforged:JarJarMetadata:0.4.1'
+    neoforgeLibraries 'net.neoforged:JarJarFileSystems:0.4.1'
+    neoforgeLibraries 'org.apache.maven:maven-artifact:3.8.5'
+    neoforgeLibraries 'net.jodah:typetools:0.6.3'
+    neoforgeLibraries 'net.fabricmc:sponge-mixin:0.16.4+mixin.0.8.7'
+    neoforgeLibraries 'org.apache.commons:commons-lang3:3.14.0'
+    neoforgeLibraries 'org.jetbrains:annotations:24.1.0'
+    neoforgeLibraries 'net.neoforged:mergetool:2.0.0:api'
+    neoforgeLibraries 'com.google.code.findbugs:jsr305:3.0.2'
+    neoforgeLibraries 'org.ow2.asm:asm:9.7.1'
+    neoforgeLibraries 'org.ow2.asm:asm-tree:9.7.1'
+    neoforgeLibraries 'org.jline:jline-reader:3.20.0'
+    neoforgeLibraries 'org.jline:jline-terminal:3.20.0'
+    neoforgeLibraries 'net.minecrell:terminalconsoleappender:1.3.0'
+}
+
+afterEvaluate {
+    sourceSets.neoforge.compileClasspath = project.ext.minecraftHooked + configurations.neoforgeLibraries
+}
+
+tasks.named('compileNeoforgeJava') {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-proc:none', '-nowarn', '-Xlint:none']
+}

@@ -40,6 +40,7 @@ tasks.withType(JavaCompile).configureEach {
 apply from: 'gradle/fml.gradle'
 apply from: 'gradle/tools.gradle'
 apply from: 'gradle/minecraft.gradle'
+apply from: 'gradle/neoforge.gradle'
 apply from: 'gradle/bytecode.gradle'
 apply from: 'gradle/shadow.gradle'
 apply from: 'gradle/smoke.gradle'

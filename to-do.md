@@ -37,7 +37,13 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
 ## Next
 
 - [x] Phase 4: `./gradlew minecraftMojangJar` (vanilla client with Mojang names) and the `minecraftMojang` compile classpath with Minecraft's libraries; a probe using entities, blocks, codecs, Brigadier and the dedicated server compiles (2026-11-15)
-- [ ] Phase 5: Vyne's copy of NeoForge's API source (own source set, LGPL notice); Vyne transformers per spot, starting with what the test mods need; NeoForge-only scenarios pass with patched mode off
+- [~] Phase 5: Vyne's hook layer and NeoForge API (design: `docs/dev/hook-layer.md`)
+  - [x] Hook surface (structure NeoForge adds to vanilla) as Vyne data: `surface.tsv` + `accesstransformer.cfg`, applied by `HookSurface`; `./gradlew minecraftHookedJar`
+  - [x] Vyne's copy of NeoForge 21.1.265's API source in `src/neoforge/` (LGPL headers kept, credited); compiles with Gradle against vanilla + the hook surface (1495 classes)
+  - [ ] Runtime transformer that applies the hook surface to the game's classes
+  - [ ] Load Vyne's NeoForge copy instead of NeoForge's jar (converted to runtime names until Phase 6b)
+  - [ ] Vyne mixins for the behaviour hooks the test mods need first (lifecycle, registries, extension interfaces, client setup, key mappings)
+  - [ ] NeoForge-only scenarios pass with patched mode off
 - [ ] Phase 6: Vyne's copy of Fabric API on the hook layer; block-break hook end to end; mixed scenario passes; delete patched mode and the legacy NeoForge path (imitation classes in `net/neoforged` and `net/minecraftforge`, `engine/dynamic` and `vyne-bridges.json`, registry and event bridging, `vyne.accesswidener`, ~26 imitation mixins, `BridgeClassLoader`)
 - [ ] Phase 6b: Mojang names at runtime; port the remaining Vyne code; delete the Minecraft stand-ins
 - [ ] Phase 7: mixin duplicate/collision detection; content-mod smoke scenarios

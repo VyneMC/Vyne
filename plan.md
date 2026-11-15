@@ -92,7 +92,7 @@ NeoForge's own patched game behind Vyne's loader. Not the long-term design (see 
 - **Gate (passed):** code using entities, blocks, codecs, Brigadier and the dedicated server compiles against it.
 - Switching the *runtime* to Mojang names (and porting Vyne's own code, deleting the Minecraft stand-ins) moved to Phase 6b: most of the code that would need porting is the legacy NeoForge path Phase 6 deletes.
 
-### Phase 5: Vyne's hook layer and Vyne's NeoForge API
+### Phase 5: Vyne's hook layer and Vyne's NeoForge API (in progress)
 
 - Vyne's copy of NeoForge's API source in the repo (own source set), compiled against `minecraftMojang` and Vyne's hook layer; the parts of FML that mods call are provided by Vyne's loader. Until Phase 6b it is converted once to the current runtime names, like the NeoForge API jar today.
 - Vyne transformers for each spot in the inventory: add NeoForge's extension interfaces to vanilla classes and insert the event calls, one transformer per spot, ready to fire Fabric API's events from the same hook.
