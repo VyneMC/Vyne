@@ -1,0 +1,22 @@
+Minecraft 1.21.1, NeoForge 21.1.265, Fabric API 0.116.17+1.21.1
+
+NeoForge
+  vanilla classes changed: 938
+  class+: 8
+  field+: 396
+  implements: 93
+  method+: 1240
+  method-: 161
+  method~: 1914
+  of the method entries, synthetic (lambdas, bridges): 518
+  methods only recompiled (same behaviour, different bytecode layout; not listed): 2466
+
+Fabric API
+  mixin classes targeting Minecraft: 230
+  Minecraft classes targeted: 186
+  (class, method) targets: 365
+
+Both
+  classes changed by both: 147
+  Fabric API method targets in classes NeoForge changes: 308
+  methods changed by both (same name and descriptor): 211

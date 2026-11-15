@@ -38,6 +38,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 apply from: 'gradle/fml.gradle'
+apply from: 'gradle/hooks.gradle'
 apply from: 'gradle/bytecode.gradle'
 apply from: 'gradle/shadow.gradle'
 apply from: 'gradle/smoke.gradle'

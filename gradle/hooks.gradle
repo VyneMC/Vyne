@@ -1,0 +1,37 @@
+sourceSets {
+    hooks {
+        java {
+            srcDirs = ['src/hooks/java']
+        }
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
+configurations {
+    hookFabricApi {
+        transitive = false
+    }
+}
+
+dependencies {
+    hookFabricApi "net.fabricmc.fabric-api:fabric-api:${project.hook_fabric_api_version}"
+}
+
+tasks.register('hookInventory', JavaExec) {
+    group = 'vyne'
+    description = 'Lists every spot NeoForge and Fabric API change in vanilla Minecraft (data/hooks/).'
+    dependsOn tasks.named('hooksClasses')
+    classpath = sourceSets.hooks.runtimeClasspath
+    mainClass = 'dev.stolym.vyne.tools.hooks.HookInventory'
+    def work = layout.buildDirectory.dir('hook-inventory').get().asFile
+    systemProperty 'vyne.gameDir', work.absolutePath
+    workingDir = work
+    doFirst { work.mkdirs() }
+    args project.minecraft_version,
+            project.hook_neoforge_version,
+            "${-> configurations.hookFabricApi.singleFile.absolutePath}",
+            project.hook_fabric_api_version,
+            file('data/hooks').absolutePath
+    maxHeapSize = '3G'
+}
