@@ -35,3 +35,17 @@ tasks.register('hookInventory', JavaExec) {
             file('data/hooks').absolutePath
     maxHeapSize = '3G'
 }
+
+tasks.register('hookSurface', JavaExec) {
+    group = 'vyne'
+    description = 'Regenerates the NeoForge hook surface (interfaces, fields, methods NeoForge adds to vanilla).'
+    dependsOn tasks.named('toolsClasses')
+    classpath = sourceSets.tools.runtimeClasspath
+    mainClass = 'dev.stolym.vyne.tools.hooks.SurfaceExtract'
+    def work = layout.buildDirectory.dir('hook-inventory').get().asFile
+    systemProperty 'vyne.gameDir', work.absolutePath
+    workingDir = work
+    doFirst { work.mkdirs() }
+    args project.hook_neoforge_version,
+            file("src/main/resources/vyne/hooks/neoforge-${project.hook_neoforge_version}/surface.tsv").absolutePath
+}

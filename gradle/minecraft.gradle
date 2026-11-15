@@ -44,3 +44,26 @@ tasks.register('printMinecraftClasspath') {
     dependsOn 'minecraftMojangJar'
     doLast { println "MCCP=" + project.ext.minecraftMojang.files.join(File.pathSeparator) }
 }
+
+def hookDir = file("src/main/resources/vyne/hooks/neoforge-${project.hook_neoforge_version}")
+def hookedJar = new File(minecraftDir, "minecraft-${project.minecraft_version}-hooked.jar")
+
+tasks.register('minecraftHookedJar', JavaExec) {
+    group = 'vyne'
+    description = 'Minecraft with Mojang names plus Vyne\'s hook surface and access rules, for compiling Vyne\'s NeoForge API.'
+    dependsOn 'minecraftMojangJar', tasks.named('toolsClasses')
+    classpath = sourceSets.tools.runtimeClasspath
+    mainClass = 'dev.stolym.vyne.tools.minecraft.HookedJar'
+    args mojangJar.absolutePath, new File(hookDir, 'surface.tsv').absolutePath,
+            new File(hookDir, 'accesstransformer.cfg').absolutePath, hookedJar.absolutePath
+    inputs.file(mojangJar)
+    inputs.dir(hookDir)
+    outputs.file(hookedJar)
+}
+
+ext.minecraftHooked = files(hookedJar) { builtBy 'minecraftHookedJar' } + configurations.minecraftLibraries
+
+tasks.register('printHookedClasspath') {
+    dependsOn 'minecraftHookedJar'
+    doLast { println "HKCP=" + project.ext.minecraftHooked.files.join(File.pathSeparator) }
+}
