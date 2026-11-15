@@ -13,41 +13,37 @@ Working checklist for [plan.md](plan.md). Updated as work happens. `[x]` done, `
 - [x] All 5 server smoke scenarios reach `Done`, 0 fallbacks; client reaches the title screen with the test mods; `VyneModLifecycle` now runs in `KnotClassLoader`
 - [ ] Move the crossing analysis from the scratch tool into the repo as a check (with the Phase 7 tooling)
 
-## Now: Phase 2, run on NeoForge's patched game
+## Done: Phase 2, temporary patched mode (2026-11-15)
 
-Server: **done for the test mods** (2026-11-15). A dedicated server running NeoForge 21.1.265's own patched game reaches `Done` with Mouse Tweaks, CraftPresence and UniLib, 0 ERROR lines, NeoForge's own lifecycle constructing every mod through Vyne's core. Still behind dev properties.
+NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's loader, server and client, by default, with no developer flags. Temporary: it is replaced by Vyne's own hook layer (plan, Phase 5) and then deleted.
 
-- [x] Produce NeoForge 21.1.265's patched server with NeoForge's installer tools
-- [x] `GameOverlay`: serve patched classes ahead of vanilla; Fabric's entrypoint patcher reads the patched `Main` from it
-- [x] Patched mode set up before Fabric patches the entrypoint (`ConvertedModMount.preparePatchedGame`)
-- [x] One exact rename run (tiny-remapper, full hierarchy, mixin extension) for the patched game, NeoForge's API jar and the NeoForge mod jars together (`PatchedGameBuilder` + `ExactRemap`), cached as one unit
-- [x] Dedicated server keeps only the client classes server code uses (3 for NeoForge 21.1.265)
-- [x] Real FML jar, real event bus jar and FML's libraries (SecureJarHandler, JLine, terminal appender) mounted ahead of Vyne's game-side jar
-- [x] Patched mode switches off Vyne's compatibility lifecycle and its NeoForge-imitating mixins (only Vyne's own feature mixins apply)
-- [x] Gradle source set `fml` compiled against real FML 4.0.45 and bus 8.0.5
-- [x] Routing table `vyne/routing/neoforge-21.1.txt` (7 classes) applied to the patched game, NeoForge's API jar, the FML jar and the mods
-- [x] Core FML layer in `dev.stolym.vyne.fml`: `VyneModList`, `VyneLoadingModList`, `VyneFMLLoader`, `VyneModLoader`, `VyneModInfo`, `VyneModFileInfo`, `VyneModFile`, `VyneSecureJar`, `VyneModContainer` (real event bus), `ModScan`, `VyneMods`
-- [x] NeoForge itself (`neoforge`) and Minecraft are mods with containers; NeoForge's own data pack and assets kept
-- [x] `@EventBusSubscriber` methods registered per method on the right bus, as real FML does
-- [x] FML paths and `fml.toml` set up by the core
-- [x] Fixes found on the way that also help the normal path: lambda method names now renamed with the interface they implement; night-config upgraded to 3.8.3; real Maven Artifact library bundled instead of two hand-written stand-ins; smoke servers use a free port
-- [ ] Client build in patched mode (the `send(Packet)` naming conflict means the client needs either Mojang names at runtime or a targeted fix)
-- [ ] Once patched mode runs the client and is the default: delete the legacy NeoForge path (imitation classes in `net/neoforged` and `net/minecraftforge`, `engine/dynamic` and `vyne-bridges.json`, registry and event bridging, `vyne.accesswidener`, the NeoForge mixins). Dead classes already removed on 2026-11-15 (35 files).
-- [ ] Replace the dev properties (`vyne.neoforge.patchedGame`, `patchedClasspath`, `fmlJar`, `busJar`, `libraries`) with a real source: installer run on first start, later prebuilt packages
-- [ ] Register NeoForge's own mixin config (`neoforge.mixins.json`)
-- [ ] Patched-mode smoke scenario in Gradle (today: scratch script `run-patched.sh`)
-- [ ] Content mods on patched mode (Comforts, Farmer's Delight, Waystones, Create)
-- [ ] Move the analysis tools (crossing check, link check, FML surface) from scratch scripts into the repo
+- [x] `NeoForgeInstall`: Vyne downloads NeoForge's installer, runs it on first start (server ~65 s, client ~34 s), keeps the 8 jars it needs under `.vyne/neoforge/<version>/<side>/` (20 MB) and deletes the rest
+- [x] One exact rename pass for the patched game, NeoForge's API jar and the NeoForge mods (`PatchedGameBuilder`, `ExactRemap`), cached; `SharedMethodSplit` handles NeoForge methods that Minecraft names two ways (`ICommonPacketListener.send`)
+- [x] FML routing points answered by `dev.stolym.vyne.fml` (8 classes, incl. `VyneImmediateWindowHandler` for the client window hand-off)
+- [x] NeoForge's lifecycle constructs the mods; NeoForge's data pack and assets kept; `@EventBusSubscriber` per method
+- [x] Default for packs with NeoForge mods and no Fabric mods; packs with both use the compatibility path; `-Dvyne.patchedGame=false` forces the compatibility path
+- [x] All five smoke scenarios pass (`neoforge-simple`, `neoforge-with-lib` on patched mode; `mixed`, `fabric-only`, `mixin-fixture` as before); client reaches NeoForge's title screen with the three test mods
+- [ ] Small gaps while it lives: Vyne branding instead of NeoForge's in the title screen corner; early-screen mod tiles advance as mods are constructed
 
-## Later
+## Done: Phase 3, hook inventory (2026-11-15)
 
-- [ ] Phase 3: Mojang-named compile jar; port Vyne's code to Mojang names; delete stand-ins and unneeded mixins; switch runtime names
-- [ ] Phase 4: bundle Fabric API; block-break hook end to end; Fabric API events fired from NeoForge hooks
-- [ ] Phase 5: mixin duplicate/collision detection; content-mod smoke scenarios
-- [ ] Phase 6: Guard redesign (points 1 to 5 in the design doc)
-- [ ] Phase 7: routing table, version adapters, signature-diff CI job, analysis tool into the repo
-- [ ] Phase 8: prebuilt package pipeline and download/verify in Vyne
-- [ ] Phase 9: benchmark table, CI, release workflow, license check, publish
+- [x] `./gradlew hookInventory` (source in `src/hooks/java`, not shipped), docs in `docs/dev/hook-inventory.md`
+- [x] Per vanilla class and method: what NeoForge changes (`method~`, `method+`, `method-`, `field+`, `implements`, `class+`) with the NeoForge references added and the vanilla references removed
+- [x] Recompilation noise filtered (compare behaviour, not bytecode layout: 2466 methods only recompiled); renumbered lambdas paired
+- [x] Every Fabric API injection into Minecraft with injector kind, `@At` point, module and mixin
+- [x] Output in `data/hooks/` for NeoForge 21.1.265 and Fabric API 0.116.17: NeoForge changes 938 classes (1914 methods changed, 1240 added); 211 methods changed by both (earlier name-only estimate: 209)
+- [ ] Pair renumbered anonymous classes (`Util$7` / `Util$8`); today they show up as removed in one class and added in another
+
+## Next
+
+- [ ] Phase 4: Mojang-named compile jar; port Vyne's code to Mojang names; delete the Minecraft stand-ins
+- [ ] Phase 5: Vyne's copy of NeoForge's API source (own source set, LGPL notice); Vyne transformers per spot, starting with what the test mods need; NeoForge-only scenarios pass with patched mode off
+- [ ] Phase 6: Vyne's copy of Fabric API on the hook layer; block-break hook end to end; mixed scenario passes; delete patched mode and the legacy NeoForge path (imitation classes in `net/neoforged` and `net/minecraftforge`, `engine/dynamic` and `vyne-bridges.json`, registry and event bridging, `vyne.accesswidener`, ~26 imitation mixins, `BridgeClassLoader`)
+- [ ] Phase 7: mixin duplicate/collision detection; content-mod smoke scenarios
+- [ ] Phase 8: Guard redesign (points 1 to 5 in the design doc)
+- [ ] Phase 9: inventory diff per NeoForge / Fabric API release
+- [ ] Phase 10: benchmark table, CI, release workflow, notices for the NeoForge and Fabric API source copies
+- [ ] Move the crossing check and link check from scratch scripts into the repo
 
 ## Chores (after Vyne works)
 

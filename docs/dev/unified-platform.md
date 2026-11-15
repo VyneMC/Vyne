@@ -2,6 +2,8 @@
 
 Status: **brainstorm** (2026-11-14). This describes where Vyne is heading, not what exists today. It extends [kernel-architecture.md](kernel-architecture.md) (translate once, run native) and changes the goal of [heavy-mod-roadmap.md](heavy-mod-roadmap.md) from "run NeoForge mods on Fabric" to "run Fabric and NeoForge mods on Vyne".
 
+**Direction, 2026-11-15.** Vyne patches vanilla itself. The hook layer is Vyne's own transformers on vanilla Minecraft, produced from a generated inventory of every spot NeoForge's patches and Fabric API's mixins change, then owned and maintained as Vyne code. The NeoForge API inside Vyne is Vyne's copy of NeoForge's source (LGPL-2.1, credited), rewired onto Vyne's hooks; Fabric API the same way. NeoForge's patched game, its installer and its FML jar are **not** the base: sections 9.2 to 9.4 describe a temporary patched mode that runs NeoForge-only packs until Vyne's hook layer covers NeoForge, and serves as the reference to test Vyne's hooks against. Where older sections say the hook layer is "built from NeoForge's own patches", read "built from an inventory of what NeoForge's patches change". Phases are in [plan.md](../../plan.md).
+
 ---
 
 ## 1. Goal
@@ -220,6 +222,14 @@ A dedicated server running NeoForge 21.1.265's own patched game reaches `Done` w
 - **Client classes on the server.** NeoForge's server output carries 384 client classes; 3 are used by server code (LAN pinger) and kept, the rest are left out.
 
 Still open: the client in patched mode, the source of the patched game and FML jars (dev properties today), NeoForge's own mixin config, content mods.
+
+
+### 9.4 Patched client boots (2026-11-15)
+
+The client runs NeoForge 21.1.265's patched game (from `neoforge-21.1.265-client.jar`) and reaches NeoForge's title screen with Mouse Tweaks, CraftPresence and UniLib; NeoForge's own lifecycle constructs all five mods (Minecraft, NeoForge and the three test mods).
+
+- **Naming conflict solved without Mojang names.** `SharedMethodSplit` runs before the exact rename. It looks for methods on NeoForge types whose Minecraft implementations get more than one Intermediary name (for 21.1.265 only `ICommonPacketListener.send(Packet)`: `method_52787` on the client listener, `method_14364` on the server one). For each, the NeoForge declaration and its callers get a temporary name, each Minecraft class that implements it gets a bridge to its own method, and after the rename the original name is restored. The check takes about 2 s; the whole client build about 19 s on first launch, then cached.
+- **Early window.** NeoForge's patched `Window` creates its window through FML's `ImmediateWindowHandler`. That class is now routed to `VyneImmediateWindowHandler`, which hands over Vyne's early window, sends FML's progress messages to Vyne's loading screen and asks NeoForge's own `NoVizFallback` for the loading overlay. The `WindowEarlyHandOffMixin` is no longer applied in patched mode.
 
 ## 10. Decisions
 
