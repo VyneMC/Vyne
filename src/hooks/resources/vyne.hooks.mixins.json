@@ -10,6 +10,9 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "item.DyeColorTagHooks"
+    "item.CreativeModeTabBuilderHooks",
+    "item.CreativeModeTabHooks",
+    "item.DyeColorTagHooks",
+    "registry.RegistryDataLoaderHooks"
   ]
 }

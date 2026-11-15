@@ -41,7 +41,9 @@ Progress is measurable: every surface method still throwing "Vyne hook not imple
 3. The hooked classes, Vyne's NeoForge copy (`META-INF/vyne/neoforge.jar` inside the Vyne jar) and the NeoForge mods go through the same exact rename as patched mode and are served the same way, until runtime names become Mojang names (Phase 6b).
 4. Behaviour hooks are mixins in `src/hooks/java` written with Mojang names, compiled against the hooked jar, renamed to runtime names at build time (`./gradlew remapHooksJar`) and applied only in hooks mode (`vyne.hooks.mixins.json`, `HooksMixinPlugin`).
 
-First hook: `MainHooks` starts NeoForge's server lifecycle where NeoForge's own patch does. NeoForge's mod loading then runs on vanilla Minecraft; it stops at the first method NeoForge adds that has no body yet.
+First hook: `MainHooks` starts NeoForge's server lifecycle where NeoForge's own patch does.
+
+**2026-11-15:** the NeoForge-only test server (Mouse Tweaks, CraftPresence, UniLib) reaches `Done` with 0 ERROR lines in hooks mode: vanilla Minecraft, Vyne's hook surface, 318 generated mixins and five hand-written hooks, Vyne's NeoForge copy. Most of NeoForge's behaviour changes inside vanilla methods (events) are not written yet, so gameplay events mostly do not fire; that is the next body of work.
 
 ## Generated hooks
 

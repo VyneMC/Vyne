@@ -3,6 +3,7 @@ def defaultSkipPrefixes = [
         'dev.stolym.vyne.game.',
         'dev.stolym.vyne.fml.',
         'dev.stolym.vyne.hooks.mixin.',
+        'dev.stolym.vyne.hooks.bridge.',
         'dev.stolym.vyne.compat.',
         'dev.stolym.vyne.fluid.',
         'net.minecraftforge.',
