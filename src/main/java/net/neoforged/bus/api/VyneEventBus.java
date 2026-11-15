@@ -1099,7 +1099,12 @@ public final class VyneEventBus implements net.neoforged.bus.api.IEventBus, net.
                         Object event = (finalTwoArg != null && liveReg != null)
                             ? finalTwoArg.newInstance(dispatchKey, liveReg)
                             : finalOneArg.newInstance(dispatchKey);
-                        post(event);
+                        dev.stolym.vyne.registry.RegistryUnlock.Token unlock = dev.stolym.vyne.registry.RegistryUnlock.open(liveReg);
+                        try {
+                            post(event);
+                        } finally {
+                            dev.stolym.vyne.registry.RegistryUnlock.close(unlock);
+                        }
                     } catch (Throwable t) {
                         if (t instanceof dev.stolym.vyne.containment.VyneFailureTriage.VyneCleanShutdownError) throw t;
                         VyneLogger.error("[Vyne-Bus] Critical registration failure for " + loc + " in mod " + modId, t);
@@ -1120,7 +1125,12 @@ public final class VyneEventBus implements net.neoforged.bus.api.IEventBus, net.
                         Object event2 = (finalTwoArg != null && liveReg != null)
                             ? finalTwoArg.newInstance(regKeyForPass, liveReg)
                             : finalOneArg.newInstance(regKeyForPass);
-                        post(event2);
+                        dev.stolym.vyne.registry.RegistryUnlock.Token unlock2 = dev.stolym.vyne.registry.RegistryUnlock.open(liveReg);
+                        try {
+                            post(event2);
+                        } finally {
+                            dev.stolym.vyne.registry.RegistryUnlock.close(unlock2);
+                        }
                         VyneLogger.info("[Vyne-Bus] Second RegisterEvent for " + secondPath
                             + " (after other registries; DeferredRegister suppliers may depend on later passes).");
                     } catch (Throwable t) {

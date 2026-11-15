@@ -498,8 +498,8 @@ public final class VyneRegistryInjector {
                 VyneLogger.debug("[Vyne-Recovery] Setup failed for " + rl + ": " + t);
             }
 
-            boolean registered = false;
-            for (Method m : registry.getClass().getMethods()) {
+            boolean registered = registerWithInfo(registry, rl, value, cl);
+            for (Method m : registered ? new Method[0] : registry.getClass().getMethods()) {
                 if (m.getName().equals("register") || m.getName().contains("method_10230")) {
                      if (m.getParameterCount() == 4) {
                          int rawId = 0; 
@@ -556,10 +556,12 @@ public final class VyneRegistryInjector {
                 }
             }
 
-            if (registered) {
-                forceBindIntrusiveHolder(registry, value, cl);
-                net.minecraftforge.vyne.VyneShims.applyPendingSettings(value);
+            if (!registered) {
+                throw new IllegalStateException("no register method on " + registry.getClass().getName()
+                        + " accepts this value");
             }
+            forceBindIntrusiveHolder(registry, value, cl);
+            net.minecraftforge.vyne.VyneShims.applyPendingSettings(value);
             return;
         } finally {
             try {
@@ -567,6 +569,47 @@ public final class VyneRegistryInjector {
                     frozenField.set(registry, true);
                 }
             } catch (Throwable t) {}
+        }
+    }
+
+    private static boolean registerWithInfo(Object registry, Object rl, Object value, ClassLoader cl) throws Throwable {
+        Class<?> infoClass;
+        try {
+            infoClass = Class.forName("net.minecraft.class_9248", true, cl);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+        Object builtIn = null;
+        for (Field f : infoClass.getDeclaredFields()) {
+            if (Modifier.isStatic(f.getModifiers()) && f.getType() == infoClass) {
+                f.setAccessible(true);
+                builtIn = f.get(null);
+                break;
+            }
+        }
+        if (builtIn == null) return false;
+        for (Method m : registry.getClass().getMethods()) {
+            Class<?>[] params = m.getParameterTypes();
+            if (params.length != 3 || params[2] != infoClass || Modifier.isStatic(m.getModifiers())) continue;
+            if (!params[0].getName().equals("net.minecraft.class_5321")) continue;
+            Class<?> locationClass = Class.forName("net.minecraft.class_2960", true, cl);
+            Object location = locationClass.getMethod("method_60654", String.class).invoke(null, rl.toString());
+            if (isRegistered(registry, value)) return true;
+            Object registryKey = registry.getClass().getMethod("method_30517").invoke(registry);
+            Object key = params[0].getMethod("method_29179", params[0], locationClass).invoke(null, registryKey, location);
+            m.setAccessible(true);
+            m.invoke(registry, key, value, builtIn);
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isRegistered(Object registry, Object value) {
+        try {
+            Method m = registry.getClass().getMethod("method_29113", Object.class);
+            return ((java.util.Optional<?>) m.invoke(registry, value)).isPresent();
+        } catch (ReflectiveOperationException | ClassCastException e) {
+            return false;
         }
     }
 
@@ -870,21 +913,15 @@ public final class VyneRegistryInjector {
         try {
             Object registry = resolveRegistry(knot, myPath);
             if (registry == null) return false;
-            Object rl = toResourceLocation(knot, idStr);
-            if (rl == null) return false;
-            for (Method m : registry.getClass().getMethods()) {
-                String mn = m.getName();
-                if (mn.equals("containsKey") || mn.equals("method_10250")) {
-                    Object result = m.invoke(registry, convertResourceLocation(rl, m.getParameterTypes()[0]));
-                    return Boolean.TRUE.equals(result);
-                }
-                if (mn.equals("get") || mn.equals("method_10223")) {
-                    Object result = m.invoke(registry, convertResourceLocation(rl, m.getParameterTypes()[0]));
-                    return result != null && !dev.stolym.vyne.registry.RegistryMirrorUtil.isVanillaAirBlock(result, knot);
-                }
-            }
-        } catch (Throwable t) {}
-        return false;
+            Class<?> locationClass = Class.forName("net.minecraft.class_2960", true, knot);
+            Object location = locationClass.getMethod("method_60654", String.class).invoke(null, idStr);
+            Object value = registry.getClass().getMethod("method_10223", locationClass).invoke(registry, location);
+            if (value == null) return false;
+            Object key = registry.getClass().getMethod("method_10221", Object.class).invoke(registry, value);
+            return location.equals(key);
+        } catch (Throwable t) {
+            return false;
+        }
     }
 
     private static final Set<Object> TRACKED_FOREIGN_REGISTERS;

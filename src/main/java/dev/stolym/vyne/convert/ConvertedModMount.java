@@ -44,17 +44,20 @@ public final class ConvertedModMount {
         }
         try {
             Path base = Path.of(System.getProperty("vyne.gameDir", ".")).toAbsolutePath().normalize();
-            NeoForgeInstall neoForge = NeoForgeInstall.ensure(version, dedicatedServer, base);
             Path cacheRoot = base.resolve(".vyne").resolve("cache");
-            Path game = neoForge.patchedGame();
-            Path vanilla = neoForge.vanillaGame();
+            NeoForgeInstall neoForge;
             if (hooks) {
-                vanilla = VanillaGame.mojang(VyneLauncher.TARGET_MC, dedicatedServer, cacheRoot);
-                game = HookedGame.build(vanilla, HookedGame.surface(), cacheRoot.resolve("hooked")
-                        .resolve(Integer.toHexString(HookedGame.fingerprint()) + "-" + (dedicatedServer ? "server" : "client") + ".jar"));
+                Path vanilla = VanillaGame.mojang(VyneLauncher.TARGET_MC, dedicatedServer, cacheRoot);
+                Path game = HookPatches.apply(vanilla, dedicatedServer, cacheRoot);
+                NeoForgeLibraries libraries = NeoForgeLibraries.ensure(dedicatedServer, base);
+                neoForge = new NeoForgeInstall(version, game, vanilla, libraries.fml(), libraries.bus(), libraries.libraries());
                 VyneLauncher.useNeoForgeApiJar(HookedGame.vyneNeoForge(cacheRoot));
                 VyneLogger.info("[Hooks] Running vanilla Minecraft with Vyne's hooks and Vyne's NeoForge API");
+            } else {
+                neoForge = NeoForgeInstall.ensure(version, dedicatedServer, base);
             }
+            Path game = neoForge.patchedGame();
+            Path vanilla = neoForge.vanillaGame();
             List<Path> classpath = new ArrayList<>();
             classpath.add(vanilla);
             Path neoApi = VyneLauncher.getNeoForgeApiJar();

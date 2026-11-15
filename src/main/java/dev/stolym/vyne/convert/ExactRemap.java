@@ -54,6 +54,7 @@ public final class ExactRemap {
                 .withMappings(TinyUtils.createMappingProvider(mappings, "named", "intermediary"))
                 .extension(new MixinExtension())
                 .rebuildSourceFilenames(true)
+                .fixPackageAccess(true)
                 .build();
         List<Path> temporary = new ArrayList<>();
         List<Path> sources = SharedMethodSplit.prepare(inputs, classpath, mappings, outputs.get(0).getParent());

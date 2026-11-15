@@ -153,16 +153,6 @@ public final class VyneRemapper extends ClassRemapper {
                     return;
                 }
 
-                if (isGetConnectedDirectionCall(opcode, name, descriptor)) {
-                    super.visitMethodInsn(
-                        opcode,
-                        "net/minecraft/world/level/block/FaceAttachedHorizontalDirectionalBlock",
-                        "getConnectedDirection",
-                        descriptor,
-                        isInterface);
-                    return;
-                }
-
                 if (opcode == org.objectweb.asm.Opcodes.INVOKESTATIC
                         && "create".equals(name)
                         && descriptor != null
@@ -342,16 +332,6 @@ public final class VyneRemapper extends ClassRemapper {
             return false;
         }
         return true;
-    }
-
-    private static boolean isGetConnectedDirectionCall(int opcode, String name, String descriptor) {
-        if (opcode != Opcodes.INVOKESTATIC || descriptor == null) {
-            return false;
-        }
-        if (!"getConnectedDirection".equals(name) && !"connectedDirection".equals(name)) {
-            return false;
-        }
-        return descriptor.equals("(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/core/Direction;");
     }
 
     public static boolean shouldRemap(String className) {

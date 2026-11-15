@@ -5,9 +5,6 @@
 
 package dev.stolym.vyne.mixin;
 
-import dev.stolym.vyne.core.DetectedMod;
-import dev.stolym.vyne.core.VyneLauncher;
-import dev.stolym.vyne.util.VyneLogger;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -18,21 +15,6 @@ import java.util.Set;
 public class VCLMixinConfigPlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
-        VyneLogger.info("[VCLMixinConfigPlugin] Registering deferred Mixin configurations for (Neo)Forge mods...");
-        ClassLoader cl = VCLMixinConfigPlugin.class.getClassLoader();
-
-        List<DetectedMod> pending = VyneLauncher.getPendingVCLMods();
-        if (pending != null) {
-            for (DetectedMod mod : pending) {
-                List<String> mixins = mod.getMixins();
-                if (mixins != null && !mixins.isEmpty()) {
-                    VyneLogger.detail("[VCLMixinConfigPlugin] Registering " + mixins.size() + " mixin configs for " + mod.getModId());
-                    for (String config : mixins) {
-                        VyneMixinIntegration.registerMixinConfig(config, cl);
-                    }
-                }
-            }
-        }
     }
 
     @Override

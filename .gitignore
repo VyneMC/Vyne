@@ -49,6 +49,5 @@ vyne-api/
 jar_content.txt
 recovery_errors.txt
 
-# Generated hook sources contain decompiled Minecraft code: local build output only, never committed
-src/hooks/generated/java/
-src/hooks/generated/resources/
+# Never commit decompiled or generated Minecraft code
+src/hooks/generated/

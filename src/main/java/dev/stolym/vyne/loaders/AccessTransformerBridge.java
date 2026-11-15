@@ -47,18 +47,21 @@ public final class AccessTransformerBridge {
 
     public static String buildForInstalledMods(Collection<Path> gameJars) {
         if (!MappingRegistry.isReady() || MappingRegistry.get().classMap().isEmpty()) return null;
-        List<Path> sources = new ArrayList<>();
-        Path neoApi = VyneLauncher.getNeoForgeApiJar();
-        if (neoApi != null && RealNeoForgeApiMount.isEnabled()) sources.add(neoApi);
+        List<Path> modJars = new ArrayList<>();
         List<DetectedMod> detected = VyneLauncher.getDetectedMods();
         if (detected != null) {
             for (DetectedMod mod : detected) {
                 if (mod.getLoaderType() == DetectedMod.LoaderType.NEOFORGE
                         || mod.getLoaderType() == DetectedMod.LoaderType.FORGE) {
-                    sources.add(mod.getJarPath());
+                    modJars.add(mod.getJarPath());
                 }
             }
         }
+        if (modJars.isEmpty()) return null;
+        List<Path> sources = new ArrayList<>();
+        Path neoApi = VyneLauncher.getNeoForgeApiJar();
+        if (neoApi != null && RealNeoForgeApiMount.isEnabled()) sources.add(neoApi);
+        sources.addAll(modJars);
         List<String> lines = new ArrayList<>();
         for (Path jar : sources) {
             if (jar == null || !Files.isRegularFile(jar)) continue;

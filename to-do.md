@@ -37,7 +37,7 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
 ## Next
 
 - [x] Phase 4: `./gradlew minecraftMojangJar` (vanilla client with Mojang names) and the `minecraftMojang` compile classpath with Minecraft's libraries; a probe using entities, blocks, codecs, Brigadier and the dedicated server compiles (2026-11-15)
-- [~] Phase 5: Vyne's hook layer and NeoForge API (design: `docs/dev/hook-layer.md`)
+- [~] Phase 5: Vyne's patch layer and NeoForge API (design: `docs/dev/hook-layer.md`)
   - [x] Hook surface (structure NeoForge adds to vanilla) as Vyne data: `surface.tsv` + `accesstransformer.cfg`, applied by `HookSurface`; `./gradlew minecraftHookedJar`
   - [x] Vyne's copy of NeoForge 21.1.265's API source in `src/neoforge/` (LGPL headers kept, credited); compiles with Gradle against vanilla + the hook surface (1495 classes)
   - [x] Hooks mode (`-Dvyne.hooks=true`, NeoForge-only packs): vanilla with Mojang names (`VanillaGame`, client or server) + the hook surface (`HookedGame`, 591 server classes) renamed in the same exact pass as Vyne's NeoForge copy and the mods, served like patched mode
@@ -47,13 +47,14 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
   - [x] Generated hooks: 318 mixins, 682 method bodies, 133 field initialisers from NeoForge's patched classes (`generateHookBodies`, Vineflower); all compile
   - [x] In hooks mode NeoForge's lifecycle constructs every test mod (minecraft, neoforge, CraftPresence, UniLib, Mouse Tweaks) on vanilla + Vyne's hooks
   - [x] Hooks mode server milestone (2026-11-15): NeoForge-only test server reaches `Done` with 0 ERROR lines on vanilla Minecraft + Vyne's hooks + Vyne's NeoForge copy; hand-written hooks so far: `MainHooks`, `DyeColorTagHooks`, `CreativeModeTabHooks` (+ `BuildCreativeModeTabContentsEvent`), `CreativeModeTabBuilderHooks`, `RegistryDataLoaderHooks`
-  - [ ] Behaviour hooks for the 1914 changed vanilla methods, ordered by what mods use (events: block break/place, entity join/tick, player interact, server lifecycle, registries, networking, data-pack conditions)
-  - [ ] Constructors NeoForge adds (98) and changes; record components NeoForge adds (`RegistryData.registryBuilderConsumer`, ...); custom creative tab factories
-  - [ ] Hooks mode on the client; then make hooks mode the default for NeoForge-only packs and retire patched mode
+  - [x] Binary patch layer (2026-11-15): `./gradlew hookPatches` diffs vanilla against NeoForge's patched classes (client + server), shipped as `META-INF/vyne/patches/`; `HookPatches` applies them on first start (1613 server classes); `NeoForgeLibraries` downloads the 6 libraries NeoForge needs; replaces the generated and hand-written hook mixins
+  - [x] Hooks mode with the binary patches: `neoforge-simple` and `neoforge-with-lib` reach `Done` with 0 ERROR lines, no NeoForge installer (`./gradlew smokeServer_<scenario> -Psmoke.hooks`)
+  - [x] Measured: a mixed pack on the binary patches fails at the first Fabric API mixin on a NeoForge-changed method (`fabric-entity-events-v1` `LivingEntityMixin.onIsSleepingInBed`, target `LivingEntity.method_18405`)
+  - [x] Hooks mode on the client (2026-11-15): Prism instance with Mouse Tweaks, CraftPresence and UniLib (NeoForge) reaches the title screen, patches applied to 1613 client classes, no NeoForge installer
+  - [ ] Hooks mode as the default for NeoForge-only packs; delete patched mode (`NeoForgeInstall` at runtime, `PatchedGameBuilder`)
   - [ ] Chore: NeoForge logs its version as 0.0.0 in hooks mode
-  - [ ] Vyne mixins for the behaviour hooks the test mods need first (lifecycle, registries, extension interfaces, client setup, key mappings)
-  - [ ] NeoForge-only scenarios pass with patched mode off
-- [ ] Phase 6: Vyne's copy of Fabric API on the hook layer; block-break hook end to end; mixed scenario passes; delete patched mode and the legacy NeoForge path (imitation classes in `net/neoforged` and `net/minecraftforge`, `engine/dynamic` and `vyne-bridges.json`, registry and event bridging, `vyne.accesswidener`, ~26 imitation mixins, `BridgeClassLoader`)
+  - [ ] `docs/dev/hook-layer.md`: rewrite for the binary patch layer
+- [ ] Phase 6: Vyne's copy of Fabric API on the patch layer; at the 211 shared methods, Fabric API's event calls added into the patched methods when Vyne builds its patches (instead of its mixins); block-break hook end to end; mixed scenario passes; delete patched mode and the legacy NeoForge path (imitation classes in `net/neoforged` and `net/minecraftforge`, `engine/dynamic` and `vyne-bridges.json`, registry and event bridging, `vyne.accesswidener`, ~26 imitation mixins, `BridgeClassLoader`)
 - [ ] Phase 6b: Mojang names at runtime; port the remaining Vyne code; delete the Minecraft stand-ins
 - [ ] Phase 7: mixin duplicate/collision detection; content-mod smoke scenarios
 - [ ] Phase 8: Guard redesign (points 1 to 5 in the design doc)
@@ -70,6 +71,19 @@ See [docs/dev/small-fixes.md](docs/dev/small-fixes.md) for the full list. Highli
 - [ ] Skip mounting/converting the NeoForge API when no NeoForge mod is installed
 - [ ] Smoke suite: second boot per scenario to prove the cache is reused; fail on ERROR-level registration failures
 - [ ] Prune old `.vyne/cache/remap` and `.vyne/cache/realneo` buckets
+
+## Done on 2026-11-15 (fixes from player logs)
+
+- [x] Fabric-only packs no longer get NeoForge's access rules, and no pack gets every Minecraft member made public (`MinecraftFieldAccessWidener` deleted): Lithium's private `@Overwrite`s crashed on it; Fabric API + Lithium reach `Done` alone and in the mixed scenario
+- [x] NeoForge mods' mixin configs registered with the Fabric mods' configs in `FabricMixinBootstrap`, not from `VCLMixinConfigPlugin.onLoad` during Mixin's config selection (`ConcurrentModificationException` with Comforts + Lithium)
+- [x] `[VyneGate] Refusing to transform` lowered to debug (2434 lines in a 140-mod Fabric pack)
+- [x] `classLoadCheck` skips the optional `commons-compress` codecs (xz, brotli, zstd, 7z, pack200) bundled for `jbsdiff`
+- [x] `./gradlew build` on a fresh clone generates what it needs (no generated sources in git)
+- [x] Comforts 9.0.5 in a mixed pack (with Fabric API and Lithium): blocks place, items exist, 0 ERROR lines. Fixes: payload and late registry events posted once per bus; `RegistryUnlock` around `RegisterEvent`; `NewRegistryEvent` and the server lifecycle events fired on the compatibility path (SpectreLib loads its configs on them); full `FMLConfig` stand-in; `ICancellableEvent`; `VyneRegistryInjector` uses 1.21.1's `register(key, value, RegistrationInfo)` and checks registration by value; removed a redirect that sent every `getConnectedDirection` call to `FaceAttachedHorizontalDirectionalBlock`; converter and remap caches bumped
+- [ ] Title screen: Mods button replaces the Realms button (and leaves the Options screen)
+- [ ] Mods screen: open Fabric mods' config screens through their `modmenu` entrypoint (`ModMenuApi.getModConfigScreenFactory`), with Mod Menu's API interfaces provided when Mod Menu is not installed
+- [ ] Early window: log why it did not open (`glfwInit` / `glfwCreateWindow` failures return silently)
+- [ ] Installer: notes point at `.minecraft/mods` instead of Prism's `minecraft/mods`; the Fabric Loader component is left next to Vyne
 
 ## Done on 2026-11-14
 

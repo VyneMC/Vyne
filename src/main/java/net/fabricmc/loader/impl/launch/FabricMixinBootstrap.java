@@ -108,9 +108,20 @@ public final class FabricMixinBootstrap {
 			}
 		}
 
-		for (Config config : Mixins.getConfigs()) {
-			ModContainerImpl mod = configToModMap.get(config.getName());
-			if (mod == null) continue;
+		java.util.List<dev.stolym.vyne.core.DetectedMod> pendingVcl = dev.stolym.vyne.core.VyneLauncher.getPendingVCLMods();
+		if (pendingVcl != null) {
+			for (dev.stolym.vyne.core.DetectedMod mod : pendingVcl) {
+				if (mod.getMixins() == null) continue;
+				for (String config : mod.getMixins()) {
+					if (configToModMap.containsKey(config)) continue;
+					try {
+						Mixins.addConfiguration(config);
+						Log.info(LogCategory.MIXIN, "Vyne: Registered mixin config %s for %s", config, mod.getModId());
+					} catch (Throwable t) {
+						Log.warn(LogCategory.MIXIN, "Vyne: Could not register mixin config %s for %s: %s", config, mod.getModId(), t);
+					}
+				}
+			}
 		}
 
 		try {

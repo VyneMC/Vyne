@@ -26,6 +26,11 @@ shadowJar {
         exclude 'META-INF/MANIFEST.MF'
     }
 
+    dependsOn tasks.named('hookPatches')
+    from(layout.buildDirectory.dir('hook-patches')) {
+        into 'META-INF/vyne/patches'
+    }
+
     from(tasks.named('neoforgeJar').flatMap { it.archiveFile }) {
         into 'META-INF/vyne'
         rename { 'neoforge.jar' }

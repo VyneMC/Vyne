@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "plugin": "dev.stolym.vyne.mixin.VCLMixinConfigPlugin",
   "mixins": [
+    "ServerLifecycleEventsMixin",
     "PackRepositoryVyneMixin",
     "MinecraftServerLagMitigationMixin",
     "LevelEntityTickContainmentMixin",

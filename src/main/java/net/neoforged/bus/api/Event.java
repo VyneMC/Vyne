@@ -9,7 +9,7 @@ public class Event {
     private boolean canceled = false;
 
     public boolean isCancelable() {
-        return this instanceof ICancelableEvent;
+        return this instanceof ICancelableEvent || this instanceof ICancellableEvent;
     }
 
     public boolean isCanceled() {

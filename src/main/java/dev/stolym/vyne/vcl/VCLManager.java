@@ -491,6 +491,8 @@ public final class VCLManager {
                 }
             }
 
+            dispatchNewRegistryEvent(modBuses);
+
             for (Map.Entry<String, ModBusEntry> entry : modBuses.entrySet()) {
                 String modId = entry.getKey();
                 if (isInactive(modId)) continue;
@@ -565,12 +567,46 @@ public final class VCLManager {
         }
     }
 
+    private static void dispatchNewRegistryEvent(Map<String, ModBusEntry> modBuses) {
+        Object event = null;
+        java.util.Set<Object> posted = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        for (Map.Entry<String, ModBusEntry> entry : modBuses.entrySet()) {
+            ModBusEntry mbe = entry.getValue();
+            if (isInactive(entry.getKey()) || mbe == null || mbe.bus() == null || !posted.add(mbe.bus())) continue;
+            try {
+                if (event == null) {
+                    java.lang.reflect.Constructor<?> ctor = mbe.loader()
+                            .loadClass("net.neoforged.neoforge.registries.NewRegistryEvent")
+                            .getDeclaredConstructor();
+                    ctor.setAccessible(true);
+                    event = ctor.newInstance();
+                }
+                mbe.bus().getClass().getMethod("post", Object.class).invoke(mbe.bus(), event);
+            } catch (ClassNotFoundException e) {
+                return;
+            } catch (Throwable t) {
+                VyneLogger.warn("[VCL] NewRegistryEvent for " + entry.getKey() + ": " + unwrap(t));
+            }
+        }
+        if (event == null) return;
+        try {
+            java.lang.reflect.Method fill = event.getClass().getDeclaredMethod("fill");
+            fill.setAccessible(true);
+            fill.invoke(event);
+        } catch (Throwable t) {
+            VyneLogger.info("[VCL] Custom registries from NewRegistryEvent are not added yet: " + unwrap(t));
+        }
+    }
+
     private static void dispatchPayloadRegistration(Map<String, ModBusEntry> modBuses) {
+        java.util.Set<Object> dispatchedBuses = java.util.Collections.newSetFromMap(
+                new java.util.IdentityHashMap<>());
         for (Map.Entry<String, ModBusEntry> entry : modBuses.entrySet()) {
             String modId = entry.getKey();
             if (isInactive(modId) || failedMods.contains(modId)) continue;
             ModBusEntry mbe = entry.getValue();
             if (mbe == null || mbe.bus() == null) continue;
+            if (!dispatchedBuses.add(mbe.bus())) continue;
             try {
                 Object bus = mbe.bus();
                 ClassLoader cl = mbe.loader();
@@ -704,6 +740,8 @@ public final class VCLManager {
         if (regKey == null) {
             return;
         }
+        java.util.Set<Object> dispatchedBuses = java.util.Collections.newSetFromMap(
+                new java.util.IdentityHashMap<>());
         for (Map.Entry<String, ModBusEntry> entry : modBuses.entrySet()) {
             String modId = entry.getKey();
             if (isInactive(modId) || failedMods.contains(modId)) {
@@ -711,6 +749,9 @@ public final class VCLManager {
             }
             ModBusEntry mbe = entry.getValue();
             if (mbe == null || mbe.bus() == null) {
+                continue;
+            }
+            if (!dispatchedBuses.add(mbe.bus())) {
                 continue;
             }
             Object bus = mbe.bus();

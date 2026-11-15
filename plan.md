@@ -10,7 +10,7 @@ Last updated: 2026-11-15.
 
 Vyne is its own Minecraft mod loader. It loads Fabric mods and NeoForge mods **natively**, side by side, as first-class citizens.
 
-- **Vyne patches vanilla itself.** Vyne starts from vanilla Minecraft and changes it with its own hook layer. Everything NeoForge changes in the game and everything Fabric API changes in the game is done by Vyne, once per spot, and each hook serves both ecosystems.
+- **Vyne patches vanilla itself.** Vyne starts from vanilla Minecraft and changes it with its own patch layer, built by Vyne and shipped as binary diffs in the Vyne jar. NeoForge's patches are its starting point; at spots Fabric API also changes, Vyne adds the Fabric API call into the same patched method at build time, so each spot is changed once and serves both ecosystems.
 - **Vyne contains both APIs.** The `net.neoforged.*` API that NeoForge mods call and the `net.fabricmc.fabric.api.*` API that Fabric mods call are part of Vyne and run on Vyne's hooks. Mods are not rerouted to a separate NeoForge or Fabric API install; there is none.
 - **Vyne's own loader.** Vyne reads `neoforge.mods.toml` and `fabric.mod.json` itself and runs both lifecycles. Fabric Loader was the starting template; the loader core is now Vyne's code.
 - **Vyne's own hooks, later.** On top of the two ecosystems, Vyne will add hooks of its own so mods can do more than either API allows. Not started yet.
@@ -26,8 +26,9 @@ Vyne is its own Minecraft mod loader. It loads Fabric mods and NeoForge mods **n
                |                            |
      Fabric API (Vyne's copy)      NeoForge API (Vyne's copy)
                +--------------+-------------+
-                     Vyne hook layer
-           (Vyne's own transformers on vanilla Minecraft;
+                     Vyne patch layer
+           (binary diffs on vanilla Minecraft, built by Vyne:
+            NeoForge's patches + Vyne's hooks for Fabric API;
             one hook per spot, firing both APIs' events;
             later also Vyne's own hooks)
                               |
@@ -44,11 +45,14 @@ Vyne is its own Minecraft mod loader. It loads Fabric mods and NeoForge mods **n
 |---|---|---|
 | Unified Knot: every mod and both APIs load in one class loader | 2026-10 | Mods see each other; no isolation bugs |
 | Translate each mod jar once, cache it, never at runtime | 2026-11-14 | No runtime translation tax |
-| **Vyne patches vanilla itself; NeoForge's patched game is not the base** | 2026-11-15 | Vyne is its own loader, not NeoForge with Fabric on top (that would be a loader-level Sinytra Connector) |
+| **Vyne owns the patch layer, built from NeoForge's patches**: Vyne builds binary diffs (vanilla → NeoForge's patched classes → Vyne's added hooks) and ships them in the Vyne jar; no NeoForge installer at runtime | 2026-11-15 | Every NeoForge hook is present at once (1613 server classes) instead of rewriting 1914 changed methods by hand; NeoForge-only server scenarios already reach `Done` with 0 errors on it |
+| **Fabric API at the 211 spots NeoForge also changes: the Fabric event call is added into the patched method at build time**, not applied as a mixin at runtime | 2026-11-15 | Fabric API's mixins fail on NeoForge's patched methods (measured: `fabric-entity-events-v1` `LivingEntityMixin.onIsSleepingInBed` cannot find its target, the bed-check lambda `method_18405` in `LivingEntity` that NeoForge's patch rewrites); a build-time hook cannot fail at launch and costs nothing at startup |
+| NeoForge's patches stay LGPL-2.1 inside Vyne's diffs: notice kept, their source stays available | 2026-11-15 | Licence of the patches Vyne builds on |
+| Superseded: "NeoForge's patched game is not the base; Vyne writes every hook itself" | 2026-11-15, superseded the same day | Writing 1914 changed methods by hand was the bulk of the work; owning NeoForge's patches as Vyne's diffs gives the same result now and keeps the build-time hook idea for Fabric API |
 | **The NeoForge API inside Vyne is Vyne's copy of NeoForge's source** (LGPL-2.1, credited), rewired onto Vyne's hooks and owned from then on | 2026-11-15 | Exact signatures and behaviour mods expect, without NeoForge's patches or installer |
-| **Vyne's hook layer is generated, then owned**: a Vyne tool lists every spot NeoForge's patches and Fabric API's mixins change in vanilla; Vyne's hooks are written as Vyne transformers from that list and maintained as Vyne code | 2026-11-15 | Complete coverage of what mods rely on, without hand-searching 1023 classes |
-| Patched mode (NeoForge's own patched game behind Vyne's loader) stays as a **temporary** path and test reference until Vyne's hook layer covers NeoForge; then it is deleted | 2026-11-15 | NeoForge packs keep running meanwhile; Vyne's hooks can be checked against NeoForge's real behaviour |
-| Fabric API is part of Vyne the same way (Vyne's copy, its mixins replaced by Vyne hooks where a shared hook exists); a Fabric API jar in `mods/` is ignored with a notice | 2026-11-14 | One owner of every spot in the game |
+| The hook inventory (`data/hooks/`) lists every spot NeoForge's patches and Fabric API's mixins change in vanilla; it is the work list for the shared spots | 2026-11-15 | Complete coverage of what mods rely on, without hand-searching 1023 classes |
+| Patched mode (NeoForge's installer run at first start) stays only until hooks mode is the default for NeoForge-only packs; then it is deleted | 2026-11-15 | Hooks mode gives the same game without the installer |
+| Fabric API is part of Vyne the same way (Vyne's copy, its mixins at shared spots replaced by Vyne's build-time hooks); a Fabric API jar in `mods/` is ignored with a notice | 2026-11-14 | One owner of every spot in the game |
 | Runtime names: Mojang names; Fabric mods get converted once | 2026-11-14 | Readable logs and code; NeoForge's API source and NeoForge mods need no renaming |
 | Compile against real Minecraft, delete the hand-written Minecraft stand-ins | 2026-11-14 | Stand-ins drift from the real game |
 | Several NeoForge API versions supported over time; updating means regenerating the hook list and merging NeoForge's API changes into Vyne's copy | 2026-11-15 | Players get NeoForge's fixes without Vyne becoming NeoForge |
@@ -92,16 +96,18 @@ NeoForge's own patched game behind Vyne's loader. Not the long-term design (see 
 - **Gate (passed):** code using entities, blocks, codecs, Brigadier and the dedicated server compiles against it.
 - Switching the *runtime* to Mojang names (and porting Vyne's own code, deleting the Minecraft stand-ins) moved to Phase 6b: most of the code that would need porting is the legacy NeoForge path Phase 6 deletes.
 
-### Phase 5: Vyne's hook layer and Vyne's NeoForge API (in progress)
+### Phase 5: Vyne's patch layer and Vyne's NeoForge API (in progress)
 
 - Vyne's copy of NeoForge's API source in the repo (own source set), compiled against `minecraftMojang` and Vyne's hook layer; the parts of FML that mods call are provided by Vyne's loader. Until Phase 6b it is converted once to the current runtime names, like the NeoForge API jar today.
-- Vyne transformers for each spot in the inventory: add NeoForge's extension interfaces to vanilla classes and insert the event calls, one transformer per spot, ready to fire Fabric API's events from the same hook.
-- Order: what the test mods need first (lifecycle, registries, extension interfaces, client setup, key mappings), then by how many mods use a spot.
-- **Gate:** the NeoForge-only smoke scenarios and the client reach `Done` / the title screen on vanilla plus Vyne's hooks, with patched mode off.
+- Vyne's patch layer: `./gradlew hookPatches` builds binary diffs from vanilla to NeoForge's patched classes (client and server) and ships them in the Vyne jar; `HookPatches` applies them to the player's vanilla jar on first start and caches the result.
+- Server done (2026-11-15): `neoforge-simple` and `neoforge-with-lib` reach `Done` with 0 ERROR lines in hooks mode (`-Psmoke.hooks`), without NeoForge's installer.
+- Left: the client in hooks mode; hooks mode as the default for NeoForge-only packs; delete patched mode.
+- **Gate:** the NeoForge-only smoke scenarios and the client reach `Done` / the title screen in hooks mode, with patched mode deleted.
 
-### Phase 6: Fabric API on Vyne's hook layer
+### Phase 6: Fabric API on Vyne's patch layer
 
-- Vyne's copy of Fabric API; for spots NeoForge also changes, its mixins replaced by Vyne hooks; its other mixins kept as they are.
+- Vyne's copy of Fabric API; its other mixins kept as they are.
+- At the 211 methods NeoForge also changes (`data/hooks/overlap-*.tsv`), the Fabric API mixin is dropped and its event call is added into the patched method when Vyne builds its patches, next to NeoForge's hook. Most-used events first.
 - First shared hook end to end: block breaking fires both `PlayerBlockBreakEvents` and `BlockEvent.BreakEvent`; cancelling either cancels the break.
 - **Gate:** the mixed smoke scenario passes; a Fabric test mod and a NeoForge test mod both receive and can cancel the shared events. Patched mode and the legacy NeoForge path are deleted.
 

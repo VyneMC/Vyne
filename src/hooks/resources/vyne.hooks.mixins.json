@@ -3,16 +3,8 @@
   "package": "dev.stolym.vyne.hooks.mixin",
   "compatibilityLevel": "JAVA_21",
   "plugin": "dev.stolym.vyne.hooks.HooksMixinPlugin",
-  "server": [
-    "server.MainHooks"
-  ],
+  "mixins": [],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "item.CreativeModeTabBuilderHooks",
-    "item.CreativeModeTabHooks",
-    "item.DyeColorTagHooks",
-    "registry.RegistryDataLoaderHooks"
-  ]
+  }
 }

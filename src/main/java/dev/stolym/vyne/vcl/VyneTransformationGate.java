@@ -154,7 +154,7 @@ public final class VyneTransformationGate {
 
     private static void warnScopeViolation(String dottedName, DetectedMod.LoaderType loaderType) {
         if (SCOPE_WARNINGS.add(dottedName)) {
-            VyneLogger.warn("[VyneGate] Refusing to transform " + dottedName
+            VyneLogger.debug("[VyneGate] Refusing to transform " + dottedName
                     + " (owner mod is " + loaderType + "-native; Fabric mods must run untransformed)");
         }
     }

@@ -1,10 +1,10 @@
 sourceSets {
     hooks {
         java {
-            srcDirs = ['src/hooks/java', 'src/hooks/generated/java']
+            srcDirs = ['src/hooks/java']
         }
         resources {
-            srcDirs = ['src/hooks/resources', 'src/hooks/generated/resources']
+            srcDirs = ['src/hooks/resources']
         }
     }
 }
@@ -23,14 +23,6 @@ dependencies {
 afterEvaluate {
     sourceSets.hooks.compileClasspath = project.ext.minecraftHookedOpen + sourceSets.neoforge.output +
             configurations.neoforgeLibraries + configurations.hooksMixin
-}
-
-tasks.named('compileHooksJava') {
-    dependsOn 'generateHookBodies'
-}
-
-tasks.named('processHooksResources') {
-    dependsOn 'generateHookBodies'
 }
 
 tasks.register('hooksJar', Jar) {

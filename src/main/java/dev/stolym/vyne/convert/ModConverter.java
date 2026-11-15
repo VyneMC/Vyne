@@ -48,7 +48,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 public final class ModConverter {
-    public static final int SCHEMA = 1;
+    public static final int SCHEMA = 2;
     public static final String DEFERRED_ENTRY = "META-INF/vyne/deferred.list";
 
     private static final String INDEX_FILE = "index.properties";

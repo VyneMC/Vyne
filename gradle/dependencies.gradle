@@ -43,6 +43,12 @@ dependencies {
     include 'com.electronwill.night-config:toml:3.8.3'
     include 'net.jodah:typetools:0.6.3'
     include 'org.apache.commons:commons-lang3:3.14.0'
+    include('io.sigpipe:jbsdiff:1.0') {
+        exclude group: 'org.apache.commons', module: 'commons-compress'
+    }
+    include('org.apache.commons:commons-compress:1.21') {
+        transitive = false
+    }
     include('org.apache.maven:maven-artifact:3.8.5') {
         transitive = false
     }

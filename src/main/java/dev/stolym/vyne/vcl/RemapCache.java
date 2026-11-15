@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class RemapCache {
-    public static final int CACHE_SCHEMA = 3;
+    public static final int CACHE_SCHEMA = 4;
 
     private static volatile String mappingsFingerprint = "init";
     private static final Map<String, String> JAR_SHA_CACHE = new ConcurrentHashMap<>();

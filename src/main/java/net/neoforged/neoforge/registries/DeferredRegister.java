@@ -425,10 +425,12 @@ public class DeferredRegister<T> {
                 boolean itemLive = VyneRegistryInjector.liveRegistryHasId(knotForSkip, myPath, idStr);
                 boolean blockLive = VyneRegistryInjector.liveRegistryHasId(knotForSkip, "minecraft:block", idStr);
                 if (itemLive && blockLive) {
+                    registeredIds.add(holder.getId());
                     continue;
                 }
                 if (itemLive && !blockLive) {
                     mirrorBlockFromItemIfMissing(knotForSkip, holder);
+                    registeredIds.add(holder.getId());
                     continue;
                 }
             }
@@ -475,10 +477,12 @@ public class DeferredRegister<T> {
                     boolean itemLive = VyneRegistryInjector.liveRegistryHasId(knotForSkip, myPath, idStr);
                     boolean blockLive = VyneRegistryInjector.liveRegistryHasId(knotForSkip, "minecraft:block", idStr);
                     if (itemLive && blockLive) {
+                        registeredIds.add(holder.getId());
                         continue;
                     }
                     if (itemLive && !blockLive) {
                         mirrorBlockFromItemIfMissing(knotForSkip, holder);
+                        registeredIds.add(holder.getId());
                         continue;
                     }
                 }
