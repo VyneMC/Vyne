@@ -53,7 +53,12 @@ public final class VyneMods {
         }
         addMinecraft();
         Path neoforge = VyneMode.neoForgeApiJar();
-        if (neoforge != null) addJar(neoforge, VyneLauncher.getNeoForgeApiJar(), null);
+        if (neoforge != null) {
+            String neoForgeVersion = dev.stolym.vyne.core.VyneMode.hooks()
+                    ? dev.stolym.vyne.convert.HookedGame.SURFACE_VERSION
+                    : VyneLauncher.getNeoForgeVersion();
+            addJar(neoforge, VyneLauncher.getNeoForgeApiJar(), neoForgeVersion);
+        }
         List<DetectedMod> detected = VyneLauncher.getDetectedMods();
         if (detected != null) {
             for (DetectedMod mod : detected) {

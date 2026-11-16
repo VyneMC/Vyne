@@ -35,7 +35,7 @@ public final class ConvertedModMount {
                 .anyMatch(mod -> mod.getLoaderType() == DetectedMod.LoaderType.NEOFORGE);
         boolean fabricMods = mods != null && mods.stream()
                 .anyMatch(mod -> mod.getLoaderType() == DetectedMod.LoaderType.FABRIC && !isVyne(mod));
-        boolean hooks = Boolean.getBoolean("vyne.hooks");
+        boolean hooks = !"false".equalsIgnoreCase(System.getProperty("vyne.hooks"));
         if (hooks) version = HookedGame.SURFACE_VERSION;
         if (version == null || version.isBlank() || !neoForgeMods) return;
         if (fabricMods) {
@@ -45,15 +45,22 @@ public final class ConvertedModMount {
         try {
             Path base = Path.of(System.getProperty("vyne.gameDir", ".")).toAbsolutePath().normalize();
             Path cacheRoot = base.resolve(".vyne").resolve("cache");
-            NeoForgeInstall neoForge;
+            NeoForgeInstall neoForge = null;
             if (hooks) {
-                Path vanilla = VanillaGame.mojang(VyneLauncher.TARGET_MC, dedicatedServer, cacheRoot);
-                Path game = HookPatches.apply(vanilla, dedicatedServer, cacheRoot);
-                NeoForgeLibraries libraries = NeoForgeLibraries.ensure(dedicatedServer, base);
-                neoForge = new NeoForgeInstall(version, game, vanilla, libraries.fml(), libraries.bus(), libraries.libraries());
-                VyneLauncher.useNeoForgeApiJar(HookedGame.vyneNeoForge(cacheRoot));
-                VyneLogger.info("[Hooks] Running vanilla Minecraft with Vyne's hooks and Vyne's NeoForge API");
-            } else {
+                try {
+                    Path vanilla = VanillaGame.mojang(VyneLauncher.TARGET_MC, dedicatedServer, cacheRoot);
+                    Path game = HookPatches.apply(vanilla, dedicatedServer, cacheRoot);
+                    NeoForgeLibraries libraries = NeoForgeLibraries.ensure(dedicatedServer, base);
+                    neoForge = new NeoForgeInstall(version, game, vanilla, libraries.fml(), libraries.bus(), libraries.libraries());
+                    VyneLauncher.useNeoForgeApiJar(HookedGame.vyneNeoForge(cacheRoot));
+                    VyneLogger.info("[Hooks] Running vanilla Minecraft with Vyne's hooks and Vyne's NeoForge API");
+                } catch (IOException e) {
+                    hooks = false;
+                    version = VyneLauncher.getNeoForgeVersion();
+                    VyneLogger.warn("[Hooks] Vyne's patches are unavailable (" + e.getMessage() + "); using NeoForge's installer instead");
+                }
+            }
+            if (neoForge == null) {
                 neoForge = NeoForgeInstall.ensure(version, dedicatedServer, base);
             }
             Path game = neoForge.patchedGame();

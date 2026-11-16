@@ -51,9 +51,11 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
   - [x] Hooks mode with the binary patches: `neoforge-simple` and `neoforge-with-lib` reach `Done` with 0 ERROR lines, no NeoForge installer (`./gradlew smokeServer_<scenario> -Psmoke.hooks`)
   - [x] Measured: a mixed pack on the binary patches fails at the first Fabric API mixin on a NeoForge-changed method (`fabric-entity-events-v1` `LivingEntityMixin.onIsSleepingInBed`, target `LivingEntity.method_18405`)
   - [x] Hooks mode on the client (2026-11-15): Prism instance with Mouse Tweaks, CraftPresence and UniLib (NeoForge) reaches the title screen, patches applied to 1613 client classes, no NeoForge installer
-  - [ ] Hooks mode as the default for NeoForge-only packs; delete patched mode (`NeoForgeInstall` at runtime, `PatchedGameBuilder`)
-  - [ ] Chore: NeoForge logs its version as 0.0.0 in hooks mode
-  - [ ] `docs/dev/hook-layer.md`: rewrite for the binary patch layer
+  - [x] Hooks mode is the default for NeoForge-only packs (2026-11-16); `-Dvyne.hooks=false`, or missing patches, fall back to NeoForge's installer
+  - [ ] Delete the installer fallback (runtime `NeoForgeInstall`) once hooks mode has run in players' packs
+  - [x] NeoForge reports 21.1.265 (version in Vyne's NeoForge jar manifest and registered by Vyne's FML)
+  - [x] `docs/dev/hook-layer.md` describes the binary patch layer
+  - [x] `FMLModContainer` routed to `VyneModContainer`: mods that check their container type (Comforts) load in NeoForge-only packs
 - [ ] Phase 6: Vyne's copy of Fabric API on the patch layer; at the 211 shared methods, Fabric API's event calls added into the patched methods when Vyne builds its patches (instead of its mixins); block-break hook end to end; mixed scenario passes; delete patched mode and the legacy NeoForge path (imitation classes in `net/neoforged` and `net/minecraftforge`, `engine/dynamic` and `vyne-bridges.json`, registry and event bridging, `vyne.accesswidener`, ~26 imitation mixins, `BridgeClassLoader`)
 - [ ] Phase 6b: Mojang names at runtime; port the remaining Vyne code; delete the Minecraft stand-ins
 - [ ] Phase 7: mixin duplicate/collision detection; content-mod smoke scenarios

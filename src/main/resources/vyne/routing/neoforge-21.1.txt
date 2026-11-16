@@ -6,3 +6,4 @@ net/neoforged/fml/loading/moddiscovery/ModInfo dev/stolym/vyne/fml/VyneModInfo
 net/neoforged/fml/loading/moddiscovery/ModFileInfo dev/stolym/vyne/fml/VyneModFileInfo
 net/neoforged/fml/loading/moddiscovery/ModFile dev/stolym/vyne/fml/VyneModFile
 net/neoforged/fml/loading/ImmediateWindowHandler dev/stolym/vyne/fml/VyneImmediateWindowHandler
+net/neoforged/fml/javafmlmod/FMLModContainer dev/stolym/vyne/fml/VyneModContainer

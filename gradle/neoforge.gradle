@@ -59,4 +59,9 @@ tasks.register('neoforgeJar', Jar) {
     archiveVersion = project.hook_neoforge_version
     destinationDirectory = layout.buildDirectory.dir('neoforge-jar')
     from sourceSets.neoforge.output
+    manifest {
+        attributes('Implementation-Title': 'NeoForge',
+                'Implementation-Version': project.hook_neoforge_version,
+                'Specification-Version': project.hook_neoforge_version)
+    }
 }
