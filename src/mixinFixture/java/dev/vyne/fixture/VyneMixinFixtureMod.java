@@ -25,5 +25,6 @@ public class VyneMixinFixtureMod {
 
     private static void serverInit() {
         System.out.println("[VyneFixture] dist-aware init: dedicated server path");
+        BlockBreakProbe.register();
     }
 }

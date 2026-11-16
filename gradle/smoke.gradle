@@ -43,7 +43,8 @@ tasks.register('classLoadCheck', JavaExec) {
     }
 }
 
-def smokeScenarios = ['fabric-only', 'neoforge-simple', 'neoforge-with-lib', 'mixed', 'mixin-fixture']
+def smokeScenarios = ['fabric-only', 'neoforge-simple', 'neoforge-with-lib', 'mixed', 'mixin-fixture', 'patch-layer']
+def fixtureScenarios = ['mixin-fixture', 'patch-layer']
 def smokeTimeoutSeconds = providers.gradleProperty('smoke.timeout').orElse('600').get().toInteger()
 
 def forbiddenPatterns = [
@@ -61,14 +62,20 @@ def expectedPatterns = [
                 ~/\[VyneFixture\] mixin injected into MinecraftServer\.runServer/,
                 ~/\[VyneFixture\] dist-aware init: dedicated server path/,
         ],
+        'patch-layer': [
+                ~/\[VyneFixture\] block-break normal: result=true removed=true neoforge-break=1 fabric-before=1 fabric-after=1 fabric-canceled=0/,
+                ~/\[VyneFixture\] block-break fabric-cancel: result=false removed=false neoforge-break=1 fabric-before=1 fabric-after=0 fabric-canceled=1/,
+                ~/\[VyneFixture\] block-break neoforge-cancel: result=false removed=false neoforge-break=1 fabric-before=0 fabric-after=0 fabric-canceled=0/,
+        ],
 ]
 
-def serverCommand = { File vyneJar ->
+def serverCommand = { File vyneJar, String scenario ->
     def extraJvmFlags = providers.gradleProperty('smoke.noRealNeo').isPresent()
             ? ['-Dvyne.realNeoforgeApi=false'] : []
     if (providers.gradleProperty('smoke.installer').isPresent()) extraJvmFlags += ['-Dvyne.hooks=false']
     def customJvmArgs = providers.gradleProperty('smoke.jvmArgs').orNull
     if (customJvmArgs) extraJvmFlags += customJvmArgs.split(',').findAll { !it.isBlank() }
+    if (scenario == 'patch-layer') extraJvmFlags += ['-Dvyne.hooks.mixed=true']
     return ['java', '-Xmx2G', '-Xms2G',
             '-Dvyne.dev=true',
             '-Djava.system.class.loader=dev.stolym.vyne.vcl.BridgeClassLoader',
@@ -93,7 +100,7 @@ smokeScenarios.each { scenario ->
         description = "Boots a dedicated server with scenario '${scenario}' and checks the log."
         def shadow = tasks.named('shadowJar')
         dependsOn shadow
-        if (scenario == 'mixin-fixture') {
+        if (scenario in fixtureScenarios) {
             dependsOn tasks.named('mixinFixtureJar')
         }
 
@@ -114,7 +121,7 @@ smokeScenarios.each { scenario ->
                 from modsDir
                 into new File(runDir, 'mods')
             }
-            if (scenario == 'mixin-fixture') {
+            if (scenario in fixtureScenarios) {
                 project.copy {
                     from tasks.named('mixinFixtureJar').get().archiveFile.get().asFile
                     into new File(runDir, 'mods')
@@ -155,7 +162,7 @@ smokeScenarios.each { scenario ->
                 }
             }
 
-            def proc = new ProcessBuilder(serverCommand(vyneJar))
+            def proc = new ProcessBuilder(serverCommand(vyneJar, scenario))
                     .directory(runDir)
                     .redirectErrorStream(true)
                     .start()
