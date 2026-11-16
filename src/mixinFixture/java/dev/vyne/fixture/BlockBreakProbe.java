@@ -43,6 +43,7 @@ final class BlockBreakProbe {
             addListener.invoke(bus, normal, false, breakEvent, onBreak);
             registerFabric(loader);
             registerFuel(loader);
+            EventBridgeProbe.registerFabric(loader);
             System.out.println("[VyneFixture] block-break probe registered");
         } catch (Throwable t) {
             System.out.println("[VyneFixture] block-break probe could not register: " + t);
@@ -131,6 +132,7 @@ final class BlockBreakProbe {
             report("neoforge-cancel", level, gameMode, neoPos, stone);
             System.out.println("[VyneFixture] fuel: dirt=" + burnTime(loader, "field_8831") + " coal="
                     + burnTime(loader, "field_8713") + " stone=" + burnTime(loader, "field_20391"));
+            EventBridgeProbe.run(loader, level, player, x, y, z);
         } catch (Throwable t) {
             System.out.println("[VyneFixture] block-break probe failed: " + t);
         }

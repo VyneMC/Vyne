@@ -26,6 +26,13 @@ public final class PatchLayerEvents {
                 listen("net.neoforged.neoforge.event.furnace.FurnaceFuelBurnTimeEvent", FabricFuel::onBurnTime);
                 VyneLogger.info("[PatchLayer] Fabric furnace fuels answered through NeoForge's FurnaceFuelBurnTimeEvent");
             }
+            if (fabric.isModLoaded("fabric-entity-events-v1")) {
+                listen("net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent", FabricSleep::onCanPlayerSleep);
+                listen("net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent", FabricSleep::onCanContinueSleeping);
+                listen("net.neoforged.neoforge.event.entity.player.PlayerSetSpawnEvent", FabricSleep::onSetSpawn);
+                listen("net.neoforged.neoforge.event.entity.living.LivingConversionEvent$Post", FabricSleep::onConversion);
+                VyneLogger.info("[PatchLayer] Fabric sleep and mob conversion events answered through NeoForge's sleep, spawn and conversion events");
+            }
         } catch (ReflectiveOperationException | RuntimeException e) {
             VyneLogger.warn("[PatchLayer] Could not register Fabric API bridges: " + e);
         }

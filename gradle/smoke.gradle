@@ -67,6 +67,7 @@ def expectedPatterns = [
                 ~/\[VyneFixture\] block-break fabric-cancel: result=false removed=false neoforge-break=1 fabric-before=1 fabric-after=0 fabric-canceled=1/,
                 ~/\[VyneFixture\] block-break neoforge-cancel: result=false removed=false neoforge-break=1 fabric-before=0 fabric-after=0 fabric-canceled=0/,
                 ~/\[VyneFixture\] fuel: dirt=1234 coal=1600 stone=0/,
+                ~/\[VyneFixture\] sleep: time-allowed=null monsters-refused=NOT_SAFE spawn-refused=true spawn-other=false continue-refused=true conversions=1/,
         ],
 ]
 

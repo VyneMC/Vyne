@@ -64,7 +64,15 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
   - [x] Mixed server on the patch layer (`-Dvyne.hooks.mixed=true`, Fabric API + Mouse Tweaks + CraftPresence + UniLib) reaches `Done` with 0 ERROR lines (2026-11-16)
   - [x] End-to-end test (`patch-layer` smoke scenario): a fake player breaks three blocks; Fabric and NeoForge listeners both run, either can cancel, Fabric's AFTER and CANCELED fire exactly when they would on Fabric
   - [x] Replaced: Fabric furnace fuels (`FuelRegistry`) answered through NeoForge's `FurnaceFuelBurnTimeEvent` for items NeoForge does not already treat as fuel; tested in `patch-layer` (dirt 1234 from Fabric, coal 1600 from NeoForge)
-  - [ ] Sleep events (`fabric-entity-events-v1`, 11 handlers): spawn, allow-sleep and bed checks through NeoForge's `PlayerSetSpawnEvent`, `CanPlayerSleepEvent` and `SleepingLocationCheckEvent`; direction, occupation and wake-up position through mixins at NeoForge's call sites
+  - [x] Sleep and conversion events through NeoForge events (tested in `patch-layer`): `ALLOW_SLEEP_TIME`, `ALLOW_NEARBY_MONSTERS`, `ALLOW_BED` (`CanPlayerSleepEvent`, `CanContinueSleepingEvent`), `ALLOW_SETTING_SPAWN` (`PlayerSetSpawnEvent`, bed spawns only), mooshroom `MOB_CONVERSION` (`LivingConversionEvent.Post`)
+  - Patch-layer events, in batches (status of every disabled Fabric API handler: `vyne/patch-layer/fabric-api-handlers.txt`):
+    - [x] Batch 1: block breaking, furnace fuel, tag removal, datapack registries
+    - [x] Batch 2: sleep checks, bed spawn, mooshroom conversion
+    - [ ] Batch 3, sleep without a NeoForge event (mixins at NeoForge's call sites): `MODIFY_SLEEPING_DIRECTION`, `SET_BED_OCCUPATION_STATE`, `MODIFY_WAKE_UP_POSITION`, `ALLOW_BED` direction check (5 handlers)
+    - [ ] Batch 4, items (`fabric-item-api-v1`): durability (`CustomDamageHandler`), recipe remainders (crafting, brewing, furnace), enchanting checks (table, anvil, command, loot)
+    - [ ] Batch 5, recipes and content: custom ingredients (`fabric-recipe-api-v1`), villager trades, chunk section air checks (`fabric-block-api-v1`)
+    - [ ] Batch 6, menus and networking (needs a client test): extended screen handlers (`openMenu`), payload codecs, configuration-phase resource reload
+    - [ ] Client-only handlers (rendering, screens, sounds, model loading): count and plan once the client runs on the patch layer
   - [ ] Analysis: slices and same-name members added by both loaders (missed `WorldChunkMixin.onRemoveBlockEntity` and `TagFileMixin`)
   - [ ] Replace the remaining 38 disabled server-side handlers and the client-side ones, most-used first; then make the patch layer the default for mixed packs
 - [ ] Phase 6b: Mojang names at runtime; port the remaining Vyne code; delete the Minecraft stand-ins
