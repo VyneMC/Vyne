@@ -112,3 +112,19 @@ tasks.register('hookPatches', JavaExec) {
     args project.minecraft_version, project.hook_neoforge_version, out.absolutePath
     outputs.dir(out)
 }
+
+tasks.register('fabricApiOnPatches', JavaExec) {
+    group = 'vyne'
+    description = 'Checks every Fabric API injection against NeoForge\'s patched classes (data/hooks/fabric-api-on-neoforge-*.tsv).'
+    dependsOn tasks.named('toolsClasses'), 'hookPatches', 'minecraftMojangJar'
+    classpath = sourceSets.tools.runtimeClasspath
+    mainClass = 'dev.stolym.vyne.tools.hooks.FabricApiOnPatches'
+    def work = layout.buildDirectory.dir('hook-inventory').get().asFile
+    def nf = project.hook_neoforge_version
+    def fapi = project.hook_fabric_api_version
+    args file("data/hooks/fabric-api-${fapi}.tsv").absolutePath,
+            layout.buildDirectory.file("minecraft/minecraft-${project.minecraft_version}-mojang.jar").get().asFile.absolutePath,
+            new File(work, ".vyne/neoforge/${nf}/client/neoforge-${nf}-client.jar").absolutePath,
+            file("data/hooks/fabric-api-on-neoforge-${nf}.tsv").absolutePath,
+            file('src/main/resources/vyne/patch-layer/fabric-api-handlers.txt').absolutePath
+}

@@ -88,6 +88,7 @@ public class MixinServiceKnot implements IMixinService, IClassProvider, IClassBy
 		ClassReader reader = new ClassReader(getClassBytes(name, runTransformers));
 		ClassNode node = new ClassNode();
 		reader.accept(node, readerFlags);
+		dev.stolym.vyne.core.PatchLayerHandlers.strip(node);
 		return node;
 	}
 
@@ -208,7 +209,7 @@ public class MixinServiceKnot implements IMixinService, IClassProvider, IClassBy
 
 	@Override
 	public InputStream getResourceAsStream(String name) {
-		return FabricLauncherBase.getLauncher().getResourceAsStream(name);
+		return dev.stolym.vyne.core.PatchLayerHandlers.filterConfig(name, FabricLauncherBase.getLauncher().getResourceAsStream(name));
 	}
 
 	@Override

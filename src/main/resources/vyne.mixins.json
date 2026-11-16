@@ -5,6 +5,9 @@
   "plugin": "dev.stolym.vyne.mixin.VCLMixinConfigPlugin",
   "mixins": [
     "ServerLifecycleEventsMixin",
+    "PatchLayerBlockBreakMixin",
+    "PatchLayerPackDefaultsMixin",
+    "PatchLayerDynamicRegistriesMixin",
     "PackRepositoryVyneMixin",
     "MinecraftServerLagMitigationMixin",
     "LevelEntityTickContainmentMixin",

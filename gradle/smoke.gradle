@@ -67,6 +67,8 @@ def serverCommand = { File vyneJar ->
     def extraJvmFlags = providers.gradleProperty('smoke.noRealNeo').isPresent()
             ? ['-Dvyne.realNeoforgeApi=false'] : []
     if (providers.gradleProperty('smoke.installer').isPresent()) extraJvmFlags += ['-Dvyne.hooks=false']
+    def customJvmArgs = providers.gradleProperty('smoke.jvmArgs').orNull
+    if (customJvmArgs) extraJvmFlags += customJvmArgs.split(',').findAll { !it.isBlank() }
     return ['java', '-Xmx2G', '-Xms2G',
             '-Dvyne.dev=true',
             '-Djava.system.class.loader=dev.stolym.vyne.vcl.BridgeClassLoader',

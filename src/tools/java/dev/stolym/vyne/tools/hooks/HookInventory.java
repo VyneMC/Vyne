@@ -53,9 +53,9 @@ public final class HookInventory {
             }
         }
         try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(fabricFile))) {
-            out.println("class\tmethod\tinjector\tat\tmodule\tmixin");
+            out.println("class\tmethod\tinjector\tat\tmodule\tmixin\thandler");
             for (FabricApiTargets.Target t : targets) {
-                out.println(t.owner() + '\t' + t.method() + '\t' + t.kind() + '\t' + t.at() + '\t' + t.module() + '\t' + t.mixin());
+                out.println(t.owner() + '\t' + t.method() + '\t' + t.kind() + '\t' + t.at() + '\t' + t.module() + '\t' + t.mixin() + '\t' + t.handler());
             }
         }
 

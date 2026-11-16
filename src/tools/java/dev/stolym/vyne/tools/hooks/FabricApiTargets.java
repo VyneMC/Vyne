@@ -29,7 +29,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 final class FabricApiTargets {
-    record Target(String owner, String method, String kind, String at, String module, String mixin) {}
+    record Target(String owner, String method, String kind, String at, String module, String mixin, String handler) {}
 
     private static final Map<String, String> INJECTORS = Map.ofEntries(
             Map.entry("Lorg/spongepowered/asm/mixin/injection/Inject;", "Inject"),
@@ -101,7 +101,7 @@ final class FabricApiTargets {
                         for (String target : targets) {
                             Names.Method mapped = names.method(target, method.name, method.desc);
                             out.add(new Target(names.type(target), mapped.name() + mapped.desc(), "Overwrite", "",
-                                    module, mixin.name));
+                                    module, mixin.name, method.name));
                         }
                         continue;
                     }
@@ -111,7 +111,7 @@ final class FabricApiTargets {
                     for (String selector : stringList(value(annotation, "method"))) {
                         String resolved = refs.getOrDefault(selector, selector);
                         for (String target : targets) {
-                            out.add(new Target(names.type(target), method(resolved, target, names), kind, at, module, mixin.name));
+                            out.add(new Target(names.type(target), method(resolved, target, names), kind, at, module, mixin.name, method.name));
                         }
                     }
                 }

@@ -22,6 +22,11 @@ public class VCLMixinConfigPlugin implements IMixinConfigPlugin {
         return null;
     }
 
+    private static final java.util.Map<String, String> PATCH_LAYER_MIXINS = java.util.Map.of(
+            "PatchLayerBlockBreakMixin", "fabric-events-interaction-v0",
+            "PatchLayerPackDefaultsMixin", "fabric-resource-loader-v0",
+            "PatchLayerDynamicRegistriesMixin", "fabric-registry-sync-v0");
+
     private static final java.util.Set<String> PATCHED_GAME_MIXINS = java.util.Set.of(
             "LoadingOverlayVyneMixin",
             "CrashReportVyneMixin",
@@ -31,6 +36,12 @@ public class VCLMixinConfigPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        String simpleName = mixinClassName.substring(mixinClassName.lastIndexOf('.') + 1);
+        String requiredModule = PATCH_LAYER_MIXINS.get(simpleName);
+        if (requiredModule != null) {
+            return dev.stolym.vyne.core.VyneMode.hooks()
+                    && net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded(requiredModule);
+        }
         if (!dev.stolym.vyne.core.VyneMode.patchedGame() || !mixinClassName.startsWith("dev.stolym.vyne.mixin.")) {
             return true;
         }

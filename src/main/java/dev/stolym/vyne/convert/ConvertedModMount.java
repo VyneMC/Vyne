@@ -38,7 +38,7 @@ public final class ConvertedModMount {
         boolean hooks = !"false".equalsIgnoreCase(System.getProperty("vyne.hooks"));
         if (hooks) version = HookedGame.SURFACE_VERSION;
         if (version == null || version.isBlank() || !neoForgeMods) return;
-        if (fabricMods) {
+        if (fabricMods && !Boolean.getBoolean("vyne.hooks.mixed")) {
             VyneLogger.info("[PatchedGame] Fabric and NeoForge mods together: using the compatibility path");
             return;
         }
