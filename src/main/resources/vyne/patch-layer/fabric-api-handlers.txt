@@ -11,8 +11,8 @@ net/fabricmc/fabric/mixin/client/rendering/fluid/FluidRendererMixin modSpriteArr
 net/fabricmc/fabric/mixin/client/rendering/shader/ShaderProgramMixin allowNoneMinecraftId disabled
 net/fabricmc/fabric/mixin/client/rendering/shader/ShaderProgramMixin modifyId disabled
 net/fabricmc/fabric/mixin/client/sound/SoundSystemMixin getStream disabled
-net/fabricmc/fabric/mixin/content/registry/AbstractFurnaceBlockEntityMixin canUseAsFuelRedirect disabled
-net/fabricmc/fabric/mixin/content/registry/AbstractFurnaceBlockEntityMixin getFuelTimeRedirect disabled
+net/fabricmc/fabric/mixin/content/registry/AbstractFurnaceBlockEntityMixin canUseAsFuelRedirect replaced
+net/fabricmc/fabric/mixin/content/registry/AbstractFurnaceBlockEntityMixin getFuelTimeRedirect replaced
 net/fabricmc/fabric/mixin/datagen/TagProviderMixin addReplaced disabled
 net/fabricmc/fabric/mixin/entity/event/LivingEntityMixin modifyBedForOccupiedState disabled
 net/fabricmc/fabric/mixin/entity/event/LivingEntityMixin modifyWakeUpPosition disabled

@@ -63,6 +63,8 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
   - [x] Fixed: Mixin put Fabric's `Pack.parentsPredicate` default after a nested `new Pack` in NeoForge's constructor; Vyne sets the default at constructor return
   - [x] Mixed server on the patch layer (`-Dvyne.hooks.mixed=true`, Fabric API + Mouse Tweaks + CraftPresence + UniLib) reaches `Done` with 0 ERROR lines (2026-11-16)
   - [x] End-to-end test (`patch-layer` smoke scenario): a fake player breaks three blocks; Fabric and NeoForge listeners both run, either can cancel, Fabric's AFTER and CANCELED fire exactly when they would on Fabric
+  - [x] Replaced: Fabric furnace fuels (`FuelRegistry`) answered through NeoForge's `FurnaceFuelBurnTimeEvent` for items NeoForge does not already treat as fuel; tested in `patch-layer` (dirt 1234 from Fabric, coal 1600 from NeoForge)
+  - [ ] Sleep events (`fabric-entity-events-v1`, 11 handlers): spawn, allow-sleep and bed checks through NeoForge's `PlayerSetSpawnEvent`, `CanPlayerSleepEvent` and `SleepingLocationCheckEvent`; direction, occupation and wake-up position through mixins at NeoForge's call sites
   - [ ] Analysis: slices and same-name members added by both loaders (missed `WorldChunkMixin.onRemoveBlockEntity` and `TagFileMixin`)
   - [ ] Replace the remaining 38 disabled server-side handlers and the client-side ones, most-used first; then make the patch layer the default for mixed packs
 - [ ] Phase 6b: Mojang names at runtime; port the remaining Vyne code; delete the Minecraft stand-ins

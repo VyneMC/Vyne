@@ -41,6 +41,7 @@ public final class VyneModLoader {
 
     public static void gatherAndInitializeMods(Executor syncExecutor, Executor parallelExecutor, Runnable periodicTask) {
         VyneMods.discover();
+        dev.stolym.vyne.patchlayer.PatchLayerEvents.register();
         Dist dist = VyneFMLLoader.getDist();
         ClassLoader loader = GameLoader.get() != null ? GameLoader.get() : VyneModLoader.class.getClassLoader();
         List<VyneModContainer> containers = VyneMods.containers();

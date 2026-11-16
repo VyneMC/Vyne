@@ -42,6 +42,7 @@ final class BlockBreakProbe {
             addListener.invoke(bus, normal, false, started, onStarted);
             addListener.invoke(bus, normal, false, breakEvent, onBreak);
             registerFabric(loader);
+            registerFuel(loader);
             System.out.println("[VyneFixture] block-break probe registered");
         } catch (Throwable t) {
             System.out.println("[VyneFixture] block-break probe could not register: " + t);
@@ -62,6 +63,29 @@ final class BlockBreakProbe {
             count("fabric-canceled", args[2]);
             return null;
         });
+    }
+
+    private static void registerFuel(ClassLoader loader) throws Exception {
+        Class<?> registry = Class.forName("net.fabricmc.fabric.api.registry.FuelRegistry", true, loader);
+        Object instance = registry.getField("INSTANCE").get(null);
+        Object dirt = Class.forName("net.minecraft.class_1802", true, loader).getField("field_8831").get(null);
+        for (Method m : registry.getMethods()) {
+            if (m.getName().equals("add") && m.getParameterCount() == 2 && !m.isBridge()) {
+                m.invoke(instance, dirt, 1234);
+                return;
+            }
+        }
+    }
+
+    private static int burnTime(ClassLoader loader, String itemField) throws Exception {
+        Object item = Class.forName("net.minecraft.class_1802", true, loader).getField(itemField).get(null);
+        Class<?> convertible = Class.forName("net.minecraft.class_1935", true, loader);
+        Object stack = Class.forName("net.minecraft.class_1799", true, loader).getConstructor(convertible).newInstance(item);
+        Object smelting = Class.forName("net.minecraft.class_3956", true, loader).getField("field_17546").get(null);
+        for (Method m : stack.getClass().getMethods()) {
+            if (m.getName().equals("getBurnTime") && m.getParameterCount() == 1) return (int) m.invoke(stack, smelting);
+        }
+        throw new NoSuchMethodException("ItemStack.getBurnTime(RecipeType)");
     }
 
     private static void listen(Class<?> events, String name, java.util.function.Function<Object[], Object> body) throws Exception {
@@ -105,6 +129,8 @@ final class BlockBreakProbe {
             report("normal", level, gameMode, normalPos, stone);
             report("fabric-cancel", level, gameMode, fabricPos, stone);
             report("neoforge-cancel", level, gameMode, neoPos, stone);
+            System.out.println("[VyneFixture] fuel: dirt=" + burnTime(loader, "field_8831") + " coal="
+                    + burnTime(loader, "field_8713") + " stone=" + burnTime(loader, "field_20391"));
         } catch (Throwable t) {
             System.out.println("[VyneFixture] block-break probe failed: " + t);
         }

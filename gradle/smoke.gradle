@@ -66,6 +66,7 @@ def expectedPatterns = [
                 ~/\[VyneFixture\] block-break normal: result=true removed=true neoforge-break=1 fabric-before=1 fabric-after=1 fabric-canceled=0/,
                 ~/\[VyneFixture\] block-break fabric-cancel: result=false removed=false neoforge-break=1 fabric-before=1 fabric-after=0 fabric-canceled=1/,
                 ~/\[VyneFixture\] block-break neoforge-cancel: result=false removed=false neoforge-break=1 fabric-before=0 fabric-after=0 fabric-canceled=0/,
+                ~/\[VyneFixture\] fuel: dirt=1234 coal=1600 stone=0/,
         ],
 ]
 
@@ -76,7 +77,7 @@ def serverCommand = { File vyneJar, String scenario ->
     def customJvmArgs = providers.gradleProperty('smoke.jvmArgs').orNull
     if (customJvmArgs) extraJvmFlags += customJvmArgs.split(',').findAll { !it.isBlank() }
     if (scenario == 'patch-layer') extraJvmFlags += ['-Dvyne.hooks.mixed=true']
-    return ['java', '-Xmx2G', '-Xms2G',
+    return ['java', '-Xmx2G', '-Xms512M',
             '-Dvyne.dev=true',
             '-Djava.system.class.loader=dev.stolym.vyne.vcl.BridgeClassLoader',
             ] + extraJvmFlags + [
