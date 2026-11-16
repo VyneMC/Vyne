@@ -68,7 +68,7 @@ See [docs/dev/small-fixes.md](docs/dev/small-fixes.md) for the full list. Highli
 
 - [ ] Log noise: duplicated Vyne lines, `[FieldRemap]` at INFO, `[VynePacks]` ERROR when Fabric API is absent
 - [ ] Gate warning about `class_2385` / `class_2378` missing from the metadata index on every server boot
-- [ ] Skip mounting/converting the NeoForge API when no NeoForge mod is installed
+- [x] Skip mounting/converting the NeoForge API when no NeoForge mod is installed (and Vyne's NeoForge event hooks stay off)
 - [ ] Smoke suite: second boot per scenario to prove the cache is reused; fail on ERROR-level registration failures
 - [ ] Prune old `.vyne/cache/remap` and `.vyne/cache/realneo` buckets
 

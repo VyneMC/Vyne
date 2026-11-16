@@ -16,6 +16,7 @@ public final class VyneTickDispatcher {
     private static net.minecraftforge.event.TickEvent.ClientTickEvent.Post POST_EVENT;
 
     public static void fireClientTickPre() {
+        if (!NeoForgeEvents.enabled()) return;
         String modId = VyneModIdentity.currentModId();
         if (modId != null && !VyneExecutionGate.isAllowed(modId)) {
             return;
@@ -31,6 +32,7 @@ public final class VyneTickDispatcher {
     }
 
     public static void fireClientTickPost() {
+        if (!NeoForgeEvents.enabled()) return;
         String modId = VyneModIdentity.currentModId();
         if (modId != null && !VyneExecutionGate.isAllowed(modId)) {
             return;

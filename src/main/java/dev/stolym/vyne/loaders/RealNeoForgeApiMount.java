@@ -33,8 +33,8 @@ public final class RealNeoForgeApiMount {
     }
 
     public static void mount(Path universalJar) {
-        if (!ENABLED) return;
-        if (universalJar == null || !Files.isRegularFile(universalJar)) {
+        if (!ENABLED || universalJar == null) return;
+        if (!Files.isRegularFile(universalJar)) {
             VyneLogger.warn("[RealNeoAPI] Flag set but no NeoForge universal jar available — skipping.");
             return;
         }

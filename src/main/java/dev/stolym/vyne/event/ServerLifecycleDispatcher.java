@@ -47,8 +47,7 @@ public final class ServerLifecycleDispatcher {
     }
 
     private static void post(String name, java.util.function.Supplier<Object> event) {
-        java.util.List<?> neoForgeMods = dev.stolym.vyne.core.VyneLauncher.getPendingVCLMods();
-        if (neoForgeMods == null || neoForgeMods.isEmpty()) return;
+        if (!NeoForgeEvents.enabled()) return;
         try {
             NeoForge.EVENT_BUS.post(event.get());
             VyneLogger.info("[ServerLifecycle] Fired " + name);

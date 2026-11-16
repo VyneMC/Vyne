@@ -188,10 +188,17 @@ public final class VyneLauncher {
             }
         }
 
-        VyneLoadingScreen.update("Resolving the NeoForge API...", 12);
-        Path refDir = baseDir.resolve(".vyne").resolve("references");
-        Path neoJar = dev.stolym.vyne.engine.dynamic.NeoForgeReferenceDownloader.resolve(neoVersion, refDir);
-        neoForgeApiJar = neoJar;
+        boolean neoForgeMods = detectedMods.stream().anyMatch(mod ->
+                mod.getLoaderType() == DetectedMod.LoaderType.NEOFORGE
+                        || mod.getLoaderType() == DetectedMod.LoaderType.FORGE);
+        if (neoForgeMods) {
+            VyneLoadingScreen.update("Resolving the NeoForge API...", 12);
+            Path refDir = baseDir.resolve(".vyne").resolve("references");
+            neoForgeApiJar = dev.stolym.vyne.engine.dynamic.NeoForgeReferenceDownloader.resolve(neoVersion, refDir);
+        } else {
+            neoForgeApiJar = null;
+            VyneLogger.info("[Vyne] No NeoForge or Forge mods installed; the NeoForge API is not loaded.");
+        }
 
         VyneLogger.info("[Vyne] Initializing Unified Knot Environment...");
         ClassLoader launcherLoader = VyneLauncher.class.getClassLoader();

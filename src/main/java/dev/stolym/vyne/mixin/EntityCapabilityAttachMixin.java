@@ -16,6 +16,7 @@ public abstract class EntityCapabilityAttachMixin {
             method = "<init>(Lnet/minecraft/class_1299;Lnet/minecraft/class_1937;)V",
             at = @At("RETURN"))
     private void vyne$attachCapabilityProviders(CallbackInfo ci) {
+        if (!dev.stolym.vyne.event.NeoForgeEvents.enabled()) return;
         try {
             CapabilityBridge.attachDefaultProviders(this);
         } catch (Throwable ignored) {

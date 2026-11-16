@@ -132,7 +132,7 @@ final class ResultAnalyzer {
 
 			if (envDisabledAlternatives == null) {
 				pw.printf("\n\t - %s", Localization.format("resolution.solution.addMod",
-						mod.getId(),
+						knownName(mod.getId()),
 						formatVersionRequirements(mod.getVersionIntervals())));
 			} else {
 				String envKey = String.format("environment.%s", envType.name().toLowerCase(Locale.ENGLISH));
@@ -267,7 +267,7 @@ final class ResultAnalyzer {
 		Object[] args = new Object[] {
 				getName(mod),
 				getVersion(mod),
-				(matches.isEmpty() ? dep.getModId() : getName(matches.get(0))),
+				(matches.isEmpty() ? knownName(dep.getModId()) : getName(matches.get(0))),
 				formatVersionRequirements(dep.getVersionIntervals()),
 				getVersions(matches),
 				matches.size()
@@ -399,6 +399,11 @@ final class ResultAnalyzer {
 		}
 
 		return formatEnumeration(ret, true);
+	}
+
+	private static String knownName(String modId) {
+		if ("fabric".equals(modId) || "fabric-api".equals(modId)) return "Fabric API (" + modId + ")";
+		return modId;
 	}
 
 	private static String getName(ModCandidateImpl candidate) {

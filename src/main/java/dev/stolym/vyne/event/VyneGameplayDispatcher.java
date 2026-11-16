@@ -11,6 +11,7 @@ public final class VyneGameplayDispatcher {
     private VyneGameplayDispatcher() {}
 
     public static void firePlayerTickPre(Object player) {
+        if (!NeoForgeEvents.enabled()) return;
         if (player == null) return;
         try {
             VyneEventBus.global().post(new net.minecraftforge.event.TickEvent.PlayerTickEvent.Pre(player));
@@ -20,6 +21,7 @@ public final class VyneGameplayDispatcher {
     }
 
     public static void firePlayerTickPost(Object player) {
+        if (!NeoForgeEvents.enabled()) return;
         if (player == null) return;
         try {
             VyneEventBus.global().post(new net.minecraftforge.event.TickEvent.PlayerTickEvent.Post(player));
@@ -29,6 +31,7 @@ public final class VyneGameplayDispatcher {
     }
 
     public static void fireServerTickPost(Object server) {
+        if (!NeoForgeEvents.enabled()) return;
         try {
             net.minecraftforge.event.TickEvent.ServerTickEvent e =
                     new net.minecraftforge.event.TickEvent.ServerTickEvent(net.minecraftforge.event.TickEvent.Phase.END) {
@@ -41,6 +44,7 @@ public final class VyneGameplayDispatcher {
     }
 
     public static void fireLevelTickPost(Object level) {
+        if (!NeoForgeEvents.enabled()) return;
         if (level == null) return;
         try {
             VyneEventBus.global().post(new net.minecraftforge.event.TickEvent.LevelTickEvent.Post(level));
@@ -50,6 +54,7 @@ public final class VyneGameplayDispatcher {
     }
 
     public static void fireEntityJoinLevel(Object entity, Object level) {
+        if (!NeoForgeEvents.enabled()) return;
         if (entity == null || level == null) return;
         try {
             net.minecraftforge.event.entity.EntityJoinLevelEvent e =
@@ -63,6 +68,7 @@ public final class VyneGameplayDispatcher {
     }
 
     public static void firePlayerLoggedIn(Object player) {
+        if (!NeoForgeEvents.enabled()) return;
         if (player == null) return;
         try {
             Class<?> cls = Class.forName("net.minecraftforge.event.entity.player.PlayerEvent$PlayerLoggedInEvent",
@@ -75,6 +81,7 @@ public final class VyneGameplayDispatcher {
     }
 
     public static void firePlayerRespawn(Object player, boolean endConquered) {
+        if (!NeoForgeEvents.enabled()) return;
         if (player == null) return;
         try {
             Class<?> cls = Class.forName("net.minecraftforge.event.entity.player.PlayerEvent$PlayerRespawnEvent",
