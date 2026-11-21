@@ -68,13 +68,15 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
   - Patch-layer events, in batches (status of every disabled Fabric API handler: `vyne/patch-layer/fabric-api-handlers.txt`):
     - [x] Batch 1: block breaking, furnace fuel, tag removal, datapack registries
     - [x] Batch 2: sleep checks, bed spawn, mooshroom conversion
-    - [ ] Batch 3, sleep without a NeoForge event (mixins at NeoForge's call sites): `MODIFY_SLEEPING_DIRECTION`, `SET_BED_OCCUPATION_STATE`, `MODIFY_WAKE_UP_POSITION`, `ALLOW_BED` direction check (5 handlers)
-    - [ ] Batch 4, items (`fabric-item-api-v1`): durability (`CustomDamageHandler`), recipe remainders (crafting, brewing, furnace), enchanting checks (table, anvil, command, loot)
-    - [ ] Batch 5, recipes and content: custom ingredients (`fabric-recipe-api-v1`), villager trades, chunk section air checks (`fabric-block-api-v1`)
-    - [ ] Batch 6, menus and networking (needs a client test): extended screen handlers (`openMenu`), payload codecs, configuration-phase resource reload
-    - [ ] Client-only handlers (rendering, screens, sounds, model loading): count and plan once the client runs on the patch layer
-  - [ ] Analysis: slices and same-name members added by both loaders (missed `WorldChunkMixin.onRemoveBlockEntity` and `TagFileMixin`)
-  - [ ] Replace the remaining 38 disabled server-side handlers and the client-side ones, most-used first; then make the patch layer the default for mixed packs
+    - [x] Batch 3, sleep without a NeoForge event (mixins at NeoForge's call sites, tested with a fake player and a sleeping villager): `MODIFY_SLEEPING_DIRECTION`, `SET_BED_OCCUPATION_STATE`, `MODIFY_WAKE_UP_POSITION`, `ALLOW_BED` direction check (5 handlers)
+    - [x] Batch 4, items (`fabric-item-api-v1`, tested in `patch-layer`): durability (`CustomDamageHandler` through NeoForge's `damageItem`), recipe remainders (crafting, brewing, furnace, through `getCraftingRemainingItem`), enchanting checks (table, anvil, command, loot, through `supportsEnchantment` / `isPrimaryItemFor`), `EnchantmentEvents.MODIFY` (NeoForge moved the registry call into a lambda)
+    - [x] Batch 5, recipes and content (tested in `patch-layer`): Fabric custom ingredients (`fabric:type`) in NeoForge's ingredient codecs, including the list codecs built from `MAP_CODEC_NONEMPTY`; network falls back to item lists as Fabric does for clients without the type; villager trades and chunk section air checks already done by NeoForge
+    - [x] Batch 6, menus and networking (server side tested in `patch-layer`, client connection still to test): Fabric payload types in NeoForge's four custom payload codecs (round trip tested), extended screen handlers through NeoForge's `openMenu`, Fabric's close-current-screen check, known packs filter, vanilla language file, datagen tag `replace`
+    - [x] Client-only handlers (targets checked against the patched client jar, not run yet): screen tick and render events, Indigo chunk building (non-vanilla Fabric models), block entity render data, fluid sprites and overlays, sound streams, model modifiers, block-breaking continuation; hanging signs and namespaced shaders already done by NeoForge
+    - [ ] Test on a real client: a mixed pack with `-Dvyne.hooks.mixed=true` joining a server (payloads, extended menus, known packs), a Fabric model mod (Indigo), a Fabric fluid mod
+  - [ ] Analysis: slices and same-name members added by both loaders (missed `WorldChunkMixin.onRemoveBlockEntity` and `TagFileMixin`), and injections that apply to code NeoForge no longer uses (missed `IngredientMixin.injectCodec`: NeoForge builds `Ingredient.CODEC` from `CraftingHelper`, not `codec(boolean)`)
+  - [x] Replace every disabled Fabric API handler: 60 replaced, 0 disabled in the table
+  - [ ] Make the patch layer the default for mixed packs (after the client test), then delete the compatibility path
 - [ ] Phase 6b: Mojang names at runtime; port the remaining Vyne code; delete the Minecraft stand-ins
 - [ ] Phase 7: mixin duplicate/collision detection; content-mod smoke scenarios
 - [ ] Phase 8: Guard redesign (points 1 to 5 in the design doc)

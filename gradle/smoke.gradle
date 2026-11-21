@@ -68,6 +68,12 @@ def expectedPatterns = [
                 ~/\[VyneFixture\] block-break neoforge-cancel: result=false removed=false neoforge-break=1 fabric-before=0 fabric-after=0 fabric-canceled=0/,
                 ~/\[VyneFixture\] fuel: dirt=1234 coal=1600 stone=0/,
                 ~/\[VyneFixture\] sleep: time-allowed=null monsters-refused=NOT_SAFE spawn-refused=true spawn-other=false continue-refused=true conversions=1/,
+                ~/\[VyneFixture\] bed: slept=true occupation=2 wake-up=1 direction-asked=true/,
+                ~/\[VyneFixture\] items: stick-sharpness=true pickaxe-unbreaking=false pickaxe-sharpness=false bucket-remainder=minecraft:bucket stick-remainder=true modified-many=true sharpness-source=VANILLA/,
+                ~/\[VyneFixture\] durability: handler-calls=2 damage-after-first=0 broken=true/,
+                ~/\[VyneFixture\] ingredients: stick=true dirt=false list-first-diamond=true list-second-dirt=true encoded-fabric=true/,
+                ~/\[VyneFixture\] payload: round-trip=hello from Fabric/,
+                ~/\[VyneFixture\] menus: route=fabric close-asked=true language-stone=Stone/,
         ],
 ]
 
@@ -78,7 +84,8 @@ def serverCommand = { File vyneJar, String scenario ->
     def customJvmArgs = providers.gradleProperty('smoke.jvmArgs').orNull
     if (customJvmArgs) extraJvmFlags += customJvmArgs.split(',').findAll { !it.isBlank() }
     if (scenario == 'patch-layer') extraJvmFlags += ['-Dvyne.hooks.mixed=true']
-    return ['java', '-Xmx2G', '-Xms512M',
+    def maxHeap = providers.gradleProperty('smoke.xmx').orElse('2G').get()
+    return ['java', '-Xmx' + maxHeap, '-Xms512M',
             '-Dvyne.dev=true',
             '-Djava.system.class.loader=dev.stolym.vyne.vcl.BridgeClassLoader',
             ] + extraJvmFlags + [

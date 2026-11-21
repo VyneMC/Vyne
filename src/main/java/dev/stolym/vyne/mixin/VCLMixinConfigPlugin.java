@@ -22,10 +22,29 @@ public class VCLMixinConfigPlugin implements IMixinConfigPlugin {
         return null;
     }
 
-    private static final java.util.Map<String, String> PATCH_LAYER_MIXINS = java.util.Map.of(
-            "PatchLayerBlockBreakMixin", "fabric-events-interaction-v0",
-            "PatchLayerPackDefaultsMixin", "fabric-resource-loader-v0",
-            "PatchLayerDynamicRegistriesMixin", "fabric-registry-sync-v0");
+    private static final java.util.Map<String, String> PATCH_LAYER_MIXINS = java.util.Map.ofEntries(
+            java.util.Map.entry("PatchLayerBlockBreakMixin", "fabric-events-interaction-v0"),
+            java.util.Map.entry("PatchLayerPackDefaultsMixin", "fabric-resource-loader-v0"),
+            java.util.Map.entry("PatchLayerDynamicRegistriesMixin", "fabric-registry-sync-v0"),
+            java.util.Map.entry("PatchLayerLivingSleepMixin", "fabric-entity-events-v1"),
+            java.util.Map.entry("PatchLayerPlayerSleepMixin", "fabric-entity-events-v1"),
+            java.util.Map.entry("PatchLayerItemMixin", "fabric-item-api-v1"),
+            java.util.Map.entry("PatchLayerRegistryLoaderMixin", "fabric-item-api-v1"),
+            java.util.Map.entry("PatchLayerIngredientMixin", "fabric-recipe-api-v1"),
+            java.util.Map.entry("PatchLayerServerboundPayloadMixin", "fabric-networking-api-v1"),
+            java.util.Map.entry("PatchLayerClientboundPayloadMixin", "fabric-networking-api-v1"),
+            java.util.Map.entry("PatchLayerMenuMixin", "fabric-screen-handler-api-v1"),
+            java.util.Map.entry("PatchLayerKnownPacksMixin", "fabric-resource-loader-v0"),
+            java.util.Map.entry("PatchLayerLanguageMixin", "fabric-resource-loader-v0"),
+            java.util.Map.entry("PatchLayerTagProviderMixin", "fabric-data-generation-api-v1"),
+            java.util.Map.entry("PatchLayerScreenTickMixin", "fabric-screen-api-v1"),
+            java.util.Map.entry("PatchLayerScreenRenderMixin", "fabric-screen-api-v1"),
+            java.util.Map.entry("PatchLayerBlockBreakingClientMixin", "fabric-item-api-v1"),
+            java.util.Map.entry("PatchLayerSoundMixin", "fabric-sound-api-v1"),
+            java.util.Map.entry("PatchLayerFluidRenderMixin", "fabric-rendering-fluids-v1"),
+            java.util.Map.entry("PatchLayerSectionCompilerMixin", "fabric-renderer-indigo"),
+            java.util.Map.entry("PatchLayerRenderRegionMixin", "fabric-block-view-api-v2"),
+            java.util.Map.entry("PatchLayerModelBakeMixin", "fabric-model-loading-api-v1"));
 
     private static final java.util.Set<String> PATCHED_GAME_MIXINS = java.util.Set.of(
             "LoadingOverlayVyneMixin",

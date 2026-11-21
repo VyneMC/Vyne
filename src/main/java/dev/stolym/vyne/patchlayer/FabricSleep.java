@@ -78,6 +78,46 @@ public final class FabricSleep {
         }
     }
 
+    public static boolean occupationHandled(Object entity, Object pos, Object state, boolean occupied) {
+        try {
+            return Boolean.TRUE.equals(FabricEvents.fire(SLEEP, "SET_BED_OCCUPATION_STATE", "setBedOccupationState", entity, pos, state, occupied));
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            disabled("bed occupation", e);
+            return false;
+        }
+    }
+
+    public static Optional<?> wakeUpPosition(Object entity, Object pos, Object level, Optional<?> vanilla) {
+        try {
+            Object state = FabricEvents.call(level, "method_8320", pos);
+            Object modified = FabricEvents.fire(SLEEP, "MODIFY_WAKE_UP_POSITION", "modifyWakeUpPosition", entity, pos, state, vanilla.orElse(null));
+            return Optional.ofNullable(modified);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            disabled("wake-up position", e);
+            return vanilla;
+        }
+    }
+
+    public static Object sleepDirection(Object entity, Object direction) {
+        try {
+            Optional<?> sleeping = (Optional<?>) FabricEvents.call(entity, "method_18398");
+            return sleeping.isEmpty() ? direction : sleepDirection(entity, sleeping.get(), direction);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            disabled("sleeping direction", e);
+            return direction;
+        }
+    }
+
+    public static Object sleepDirection(Object entity, Object pos, Object direction) {
+        try {
+            Object modified = FabricEvents.fire(SLEEP, "MODIFY_SLEEPING_DIRECTION", "modifySleepDirection", entity, pos, direction);
+            return modified != null ? modified : direction;
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            disabled("sleeping direction", e);
+            return direction;
+        }
+    }
+
     private static Enum<?> check(Object event, Class<?> problems, Enum<?> problem, String name, Object result) throws ReflectiveOperationException {
         Boolean decision = FabricEvents.decision(result);
         if (decision == null) return problem;

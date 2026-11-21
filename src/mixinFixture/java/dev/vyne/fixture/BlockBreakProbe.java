@@ -71,7 +71,7 @@ final class BlockBreakProbe {
         Object instance = registry.getField("INSTANCE").get(null);
         Object dirt = Class.forName("net.minecraft.class_1802", true, loader).getField("field_8831").get(null);
         for (Method m : registry.getMethods()) {
-            if (m.getName().equals("add") && m.getParameterCount() == 2 && !m.isBridge()) {
+            if (m.getName().equals("add") && m.getParameterCount() == 2 && !m.isBridge() && m.getParameterTypes()[0].isInstance(dirt)) {
                 m.invoke(instance, dirt, 1234);
                 return;
             }
@@ -133,6 +133,12 @@ final class BlockBreakProbe {
             System.out.println("[VyneFixture] fuel: dirt=" + burnTime(loader, "field_8831") + " coal="
                     + burnTime(loader, "field_8713") + " stone=" + burnTime(loader, "field_20391"));
             EventBridgeProbe.run(loader, level, player, x, y, z);
+            EventBridgeProbe.sleepInBed(loader, level, player, x, y, z);
+            EventBridgeProbe.items(loader, level);
+            EventBridgeProbe.durability(loader, player);
+            EventBridgeProbe.ingredients(loader);
+            EventBridgeProbe.payloads(loader, level);
+            EventBridgeProbe.menus(loader, player);
         } catch (Throwable t) {
             System.out.println("[VyneFixture] block-break probe failed: " + t);
         }
