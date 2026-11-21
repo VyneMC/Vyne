@@ -12,24 +12,38 @@ import java.util.function.Function;
 public final class FabricModels {
     private FabricModels() {}
 
-    public interface Bake {
-        Object bake(Object unbaked);
+    private static final ThreadLocal<java.util.ArrayDeque<Object>> UNBAKED = ThreadLocal.withInitial(java.util.ArrayDeque::new);
+
+    public static Object beforeBake(Object baker, Object id, Object unbaked, Object state, Function<?, ?> sprites) {
+        Object modified = unbaked;
+        Object dispatcher = dispatcher(baker);
+        if (dispatcher != null) {
+            modified = invoke(dispatcher, "modifyModelBeforeBake", 6, unbaked, id, null, sprites, state, baker);
+        }
+        UNBAKED.get().push(modified);
+        return modified;
     }
 
-    public static Object bake(Object baker, Object id, Object unbaked, Object state, Function<?, ?> sprites, Bake original) {
-        Object dispatcher;
+    public static Object afterBake(Object baker, Object id, Object baked, Object state, Function<?, ?> sprites) {
+        java.util.ArrayDeque<Object> stack = UNBAKED.get();
+        Object unbaked = stack.isEmpty() ? null : stack.pop();
+        Object dispatcher = dispatcher(baker);
+        if (dispatcher == null) return baked;
+        return invoke(dispatcher, "modifyModelAfterBake", 7, baked, id, null, unbaked, sprites, state, baker);
+    }
+
+    private static Object dispatcher(Object baker) {
         try {
-            Object bakery = bakery(baker);
-            dispatcher = Class.forName("net.fabricmc.fabric.impl.client.model.loading.ModelLoaderHooks", true, FabricModels.class.getClassLoader())
-                    .getMethod("fabric_getDispatcher").invoke(bakery);
+            return Class.forName("net.fabricmc.fabric.impl.client.model.loading.ModelLoaderHooks", true, FabricModels.class.getClassLoader())
+                    .getMethod("fabric_getDispatcher").invoke(bakery(baker));
         } catch (ReflectiveOperationException | RuntimeException e) {
-            return original.bake(unbaked);
+            return null;
         }
-        if (dispatcher == null) return original.bake(unbaked);
+    }
+
+    private static Object invoke(Object dispatcher, String name, int parameters, Object... args) {
         try {
-            Object modified = method(dispatcher, "modifyModelBeforeBake", 6).invoke(dispatcher, unbaked, id, null, sprites, state, baker);
-            Object baked = original.bake(modified);
-            return method(dispatcher, "modifyModelAfterBake", 7).invoke(dispatcher, baked, id, null, modified, sprites, state, baker);
+            return method(dispatcher, name, parameters).invoke(dispatcher, args);
         } catch (java.lang.reflect.InvocationTargetException e) {
             if (e.getCause() instanceof RuntimeException runtime) throw runtime;
             throw new IllegalStateException(e.getCause());

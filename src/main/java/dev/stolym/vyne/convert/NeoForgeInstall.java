@@ -22,12 +22,13 @@ import java.util.stream.Stream;
 
 public record NeoForgeInstall(String version, Path patchedGame, Path vanillaGame, Path fml, Path bus,
                               List<Path> libraries) {
-    private static final int SCHEMA = 1;
+    private static final int SCHEMA = 2;
     private static final String[][] LIBRARIES = {
             {"cpw/mods/securejarhandler", "securejarhandler"},
             {"org/jline/jline-reader", "jline-reader"},
             {"org/jline/jline-terminal", "jline-terminal"},
             {"net/minecrell/terminalconsoleappender", "terminalconsoleappender"},
+            {"net/neoforged/mergetool", "mergetool", "-api.jar"},
     };
 
     public static NeoForgeInstall ensure(String version, boolean dedicatedServer, Path baseDir) throws IOException {
@@ -61,7 +62,7 @@ public record NeoForgeInstall(String version, Path patchedGame, Path vanillaGame
             found.setProperty("bus", copy(newest(libraries.resolve("net/neoforged/bus"), "bus-", ".jar"), dir));
             List<String> extra = new ArrayList<>();
             for (String[] library : LIBRARIES) {
-                Path jar = newest(libraries.resolve(library[0]), library[1] + "-", ".jar");
+                Path jar = newest(libraries.resolve(library[0]), library[1] + "-", library.length > 2 ? library[2] : ".jar");
                 if (jar != null) extra.add(copy(jar, dir));
             }
             found.setProperty("libraries", String.join(",", extra));
@@ -150,7 +151,7 @@ public record NeoForgeInstall(String version, Path patchedGame, Path vanillaGame
                     .filter(p -> {
                         String name = p.getFileName().toString();
                         return name.startsWith(prefix) && name.endsWith(suffix)
-                                && (suffix.equals("-srg.jar") || !name.substring(prefix.length()).contains("-"));
+                                && (!suffix.equals(".jar") || !name.substring(prefix.length()).contains("-"));
                     })
                     .max(Comparator.comparing(p -> p.getParent().getFileName().toString()))
                     .orElse(null);

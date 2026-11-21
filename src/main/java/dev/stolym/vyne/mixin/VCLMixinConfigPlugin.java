@@ -50,15 +50,14 @@ public class VCLMixinConfigPlugin implements IMixinConfigPlugin {
             "LoadingOverlayVyneMixin",
             "CrashReportVyneMixin",
             "PackRepositoryVyneMixin",
-            "DedicatedServerMixin",
-            "ServerMainMixin");
+            "DedicatedServerMixin");
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         String simpleName = mixinClassName.substring(mixinClassName.lastIndexOf('.') + 1);
         String requiredModule = PATCH_LAYER_MIXINS.get(simpleName);
         if (requiredModule != null) {
-            return dev.stolym.vyne.core.VyneMode.hooks()
+            return dev.stolym.vyne.core.VyneMode.patchedGame()
                     && net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded(requiredModule);
         }
         if (!dev.stolym.vyne.core.VyneMode.patchedGame() || !mixinClassName.startsWith("dev.stolym.vyne.mixin.")) {

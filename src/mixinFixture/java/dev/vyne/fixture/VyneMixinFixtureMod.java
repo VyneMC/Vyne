@@ -6,7 +6,7 @@
 package dev.vyne.fixture;
 
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.DistExecutor;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,8 +19,8 @@ public class VyneMixinFixtureMod {
         LOGGER.info("[VyneFixture] mod instance created");
         System.out.println("[VyneFixture] mod instance created");
 
-        DistExecutor.safeRunWhenOn(Dist.DEDICATED_SERVER, () -> VyneMixinFixtureMod::serverInit);
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientOnlyThing::init);
+        if (FMLEnvironment.dist == Dist.DEDICATED_SERVER) serverInit();
+        if (FMLEnvironment.dist == Dist.CLIENT) ClientOnlyThing.init();
     }
 
     private static void serverInit() {

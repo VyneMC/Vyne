@@ -118,7 +118,7 @@ public final class MappingComposer {
                 byte[] raw = is.readAllBytes();
                 Map<String, String> o2i = BUILT_OFFICIAL_TO_INTER;
                 if (o2i != null && !o2i.isEmpty()) {
-                    raw = dev.stolym.vyne.engine.dynamic.rewrite.OfficialClientJarHeaderRemapper
+                    raw = OfficialClientJarHeaderRemapper
                         .remap(raw, interInternal, o2i);
                 }
                 return raw;

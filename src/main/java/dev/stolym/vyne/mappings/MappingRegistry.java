@@ -73,8 +73,6 @@ public final class MappingRegistry {
     public static void notifyMappingsChanged() {
         MappingComposer.invalidateCache();
         for (Runnable listener : INVALIDATION_LISTENERS) listener.run();
-        dev.stolym.vyne.vcl.RemapCache.setMappingsFingerprint(
-            dev.stolym.vyne.vcl.RemapCache.computeMappingsFingerprint(instance));
     }
 
     private static void startClientJarProbeAsync(String mcVersion) {

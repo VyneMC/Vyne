@@ -26,9 +26,8 @@ dependencies {
 }
 
 tasks.register('vyneClassesForFml', Sync) {
-    dependsOn tasks.named('compileJava'), 'injectDeferredRegisterBridges', 'injectRegisterEventBridges'
+    dependsOn tasks.named('compileJava')
     from sourceSets.main.output.classesDirs
-    exclude 'net/neoforged/**', 'net/minecraftforge/**', 'cpw/**', 'net/minecraft/**'
     into layout.buildDirectory.dir('fml-vyne-classes')
 }
 

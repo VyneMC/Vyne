@@ -33,7 +33,7 @@ public final class VyneLauncher {
     private static final java.util.Set<String> hardDisabledModIds =
         new java.util.HashSet<>();
     private static List<DetectedMod> detectedMods;
-    private static List<DetectedMod> pendingVCLMods = new ArrayList<>();
+    private static List<DetectedMod> neoForgeMods = new ArrayList<>();
     private static Path neoForgeApiJar;
 
     public static Path getNeoForgeApiJar() {
@@ -174,6 +174,13 @@ public final class VyneLauncher {
         VyneLoadingScreen.update("Scanning mods...", 5);
         ModDetector detector = new ModDetector(modsDir);
         detectedMods = detector.scan();
+        detectedMods = new ArrayList<>(detectedMods);
+        detectedMods.removeIf(mod -> {
+            if (mod.getLoaderType() != DetectedMod.LoaderType.FORGE) return false;
+            VyneLogger.warn("[Vyne] " + mod.getModId() + " is a legacy Forge mod and cannot run on Vyne; only NeoForge "
+                    + TARGET_MC + " and Fabric mods run. Skipping it.");
+            return true;
+        });
 
         String preferredVersion = VyneContainmentConfig.getNeoForgeVersion();
         dev.stolym.vyne.engine.dynamic.NeoForgeVersionResolver.ResolutionResult res =
@@ -188,10 +195,10 @@ public final class VyneLauncher {
             }
         }
 
-        boolean neoForgeMods = detectedMods.stream().anyMatch(mod ->
+        boolean hasNeoForgeMods = detectedMods.stream().anyMatch(mod ->
                 mod.getLoaderType() == DetectedMod.LoaderType.NEOFORGE
                         || mod.getLoaderType() == DetectedMod.LoaderType.FORGE);
-        if (neoForgeMods) {
+        if (hasNeoForgeMods) {
             VyneLoadingScreen.update("Resolving the NeoForge API...", 12);
             Path refDir = baseDir.resolve(".vyne").resolve("references");
             neoForgeApiJar = dev.stolym.vyne.engine.dynamic.NeoForgeReferenceDownloader.resolve(neoVersion, refDir);
@@ -355,7 +362,7 @@ public final class VyneLauncher {
         VyneLogger.success("[Vyne] Indexed " + dev.stolym.vyne.vcl.metadata.VyneMetadataIndex.size() + " classes for hierarchy resolution.");
         VyneLoadingScreen.activity("Indexed " + dev.stolym.vyne.vcl.metadata.VyneMetadataIndex.size() + " classes");
 
-        pendingVCLMods = detectedMods
+        neoForgeMods = detectedMods
             .stream()
             .filter(
                 m ->
@@ -459,8 +466,8 @@ public final class VyneLauncher {
         );
     }
 
-    public static List<DetectedMod> getPendingVCLMods() {
-        return pendingVCLMods;
+    public static List<DetectedMod> getNeoForgeMods() {
+        return neoForgeMods;
     }
 
     private static String resolveWorldName(Path baseDir) {

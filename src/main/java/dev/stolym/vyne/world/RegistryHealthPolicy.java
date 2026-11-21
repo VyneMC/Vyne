@@ -6,9 +6,7 @@ package dev.stolym.vyne.world;
 
 import dev.stolym.vyne.core.DetectedMod;
 import dev.stolym.vyne.core.VyneLauncher;
-import dev.stolym.vyne.registry.RegistrationDiagnostics;
 import dev.stolym.vyne.util.VyneLogger;
-import dev.stolym.vyne.vcl.VCLManager;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -43,25 +41,6 @@ public final class RegistryHealthPolicy {
     public static void loadPersistedFailuresIntoSession() {
     }
 
-    public static void applyAfterRegistrationDiagnostics() {
-        Set<String> known = new java.util.HashSet<>();
-        var list = VyneLauncher.getDetectedMods();
-        if (list != null) {
-            for (DetectedMod m : list) {
-                if (m != null && m.getModId() != null && !m.getModId().isBlank()) {
-                    known.add(m.getModId());
-                }
-            }
-        }
-        Set<String> unhealthy = RegistrationDiagnostics.collectUnhealthyModIds(known);
-        if (!unhealthy.isEmpty()) {
-            VyneLogger.warn("[RegistryHealth] Registration diagnostics reported stress for mod(s): "
-                + String.join(", ", unhealthy)
-                + ". See [RegDiag] and [VyneHealth] for policy / quarantine.");
-        }
-        dev.stolym.vyne.registry.RegistrationHealthEngine.runPostRegistrationPolicy();
-    }
-
     public static void recordSessionSuppression(String modId) {
     }
 
@@ -79,7 +58,7 @@ public final class RegistryHealthPolicy {
                 return true;
             }
         }
-        return VCLManager.shouldDropFailedModDataPack(packId);
+        return false;
     }
 
     public static void stripSuppressedPacks(Object packRepository) {

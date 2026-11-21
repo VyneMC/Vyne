@@ -154,14 +154,6 @@ public final class BridgeClassLoader extends URLClassLoader {
         }
         RESOLVING.set(true);
         try {
-            try {
-                ClassLoader ck = VCLManager.getCanonicalKnotLoader();
-                if (ck != null && canLoadCodec(ck)) {
-                    CACHED_FABRIC_GAME = ck;
-                    return ck;
-                }
-            } catch (Throwable ignored) {
-            }
             for (ClassLoader probe : FabricLoaderProbes.reflectionProbesForFabricLauncherBase()) {
                 if (probe == null) {
                     continue;
@@ -180,14 +172,6 @@ public final class BridgeClassLoader extends URLClassLoader {
                     }
                 } catch (Throwable ignored) {
                 }
-            }
-            try {
-                ClassLoader ck = VCLManager.getCanonicalKnotLoader();
-                if (ck != null) {
-                    CACHED_FABRIC_GAME = ck;
-                    return ck;
-                }
-            } catch (Throwable ignored) {
             }
         } finally {
             RESOLVING.set(false);

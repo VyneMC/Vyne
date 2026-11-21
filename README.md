@@ -61,15 +61,17 @@ cd Vyne
 ./gradlew build      # jar ends up in build/libs/
 ```
 
-**Planned change:** Vyne currently runs the game with Fabric's Intermediary names (`class_310`, `method_1523`). It will move to Mojang's names soon, so logs and Vyne's own code become readable; Fabric mods will then be converted once at load instead of NeoForge mods. As part of that move, the placeholder Minecraft classes in `src/main/java/net/minecraft/` and `src/mock/java/net/minecraft/` (only used to compile Vyne, never shipped) will be deleted, along with the mixins in `src/main/java/dev/stolym/vyne/mixin/` that the new design no longer needs. Avoid building on them. Details: [unified platform design](docs/dev/unified-platform.md).
+Vyne compiles against the real Minecraft jar with the names the game uses at runtime, Fabric's Intermediary names (`class_310`, `method_1523`); `./gradlew minecraftRuntimeJar` builds it from Mojang's jar and Fabric's mappings.
 
-**How NeoForge mods run today:** packs with only NeoForge mods run on NeoForge's own patched Minecraft behind Vyne's loader: on first start Vyne runs NeoForge's installer and keeps the result in `.vyne/neoforge/`. Packs that mix Fabric and NeoForge mods use the older compatibility path (hand-written NeoForge and Forge classes in `src/main/java/net/neoforged/` and `src/main/java/net/minecraftforge/`, the dynamic bridge engine, registry bridging, `vyne.accesswidener`). Both are temporary. The target is Vyne patching vanilla itself, with its own copy of the NeoForge and Fabric APIs on Vyne's own hooks; once that runs both kinds of pack, both temporary paths are deleted. Don't build on them. See [plan.md](plan.md).
+**Planned change:** Vyne will move to Mojang's names at runtime, so logs and Vyne's own code become readable; Fabric mods will then be converted once at load instead of NeoForge mods. Details: [unified platform design](docs/dev/unified-platform.md).
+
+**How NeoForge mods run today:** every pack with NeoForge mods, with or without Fabric mods, runs on NeoForge's patched Minecraft behind Vyne's loader. By default Vyne patches vanilla itself with its own copy of NeoForge's patches and its own copy of the NeoForge API; `-Dvyne.hooks=false` uses NeoForge's installer instead (kept in `.vyne/neoforge/`). In mixed packs, Fabric API runs on that game through Vyne's patch layer, which sends Fabric API's hooks through NeoForge's own events and call sites. Packs with only Fabric mods run on plain vanilla, as with Fabric Loader. Legacy Forge mods (`net.minecraftforge`) are not supported. See [plan.md](plan.md).
 
 `./gradlew build` runs the unit tests and a check that every class in the jar loads. There are also end-to-end tests that boot real servers. See the [playtesting guide](docs/playtest.md#7-automated-testing-for-contributors) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## How it works
 
-Every mod, Fabric or NeoForge, is loaded by Fabric's class loader, so they can see each other's classes. The first time Vyne sees a NeoForge mod, it translates the whole jar from Mojang names to the Intermediary names the Fabric-hosted game uses and saves the result under `.vyne/cache/converted/`. Later starts load the saved jar directly, with no translation work. NeoForge's own API jar is downloaded and treated the same way, so Vyne doesn't have to reimplement it. The hand-written parts are the places where NeoForge meets the Fabric host: mod lifecycle, registries and the event bus.
+Every mod, Fabric or NeoForge, is loaded by Fabric's class loader, so they can see each other's classes. The first time Vyne sees a NeoForge mod, it remaps the whole jar exactly from Mojang names to the Intermediary names the game uses, against NeoForge's patched game, and saves the result under `.vyne/cache/converted/`. Later starts load the saved jar directly. NeoForge mods are run by NeoForge's own mod loader (FML) on Vyne's class loader, with the real NeoForge API.
 
 Vyne also catches exceptions thrown by some NeoForge event listeners and rendering hooks, and can disable the mod responsible instead of crashing. This part is still rough.
 

@@ -4,9 +4,6 @@ def defaultSkipPrefixes = [
         'dev.stolym.vyne.fml.',
         'dev.stolym.vyne.hooks.mixin.',
         'dev.stolym.vyne.hooks.bridge.',
-        'dev.stolym.vyne.compat.',
-        'dev.stolym.vyne.fluid.',
-        'net.minecraftforge.',
         'net.neoforged.',
         'net.fabricmc.loader.impl.game.minecraft.',
         'org.apache.logging.log4j.',
@@ -78,12 +75,10 @@ def expectedPatterns = [
 ]
 
 def serverCommand = { File vyneJar, String scenario ->
-    def extraJvmFlags = providers.gradleProperty('smoke.noRealNeo').isPresent()
-            ? ['-Dvyne.realNeoforgeApi=false'] : []
+    def extraJvmFlags = []
     if (providers.gradleProperty('smoke.installer').isPresent()) extraJvmFlags += ['-Dvyne.hooks=false']
     def customJvmArgs = providers.gradleProperty('smoke.jvmArgs').orNull
     if (customJvmArgs) extraJvmFlags += customJvmArgs.split(',').findAll { !it.isBlank() }
-    if (scenario == 'patch-layer') extraJvmFlags += ['-Dvyne.hooks.mixed=true']
     def maxHeap = providers.gradleProperty('smoke.xmx').orElse('2G').get()
     return ['java', '-Xmx' + maxHeap, '-Xms512M',
             '-Dvyne.dev=true',

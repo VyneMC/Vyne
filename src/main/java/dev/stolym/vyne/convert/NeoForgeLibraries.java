@@ -28,16 +28,22 @@ public record NeoForgeLibraries(Path fml, Path bus, List<Path> libraries) {
             .connectTimeout(Duration.ofSeconds(15))
             .build();
 
-    private record Artifact(String repository, String group, String name, String version) {
+    private record Artifact(String repository, String group, String name, String version, String classifier) {
+        Artifact(String repository, String group, String name, String version) {
+            this(repository, group, name, version, null);
+        }
+
         String path() {
-            return group.replace('.', '/') + "/" + name + "/" + version + "/" + name + "-" + version + ".jar";
+            String suffix = classifier == null ? "" : "-" + classifier;
+            return group.replace('.', '/') + "/" + name + "/" + version + "/" + name + "-" + version + suffix + ".jar";
         }
     }
 
     private static final Artifact FML = new Artifact(NEOFORGED, "net.neoforged.fancymodloader", "loader", "4.0.45");
     private static final Artifact BUS = new Artifact(NEOFORGED, "net.neoforged", "bus", "8.0.5");
     private static final List<Artifact> COMMON = List.of(
-            new Artifact(NEOFORGED, "cpw.mods", "securejarhandler", "3.0.8"));
+            new Artifact(NEOFORGED, "cpw.mods", "securejarhandler", "3.0.8"),
+            new Artifact(NEOFORGED, "net.neoforged", "mergetool", "2.0.0", "api"));
     private static final List<Artifact> SERVER = List.of(
             new Artifact(CENTRAL, "org.jline", "jline-reader", "3.20.0"),
             new Artifact(CENTRAL, "org.jline", "jline-terminal", "3.20.0"),

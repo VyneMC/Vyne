@@ -40,6 +40,63 @@ tasks.register('minecraftMojangJar', JavaExec) {
 
 ext.minecraftMojang = files(mojangJar) { builtBy 'minecraftMojangJar' } + configurations.minecraftLibraries
 
+def runtimeJar = new File(minecraftDir, "minecraft-${project.minecraft_version}-runtime.jar")
+def officialClientJar = new File(minecraftDir, "minecraft-${project.minecraft_version}-client-official.jar")
+
+sourceSets {
+    minecraftJar {
+        java {
+            srcDirs = ['src/minecraftJar/java']
+        }
+    }
+}
+
+configurations {
+    intermediaryMappings {
+        transitive = false
+    }
+}
+
+dependencies {
+    minecraftJarImplementation 'net.fabricmc:tiny-remapper:0.15.0'
+    minecraftJarImplementation 'net.fabricmc:mapping-io:0.9.1'
+    intermediaryMappings "net.fabricmc:intermediary:${project.minecraft_version}:v2"
+}
+
+tasks.register('minecraftOfficialClientJar') {
+    group = 'vyne'
+    description = 'Downloads the vanilla Minecraft client jar and checks its SHA-1.'
+    def client = versionMeta.downloads.client
+    outputs.file(officialClientJar)
+    doLast {
+        def tmp = new File(officialClientJar.parentFile, officialClientJar.name + '.part')
+        new URL(client.url).withInputStream { input -> tmp.withOutputStream { it << input } }
+        def sha1 = java.security.MessageDigest.getInstance('SHA-1').digest(tmp.bytes).encodeHex().toString()
+        if (sha1 != client.sha1) {
+            tmp.delete()
+            throw new GradleException("Minecraft client jar SHA-1 mismatch: expected ${client.sha1}, got ${sha1}")
+        }
+        java.nio.file.Files.move(tmp.toPath(), officialClientJar.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+    onlyIf { !officialClientJar.isFile() }
+}
+
+tasks.register('minecraftRuntimeJar', JavaExec) {
+    group = 'vyne'
+    description = 'Builds the Minecraft client jar with runtime (intermediary) names, for compiling Vyne against.'
+    dependsOn 'minecraftOfficialClientJar', tasks.named('minecraftJarClasses')
+    classpath = sourceSets.minecraftJar.runtimeClasspath
+    mainClass = 'dev.stolym.vyne.minecraftjar.RuntimeJar'
+    def mappings = configurations.intermediaryMappings
+    inputs.file(officialClientJar)
+    inputs.files(mappings)
+    outputs.file(runtimeJar)
+    argumentProviders.add({ [officialClientJar.absolutePath, mappings.singleFile.absolutePath, runtimeJar.absolutePath] } as CommandLineArgumentProvider)
+    maxHeapSize = '2G'
+}
+
+ext.minecraftRuntime = files(runtimeJar) { builtBy 'minecraftRuntimeJar' }
+
 tasks.register('printMinecraftClasspath') {
     dependsOn 'minecraftMojangJar'
     doLast { println "MCCP=" + project.ext.minecraftMojang.files.join(File.pathSeparator) }

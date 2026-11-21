@@ -41,19 +41,12 @@ public final class FabricTransformer {
 		boolean environmentStrip = transforms.contains(BuiltinTransform.STRIP_ENVIRONMENT) && !DISABLE_ENVIRONMENT_STRIP;
 		boolean applyClassTweaker = transforms.contains(BuiltinTransform.CLASS_TWEAKS) && FabricLoaderImpl.INSTANCE.getClassTweaker().getTargets().contains(name.replace('.', '/'));
 
-		boolean vyneRemap = VyneRemapper.shouldRemap(name.replace('.', '/'));
-
-		if (!transformAccess && !environmentStrip && !applyClassTweaker && !vyneRemap) {
+		if (!transformAccess && !environmentStrip && !applyClassTweaker) {
 			return bytes;
 		}
 
 		ClassReader classReader = new ClassReader(bytes);
-		ClassWriter classWriter;
-		if (vyneRemap) {
-			classWriter = new ClassWriter(0);
-		} else {
-			classWriter = new ClassWriter(classReader, 0);
-		}
+		ClassWriter classWriter = new ClassWriter(classReader, 0);
 		ClassVisitor visitor = classWriter;
 		int visitorCount = 0;
 
@@ -79,11 +72,6 @@ public final class FabricTransformer {
 				visitor = new ClassStripper(FabricLoaderImpl.ASM_VERSION, visitor, stripData.getStripInterfaces(), stripData.getStripFields(), stripData.getStripMethods());
 				visitorCount++;
 			}
-		}
-
-		if (vyneRemap) {
-			visitor = new VyneRemapper(FabricLoaderImpl.ASM_VERSION, visitor);
-			visitorCount++;
 		}
 
 		if (visitorCount <= 0) {

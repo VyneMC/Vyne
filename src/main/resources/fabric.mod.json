@@ -21,9 +21,6 @@
   "entrypoints": {
     "main": [
       "dev.stolym.vyne.fabric.VyneModLifecycle"
-    ],
-    "client": [
-      "dev.stolym.vyne.hud.VyneHudOverlay"
     ]
   },
   "mixins": [

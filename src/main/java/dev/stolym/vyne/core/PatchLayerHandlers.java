@@ -25,7 +25,7 @@ public final class PatchLayerHandlers {
     private PatchLayerHandlers() {}
 
     public static void strip(ClassNode node) {
-        if (node == null || !VyneMode.hooks()) return;
+        if (node == null || !VyneMode.patchedGame()) return;
         if (node.name.startsWith("net/fabricmc/fabric/mixin/")) {
             for (MethodNode method : node.methods) {
                 makeOptional(method.visibleAnnotations);
@@ -49,7 +49,7 @@ public final class PatchLayerHandlers {
     }
 
     public static InputStream filterConfig(String name, InputStream in) {
-        if (in == null || !VyneMode.hooks() || !name.endsWith(".mixins.json")) return in;
+        if (in == null || !VyneMode.patchedGame() || !name.endsWith(".mixins.json")) return in;
         try (InputStream source = in) {
             byte[] bytes = source.readAllBytes();
             com.google.gson.JsonObject config = com.google.gson.JsonParser.parseString(new String(bytes, StandardCharsets.UTF_8)).getAsJsonObject();

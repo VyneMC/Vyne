@@ -106,23 +106,19 @@ Deleting `.vyne/` gives you a completely fresh Vyne state (mods and world untouc
 
 | Property | Default | Effect |
 |---|---|---|
-| `-Dvyne.realNeoforgeApi=false` | on | Opt out of mounting the **real NeoForge API** and fall back to hand-written shims (for bisecting) |
-| `-Dvyne.vcl.legacy=true` | off | Re-enable the deprecated legacy VCL classloading stack (regression bisect only) |
+| `-Dvyne.hooks=false` | on | Patch the game with NeoForge's installer instead of Vyne's own patches |
 | `-Dvyne.debug.loaderAudit=true` | off | Log which classloader defines each class — invaluable for bug reports about classloading |
-| `-Dvyne.gate.failOpen=false` | on | Make a failed bytecode transform abort the class load instead of silently passing unremapped bytes |
 | `-Dvyne.verbose=true` | off | More detailed dependency-resolution logging |
 | `-Dvyne.dev=true` | off | Dev mode (used by smoke tests) |
-| `-Dvyne.convert=false` | on | Don't translate mod jars ahead of time; translate classes while the game runs instead (for bisecting) |
-| `-Dvyne.convert.threads=N` | up to 4 | Worker threads used to translate mod jars on first start |
 | `-Dvyne.earlyWindow=false` | on | Don't open Vyne's loading window; Minecraft opens its own window as usual |
 
 ## 7. Automated testing (for contributors)
 
 ```bash
 ./gradlew check        # unit tests + classLoadCheck + jar composition guard
-./gradlew smokeTest    # 5 dedicated-server scenarios (incl. mixin fixture), ~15 min
+./gradlew smokeTest    # 6 dedicated-server scenarios (incl. mixin fixture and patch layer), ~15 min
 ./gradlew smokeServer_mixed            # a single scenario
-./gradlew smokeTest -Psmoke.noRealNeo  # run against shim-only API (bisect)
+./gradlew smokeServer_mixed -Psmoke.installer  # use NeoForge's installer instead of Vyne's patches
 ./gradlew smokeTest -Psmoke.timeout=900
 ```
 

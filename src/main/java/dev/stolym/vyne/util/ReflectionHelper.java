@@ -137,33 +137,12 @@ public class ReflectionHelper {
         }).orElse(null);
     }
 
-    private static final boolean REGISTRY_PROXY_VISIBLE = registryProxyVisible();
-
-    private static boolean registryProxyVisible() {
-        try {
-            Class.forName("net.neoforged.neoforge.registries.VyneRegistryProxy", false,
-                    ReflectionHelper.class.getClassLoader());
-            return true;
-        } catch (Throwable t) {
-            return false;
-        }
-    }
-
     private static String extractRegistryKeyLocationCore(Object key) {
         String rlNsPath = namespacePathFromRlLike(key);
         if (rlNsPath != null) {
             return rlNsPath;
         }
 
-        try {
-            if (REGISTRY_PROXY_VISIBLE && key instanceof net.neoforged.neoforge.registries.VyneRegistryProxy<?> vrp) {
-                String p = vrp.getRegistryPath();
-                if (p != null && !p.isEmpty()) {
-                    return p;
-                }
-            }
-        } catch (Throwable ignored) {
-        }
         try {
             Method m = publicNoArgMethod(key.getClass(), "getRegistryPath");
             if (m != null && m.getReturnType() == String.class) {

@@ -18,7 +18,7 @@ public final class PatchLayerEvents {
     private PatchLayerEvents() {}
 
     public static synchronized void register() {
-        if (registered || !VyneMode.hooks()) return;
+        if (registered || !VyneMode.patchedGame()) return;
         registered = true;
         FabricLoader fabric = FabricLoader.getInstance();
         try {

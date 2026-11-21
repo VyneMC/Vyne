@@ -16,13 +16,6 @@ public final class FabricLoaderProbes {
         if (tccl != null) {
             list.add(tccl);
         }
-        try {
-            ClassLoader ck = VCLManager.getCanonicalKnotLoader();
-            if (ck != null) {
-                list.add(ck);
-            }
-        } catch (Throwable ignored) {
-        }
         ClassLoader sys = ClassLoader.getSystemClassLoader();
         if (sys != null) {
             list.add(sys);

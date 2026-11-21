@@ -28,7 +28,7 @@ java {
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java', 'src/mock/java']
+            srcDirs = ['src/main/java']
         }
     }
 }
@@ -40,6 +40,10 @@ tasks.withType(JavaCompile).configureEach {
 apply from: 'gradle/fml.gradle'
 apply from: 'gradle/tools.gradle'
 apply from: 'gradle/minecraft.gradle'
+
+dependencies {
+    compileOnly project.ext.minecraftRuntime
+}
 apply from: 'gradle/neoforge.gradle'
 apply from: 'gradle/hooks.gradle'
 apply from: 'gradle/bytecode.gradle'

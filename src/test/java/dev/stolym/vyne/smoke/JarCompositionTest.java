@@ -17,6 +17,7 @@ import java.util.zip.ZipEntry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JarCompositionTest {
@@ -54,8 +55,8 @@ public class JarCompositionTest {
                     "VyneLauncher class missing from jar");
             assertNotNull(jar.getEntry("META-INF/services/net.fabricmc.loader.impl.game.GameProvider"),
                     "GameProvider service registration missing — Fabric Loader would not discover Vyne");
-            assertNotNull(jar.getEntry("META-INF/vyne/bootstrap/vyne-neoforge-registries-bootstrap.jar"),
-                    "NeoForge registries bootstrap jar missing from META-INF/vyne/bootstrap");
+            assertNull(jar.getJarEntry("net/neoforged/neoforge/common/NeoForge.class"),
+                    "Vyne's jar must not carry NeoForge classes; NeoForge comes from META-INF/vyne/neoforge.jar");
         }
     }
 }

@@ -4,7 +4,6 @@
  */
 package dev.stolym.vyne.mixin;
 
-import dev.stolym.vyne.vcl.VCLManager;
 import dev.stolym.vyne.core.VyneLauncher;
 import dev.stolym.vyne.world.WorldModGuard;
 import org.spongepowered.asm.mixin.Mixin;

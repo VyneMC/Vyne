@@ -42,7 +42,6 @@ CI runs `./gradlew build` on every pull request, and it must pass before merging
 ### Debugging tips
 
 - `-Dvyne.debug.loaderAudit=true` logs which class loader defines each class.
-- `-Dvyne.gate.failOpen=false` makes a failed bytecode transform fail loudly instead of passing the original bytes through.
 - Deleting `.vyne/` in the run folder resets all Vyne caches and state.
 
 More properties are listed in the [playtesting guide](docs/playtest.md#6-useful-system-properties-put-before--jar).

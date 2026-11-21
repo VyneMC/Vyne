@@ -75,10 +75,7 @@ public final class VyneGameJar {
 
     static boolean isGameSide(String entryName) {
         if (!entryName.endsWith(".class")) return false;
-        if (entryName.startsWith("net/neoforged/") || entryName.startsWith("net/minecraftforge/")
-                || entryName.startsWith("cpw/mods/")) {
-            return true;
-        }
+        if (entryName.startsWith("cpw/mods/modlauncher/")) return true;
         if (!entryName.startsWith("dev/stolym/vyne/")) return false;
         String name = entryName.substring(0, entryName.length() - ".class".length());
         return !LoaderSides.isLauncherSide(name);

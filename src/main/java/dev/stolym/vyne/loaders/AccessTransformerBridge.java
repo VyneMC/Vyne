@@ -60,7 +60,7 @@ public final class AccessTransformerBridge {
         if (modJars.isEmpty()) return null;
         List<Path> sources = new ArrayList<>();
         Path neoApi = VyneLauncher.getNeoForgeApiJar();
-        if (neoApi != null && RealNeoForgeApiMount.isEnabled()) sources.add(neoApi);
+        if (neoApi != null) sources.add(neoApi);
         sources.addAll(modJars);
         List<String> lines = new ArrayList<>();
         for (Path jar : sources) {

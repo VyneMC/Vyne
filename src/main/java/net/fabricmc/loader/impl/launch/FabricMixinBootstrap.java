@@ -108,9 +108,9 @@ public final class FabricMixinBootstrap {
 			}
 		}
 
-		java.util.List<dev.stolym.vyne.core.DetectedMod> pendingVcl = dev.stolym.vyne.core.VyneLauncher.getPendingVCLMods();
-		if (pendingVcl != null) {
-			for (dev.stolym.vyne.core.DetectedMod mod : pendingVcl) {
+		java.util.List<dev.stolym.vyne.core.DetectedMod> neoForgeMods = dev.stolym.vyne.core.VyneLauncher.getNeoForgeMods();
+		if (neoForgeMods != null) {
+			for (dev.stolym.vyne.core.DetectedMod mod : neoForgeMods) {
 				if (mod.getMixins() == null) continue;
 				for (String config : mod.getMixins()) {
 					if (configToModMap.containsKey(config)) continue;

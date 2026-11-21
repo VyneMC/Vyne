@@ -200,7 +200,7 @@ public final class VyneModListScreen extends class_437 {
         if (selected < 0 || selected >= entries.size()) return;
         String id = entries.get(selected).id();
         try {
-            class_437 screen = createConfigScreen(id);
+            class_437 screen = fabricConfigScreen(id);
             if (screen != null) field_22787.method_1507(screen);
         } catch (Throwable t) {
             dev.stolym.vyne.util.VyneLogger.warn("[ModList] Could not open the config screen of " + id + ": " + t);
@@ -211,28 +211,12 @@ public final class VyneModListScreen extends class_437 {
 
     private boolean hasConfig(String modId) {
         return hasConfig.computeIfAbsent(modId, id -> {
-            if (neoForgeConfigFactory(id).isPresent()) return true;
             try {
                 return fabricConfigScreen(id) != null;
             } catch (Throwable t) {
                 return false;
             }
         });
-    }
-
-    private class_437 createConfigScreen(String modId) throws Throwable {
-        Optional<Object> factory = neoForgeConfigFactory(modId);
-        if (factory.isPresent()) {
-            Object container = net.neoforged.fml.ModList.get().getModContainerById(modId).orElse(null);
-            for (Method m : factory.get().getClass().getMethods()) {
-                if (m.getName().equals("createScreen") && m.getParameterCount() == 2) {
-                    m.setAccessible(true);
-                    Object screen = m.invoke(factory.get(), container, this);
-                    return screen instanceof class_437 target ? target : null;
-                }
-            }
-        }
-        return fabricConfigScreen(modId);
     }
 
     private class_437 fabricConfigScreen(String modId) {
@@ -266,18 +250,5 @@ public final class VyneModListScreen extends class_437 {
         provided.putAll(own);
         modMenuFactories = provided;
         return provided;
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static Optional<Object> neoForgeConfigFactory(String modId) {
-        try {
-            Optional<net.neoforged.fml.ModContainer> container = net.neoforged.fml.ModList.get().getModContainerById(modId);
-            if (container.isEmpty()) return Optional.empty();
-            Class point = Class.forName("net.neoforged.neoforge.client.gui.IConfigScreenFactory", false,
-                    VyneModListScreen.class.getClassLoader());
-            return (Optional<Object>) container.get().getCustomExtension(point);
-        } catch (Throwable t) {
-            return Optional.empty();
-        }
     }
 }

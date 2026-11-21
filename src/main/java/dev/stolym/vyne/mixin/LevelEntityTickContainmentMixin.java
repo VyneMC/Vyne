@@ -10,7 +10,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import dev.stolym.vyne.server.ServerEntityTickContainment;
 import dev.stolym.vyne.server.ServerLagMitigationConfig;
 import dev.stolym.vyne.server.ServerLagMitigator;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.class_1297;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.function.Consumer;
@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 @Mixin(targets = "net.minecraft.class_1937")
 public abstract class LevelEntityTickContainmentMixin {
     @WrapMethod(method = "method_18472")
-    private void vyne$wrapGuardEntityTick(Consumer<Entity> consumer, Entity entity, Operation<Void> original) {
+    private void vyne$wrapGuardEntityTick(Consumer<class_1297> consumer, class_1297 entity, Operation<Void> original) {
         if (!"net.minecraft.class_3218".equals(this.getClass().getName())) {
             original.call(consumer, entity);
             return;

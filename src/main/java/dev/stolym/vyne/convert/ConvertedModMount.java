@@ -28,19 +28,15 @@ public final class ConvertedModMount {
     private static volatile NeoForgeInstall install;
 
     public static void preparePatchedGame(boolean dedicatedServer) {
-        if ("false".equalsIgnoreCase(System.getProperty("vyne.patchedGame"))) return;
         String version = VyneLauncher.getNeoForgeVersion();
         List<DetectedMod> mods = VyneLauncher.getDetectedMods();
         boolean neoForgeMods = mods != null && mods.stream()
                 .anyMatch(mod -> mod.getLoaderType() == DetectedMod.LoaderType.NEOFORGE);
-        boolean fabricMods = mods != null && mods.stream()
-                .anyMatch(mod -> mod.getLoaderType() == DetectedMod.LoaderType.FABRIC && !isVyne(mod));
         boolean hooks = !"false".equalsIgnoreCase(System.getProperty("vyne.hooks"));
         if (hooks) version = HookedGame.SURFACE_VERSION;
-        if (version == null || version.isBlank() || !neoForgeMods) return;
-        if (fabricMods && !Boolean.getBoolean("vyne.hooks.mixed")) {
-            VyneLogger.info("[PatchedGame] Fabric and NeoForge mods together: using the compatibility path");
-            return;
+        if (!neoForgeMods) return;
+        if (version == null || version.isBlank()) {
+            throw new IllegalStateException("NeoForge mods are installed but no NeoForge version could be chosen for them");
         }
         try {
             Path base = Path.of(System.getProperty("vyne.gameDir", ".")).toAbsolutePath().normalize();
@@ -98,14 +94,15 @@ public final class ConvertedModMount {
             if (hooks) dev.stolym.vyne.core.VyneMode.enableHooks();
             GameOverlay.install(result.game());
             for (int i = 0; i < inputs.size(); i++) {
-                ModConverter.registerConverted(inputs.get(i), indexSources.get(i), result.converted().get(inputs.get(i)));
+                ModConverter.registerConverted(inputs.get(i), result.converted().get(inputs.get(i)));
             }
             dev.stolym.vyne.core.VyneMode.remapClasspath(classpath);
             preparedFmlCache = cache;
             install = neoForge;
             VyneLogger.info("[PatchedGame] Running Minecraft with NeoForge's patches (" + GameOverlay.size() + " entries)");
         } catch (Throwable t) {
-            VyneLogger.error("[PatchedGame] Could not prepare NeoForge's patched game, running vanilla: " + t, t);
+            VyneLogger.error("[PatchedGame] Could not prepare NeoForge's patched game: " + t, t);
+            throw new IllegalStateException("NeoForge mods need NeoForge's patched game, which could not be prepared: " + t, t);
         }
     }
 
@@ -113,39 +110,33 @@ public final class ConvertedModMount {
         mountFml(addCodeSource);
         List<DetectedMod> detected = VyneLauncher.getDetectedMods();
         List<ModConverter.Request> requests = new ArrayList<>();
-        Set<Path> hierarchyJars = new LinkedHashSet<>();
-        if (gameJars != null) hierarchyJars.addAll(gameJars);
 
         if (detected != null) {
             for (DetectedMod mod : detected) {
                 Path jar = mod.getJarPath();
                 if (jar == null || !Files.isRegularFile(jar)) continue;
-                hierarchyJars.add(jar);
                 if (isEmulated(mod)) {
                     requests.add(new ModConverter.Request(jar, mod.getModId()));
                 }
             }
         }
 
-        Path strippedApi = null;
+        Path apiJar = null;
         Path neoApi = VyneLauncher.getNeoForgeApiJar();
-        if (neoApi != null && Files.exists(neoApi) && RealNeoForgeApiMount.isEnabled()) {
+        if (neoApi != null && Files.exists(neoApi) && dev.stolym.vyne.core.VyneMode.patchedGame()) {
             try {
-                strippedApi = dev.stolym.vyne.core.VyneMode.patchedGame()
-                        ? RealNeoForgeApiMount.prepareFullApiJar(neoApi)
-                        : RealNeoForgeApiMount.prepareStrippedApiJar(neoApi);
-                hierarchyJars.add(neoApi);
-                requests.add(new ModConverter.Request(strippedApi, neoApi, "NeoForge API"));
+                apiJar = RealNeoForgeApiMount.prepareFullApiJar(neoApi);
+                requests.add(new ModConverter.Request(apiJar, neoApi, "NeoForge API"));
             } catch (IOException e) {
-                VyneLogger.warn("[Vyne] Could not prepare the NeoForge API jar: " + e.getMessage());
+                throw new IllegalStateException("Could not prepare the NeoForge API jar: " + e.getMessage(), e);
             }
         }
 
         dev.stolym.vyne.ui.VyneLoadingScreen.update("Preparing " + requests.size() + " mod jar(s)...", 52);
         try {
-            ModConverter.convertAll(requests, hierarchyJars, environmentKey(neoApi));
-        } catch (Throwable t) {
-            VyneLogger.warn("[Converter] Conversion skipped (" + t + "); mods will be translated while the game runs.");
+            ModConverter.convertAll(requests, environmentKey(neoApi));
+        } catch (IOException e) {
+            throw new IllegalStateException("NeoForge mods could not be remapped: " + e.getMessage(), e);
         }
 
         dev.stolym.vyne.ui.VyneLoadingScreen.update("Loading Minecraft...", 58);
@@ -156,9 +147,9 @@ public final class ConvertedModMount {
                 addCodeSource.accept(ModConverter.runtimeJar(mod.getJarPath()));
             }
         }
-        if (strippedApi != null) {
-            VyneLogger.info("[Vyne] Adding NeoForge API to unified Knot classpath: " + strippedApi.getFileName());
-            Path apiRuntime = ModConverter.runtimeJar(strippedApi);
+        if (apiJar != null) {
+            VyneLogger.info("[Vyne] Adding NeoForge API to unified Knot classpath: " + apiJar.getFileName());
+            Path apiRuntime = ModConverter.runtimeJar(apiJar);
             dev.stolym.vyne.core.VyneMode.neoForgeApiJar(apiRuntime);
             addCodeSource.accept(apiRuntime);
         }
@@ -176,7 +167,6 @@ public final class ConvertedModMount {
         } catch (IOException e) {
             VyneLogger.error("[Vyne] Could not prepare Vyne's game-side classes: " + e.getMessage(), e);
         }
-        dev.stolym.vyne.loaders.KnotModClasspathBridge.markVyneJarRegistered();
     }
 
     private static void mountFml(Consumer<Path> addCodeSource) {

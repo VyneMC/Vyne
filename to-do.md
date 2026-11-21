@@ -21,7 +21,7 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
 - [x] One exact rename pass for the patched game, NeoForge's API jar and the NeoForge mods (`PatchedGameBuilder`, `ExactRemap`), cached; `SharedMethodSplit` handles NeoForge methods that Minecraft names two ways (`ICommonPacketListener.send`)
 - [x] FML routing points answered by `dev.stolym.vyne.fml` (8 classes, incl. `VyneImmediateWindowHandler` for the client window hand-off)
 - [x] NeoForge's lifecycle constructs the mods; NeoForge's data pack and assets kept; `@EventBusSubscriber` per method
-- [x] Default for packs with NeoForge mods and no Fabric mods; packs with both use the compatibility path; `-Dvyne.patchedGame=false` forces the compatibility path
+- [x] Default for packs with NeoForge mods (since 2026-11-21 also with Fabric mods, see Phase 6)
 - [x] All five smoke scenarios pass (`neoforge-simple`, `neoforge-with-lib` on patched mode; `mixed`, `fabric-only`, `mixin-fixture` as before); client reaches NeoForge's title screen with the three test mods
 - [ ] Small gaps while it lives: Vyne branding instead of NeoForge's in the title screen corner; early-screen mod tiles advance as mods are constructed
 
@@ -73,11 +73,16 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
     - [x] Batch 5, recipes and content (tested in `patch-layer`): Fabric custom ingredients (`fabric:type`) in NeoForge's ingredient codecs, including the list codecs built from `MAP_CODEC_NONEMPTY`; network falls back to item lists as Fabric does for clients without the type; villager trades and chunk section air checks already done by NeoForge
     - [x] Batch 6, menus and networking (server side tested in `patch-layer`, client connection still to test): Fabric payload types in NeoForge's four custom payload codecs (round trip tested), extended screen handlers through NeoForge's `openMenu`, Fabric's close-current-screen check, known packs filter, vanilla language file, datagen tag `replace`
     - [x] Client-only handlers (targets checked against the patched client jar, not run yet): screen tick and render events, Indigo chunk building (non-vanilla Fabric models), block entity render data, fluid sprites and overlays, sound streams, model modifiers, block-breaking continuation; hanging signs and namespaced shaders already done by NeoForge
-    - [ ] Test on a real client: a mixed pack with `-Dvyne.hooks.mixed=true` joining a server (payloads, extended menus, known packs), a Fabric model mod (Indigo), a Fabric fluid mod
+    - [ ] Test on a real client: a mixed pack joining a server
   - [ ] Analysis: slices and same-name members added by both loaders (missed `WorldChunkMixin.onRemoveBlockEntity` and `TagFileMixin`), and injections that apply to code NeoForge no longer uses (missed `IngredientMixin.injectCodec`: NeoForge builds `Ingredient.CODEC` from `CraftingHelper`, not `codec(boolean)`)
   - [x] Replace every disabled Fabric API handler: 60 replaced, 0 disabled in the table
-  - [ ] Make the patch layer the default for mixed packs (after the client test), then delete the compatibility path
+  - [x] Patch layer is the default for mixed packs, also on the NeoForge installer fallback (`-Dvyne.hooks=false`); `mixed` smoke scenario passes both ways (2026-11-21)
+  - [x] Compatibility path deleted: hand-written NeoForge/Forge classes, VCL lifecycle, dynamic bridge engine, registry/event/fluid/capability/config/network bridges, runtime bytecode translation (`VyneRemapper`), 28 emulation mixins; NeoForge mods are remapped exactly once or the launch stops with an error
+  - [x] Legacy Forge mods (`net.minecraftforge`) are skipped with a warning; they only ever ran on the hand-written classes
+  - [x] Gaps the hand-written classes had been covering: NeoForge's `mergetool` API library (`Dist`, `OnlyIn`) is now downloaded; modlauncher's `TransformingThrowablePatternConverter` is provided by Vyne's FML (`src/fml`)
 - [ ] Phase 6b: Mojang names at runtime; port the remaining Vyne code; delete the Minecraft stand-ins
+  - [x] `./gradlew minecraftRuntimeJar`: vanilla client jar with runtime (intermediary) names, built from Mojang's jar and Fabric's intermediary mappings (`src/minecraftJar`)
+  - [x] `main` compiles against it; all `class_xxxx` and Mojang-named stand-ins deleted (2026-11-21); was blocked by the compatibility path
 - [ ] Phase 7: mixin duplicate/collision detection; content-mod smoke scenarios
 - [ ] Phase 8: Guard redesign (points 1 to 5 in the design doc)
 - [ ] Phase 9: inventory diff per NeoForge / Fabric API release

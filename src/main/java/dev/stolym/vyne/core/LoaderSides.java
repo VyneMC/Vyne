@@ -19,19 +19,14 @@ public final class LoaderSides {
             "dev.stolym.vyne.containment.",
             "dev.stolym.vyne.vcl.metadata.",
             "dev.stolym.vyne.vcl.VyneTransformationGate",
-            "dev.stolym.vyne.vcl.RemapCache",
             "dev.stolym.vyne.vcl.LoaderAudit",
-            "dev.stolym.vyne.loaders.KnotModClasspathBridge",
             "dev.stolym.vyne.loaders.RealNeoForgeApiMount",
             "dev.stolym.vyne.loaders.AccessTransformerBridge",
-            "dev.stolym.vyne.mixin.MixinAnnotationRemapper",
             "dev.stolym.vyne.hooks.HookSurface",
     };
 
     private static final String[] GAME_EXCEPTIONS = {
-            "dev.stolym.vyne.config.VyneConfigBridge",
             "dev.stolym.vyne.util.ReflectionHelper",
-            "dev.stolym.vyne.util.NullMemberWrapper",
     };
 
     private LoaderSides() {}
