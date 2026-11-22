@@ -26,6 +26,10 @@ public final class PatchLayerHandlers {
 
     public static void strip(ClassNode node) {
         if (node == null || !VyneMode.patchedGame()) return;
+        if (node.name.startsWith("dev/stolym/vyne/hooks/mixin/")) {
+            expandLambdaSelectors(node);
+            return;
+        }
         if (isFabricModMixin(node.name)) {
             for (MethodNode method : node.methods) {
                 makeOptional(method.visibleAnnotations);
@@ -138,6 +142,28 @@ public final class PatchLayerHandlers {
             method.maxLocals = 2;
         }
         VyneLogger.info("[PatchLayer] Fabric " + (item ? "item" : "block") + " colour providers read NeoForge's " + neoForgeField);
+    }
+
+    private static void expandLambdaSelectors(ClassNode node) {
+        for (MethodNode method : node.methods) {
+            for (List<AnnotationNode> annotations : java.util.Arrays.asList(method.visibleAnnotations, method.invisibleAnnotations)) {
+                if (annotations == null) continue;
+                for (AnnotationNode annotation : annotations) {
+                    if (!isInjector(annotation) || annotation.values == null) continue;
+                    int index = annotation.values.indexOf("method");
+                    if (index < 0 || index % 2 != 0 || !(annotation.values.get(index + 1) instanceof List<?> selectors)) continue;
+                    List<Object> expanded = new java.util.ArrayList<>();
+                    for (Object selector : selectors) {
+                        if (selector instanceof String s && s.startsWith("lambda:")) {
+                            expanded.add("/^lambda\\$" + s.substring("lambda:".length()) + "\\$\\d+$/");
+                        } else {
+                            expanded.add(selector);
+                        }
+                    }
+                    annotation.values.set(index + 1, expanded);
+                }
+            }
+        }
     }
 
     private static boolean isFabricModMixin(String internalName) {

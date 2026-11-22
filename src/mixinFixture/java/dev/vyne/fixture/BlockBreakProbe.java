@@ -44,6 +44,7 @@ final class BlockBreakProbe {
             addListener.invoke(bus, normal, false, breakEvent, onBreak);
             registerFabric(loader);
             registerFuel(loader);
+            registerUnload(loader);
             EventBridgeProbe.registerFabric(loader);
             ARCHITECTURY = EventBridgeProbe.registerArchitectury(loader);
             System.out.println("[VyneFixture] block-break probe registered");
@@ -66,6 +67,18 @@ final class BlockBreakProbe {
             count("fabric-canceled", args[2]);
             return null;
         });
+    }
+
+    private static void registerUnload(ClassLoader loader) throws Exception {
+        Class<?> events = Class.forName("net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents", true, loader);
+        Class<?> type = Class.forName("net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents$Unload", true, loader);
+        Object listener = Proxy.newProxyInstance(loader, new Class<?>[] {type}, (proxy, method, args) -> {
+            if (method.getDeclaringClass() == Object.class) return method.invoke(BlockBreakProbe.class, args);
+            count("unload", call(args[0], "method_11016"));
+            return null;
+        });
+        Class.forName("net.fabricmc.fabric.api.event.Event", true, loader).getMethod("register", Object.class)
+                .invoke(events.getField("BLOCK_ENTITY_UNLOAD").get(null), listener);
     }
 
     private static void registerFuel(ClassLoader loader) throws Exception {
@@ -134,6 +147,12 @@ final class BlockBreakProbe {
             report("neoforge-cancel", level, gameMode, neoPos, stone);
             System.out.println("[VyneFixture] fuel: dirt=" + burnTime(loader, "field_8831") + " coal="
                     + burnTime(loader, "field_8713") + " stone=" + burnTime(loader, "field_20391"));
+            Object chestPos = blockPos.getConstructor(int.class, int.class, int.class).newInstance(x + 6, y, z);
+            call(level, "method_8501", chestPos, call(Class.forName("net.minecraft.class_2246", true, loader).getField("field_10034").get(null), "method_9564"));
+            call(call(level, "method_8321", chestPos), "method_11012");
+            int before = get("unload", chestPos);
+            Object stale = call(level, "method_8321", chestPos);
+            System.out.println("[VyneFixture] block-entity unload: stale-returned=" + (stale != null) + " unload-fired=" + (get("unload", chestPos) - before));
             EventBridgeProbe.run(loader, level, player, x, y, z);
             EventBridgeProbe.sleepInBed(loader, level, player, x, y, z);
             EventBridgeProbe.items(loader, level);

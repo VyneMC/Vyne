@@ -3,6 +3,7 @@ def defaultSkipPrefixes = [
         'dev.stolym.vyne.game.',
         'dev.stolym.vyne.fml.',
         'dev.stolym.vyne.hooks.mixin.',
+        'dev.stolym.vyne.hooks.fabric.',
         'dev.stolym.vyne.hooks.bridge.',
         'net.neoforged.',
         'net.fabricmc.loader.impl.game.minecraft.',
@@ -81,6 +82,7 @@ def expectedPatterns = [
                 ~/\[VyneFixture\] ingredients: stick=true dirt=false list-first-diamond=true list-second-dirt=true encoded-fabric=true/,
                 ~/\[VyneFixture\] payload: round-trip=hello from Fabric/,
                 ~/\[VyneFixture\] menus: route=fabric close-asked=true language-stone=Stone/,
+                ~/\[VyneFixture\] block-entity unload: stale-returned=true unload-fired=1/,
         ],
 ]
 

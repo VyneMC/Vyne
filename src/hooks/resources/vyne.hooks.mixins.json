@@ -4,7 +4,31 @@
   "compatibilityLevel": "JAVA_21",
   "plugin": "dev.stolym.vyne.hooks.HooksMixinPlugin",
   "mixins": [
-    "FabricBlockBreakHook"
+    "FabricBlockBreakHook",
+    "FabricLivingSleepHook",
+    "FabricPlayerSleepHook",
+    "FabricItemHook",
+    "FabricEnchantmentLoadHook",
+    "FabricIngredientHook",
+    "FabricServerboundPayloadHook",
+    "FabricClientboundPayloadHook",
+    "FabricMenuHook",
+    "FabricBlockEntityUnloadHook",
+    "FabricPackDefaultsHook",
+    "FabricDynamicRegistriesHook",
+    "FabricTagProviderHook"
+  ],
+  "client": [
+    "FabricScreenTickHook",
+    "FabricScreenRenderHook",
+    "FabricBlockBreakingClientHook",
+    "FabricSoundHook",
+    "FabricFluidRenderHook",
+    "FabricSectionCompilerHook",
+    "FabricRenderRegionHook",
+    "FabricModelBakeHook",
+    "FabricParticleHook",
+    "FabricBlockDustHook"
   ],
   "injectors": {
     "defaultRequire": 1

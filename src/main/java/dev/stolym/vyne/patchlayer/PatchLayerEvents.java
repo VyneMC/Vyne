@@ -22,21 +22,7 @@ public final class PatchLayerEvents {
         registered = true;
         FabricLoader fabric = FabricLoader.getInstance();
         try {
-            if (fabric.isModLoaded("fabric-content-registries-v0")) {
-                listen("net.neoforged.neoforge.event.furnace.FurnaceFuelBurnTimeEvent", FabricFuel::onBurnTime);
-                VyneLogger.info("[PatchLayer] Fabric furnace fuels answered through NeoForge's FurnaceFuelBurnTimeEvent");
-            }
-            if (fabric.isModLoaded("fabric-entity-events-v1")) {
-                listen("net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent", FabricSleep::onCanPlayerSleep);
-                listen("net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent", FabricSleep::onCanContinueSleeping);
-                listen("net.neoforged.neoforge.event.entity.player.PlayerSetSpawnEvent", FabricSleep::onSetSpawn);
-                listen("net.neoforged.neoforge.event.entity.living.LivingConversionEvent$Post", FabricSleep::onConversion);
-                VyneLogger.info("[PatchLayer] Fabric sleep and mob conversion events answered through NeoForge's sleep, spawn and conversion events");
-            }
-            if (fabric.isModLoaded("fabric-events-interaction-v0")) {
-                listen("net.neoforged.neoforge.event.entity.player.PlayerInteractEvent$EntityInteractSpecific", FabricInteraction::onEntityInteractSpecific);
-                VyneLogger.info("[PatchLayer] Fabric UseEntityCallback answered on the client through NeoForge's EntityInteractSpecific");
-            }
+            Class.forName("dev.stolym.vyne.hooks.fabric.FabricApiHooks", true, PatchLayerEvents.class.getClassLoader()).getMethod("register").invoke(null);
             if (fabric.isModLoaded("architectury")) {
                 listen("net.neoforged.neoforge.event.level.BlockEvent$BreakEvent", ArchitecturyBridge::onBlockBreak);
                 listen("net.neoforged.neoforge.event.entity.EntityJoinLevelEvent", ArchitecturyBridge::onEntityJoin);

@@ -91,7 +91,9 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
   - [ ] Fabric API's calls inside Vyne's patches at the shared spots (one hook fires both APIs); its mixins and the hand-written bridges at those spots removed
     - [x] Typed hooks: `src/hooks` compiles in Mojang names against Fabric API remapped to Mojang names (`./gradlew fabricApiMojangJar`); a hook applies on the patched game when its Fabric module is loaded (`HooksMixinPlugin`)
     - [x] Block breaking ported (`FabricBlockBreakHook`); reflection bridge deleted; same results in `patch-layer`
-    - [ ] Port the other bridges: fuel, sleep, items, ingredients, payloads, menus, interaction, block entity unload, screens, fluids, sounds, Indigo, render data, models, particles, colours, resources
+    - [x] Port the other bridges (2026-11-22): fuel, sleep, items, enchantments, ingredients, payloads, menus, block entity unload (now tested), interaction, pack defaults, dynamic registries, datagen tags, screens, block-breaking continuation, sounds, fluids, Indigo, render data, models, particles, block dust; every server scenario and the `mixed-content` client pass
+    - [ ] Colour rewrites still live in `PatchLayerHandlers` (they rewrite Fabric API's mixins rather than bridge a spot); move them once the hooks are baked
+    - [ ] Client checks a person has to do: Indigo terrain, Fabric fluid sprites, Fabric sounds, block dust tint, model modifiers (the Xvfb boot has no assets and renders no world)
     - [ ] Bake the hooks into the binary patches at build time instead of applying them as mixins at launch
   - [ ] Spot table for spots NeoForge replaced with events, written against Vyne's hooks; Architectury bridge removed
 - [ ] Phase 6b: Mojang names at runtime; port the remaining Vyne code; delete the Minecraft stand-ins

@@ -23,8 +23,30 @@ public final class HooksMixinPlugin implements IMixinConfigPlugin {
         return null;
     }
 
-    private static final java.util.Map<String, String> FABRIC_API_HOOKS = java.util.Map.of(
-            "FabricBlockBreakHook", "fabric-events-interaction-v0");
+    private static final java.util.Map<String, String> FABRIC_API_HOOKS = java.util.Map.ofEntries(
+            java.util.Map.entry("FabricBlockBreakHook", "fabric-events-interaction-v0"),
+            java.util.Map.entry("FabricLivingSleepHook", "fabric-entity-events-v1"),
+            java.util.Map.entry("FabricPlayerSleepHook", "fabric-entity-events-v1"),
+            java.util.Map.entry("FabricItemHook", "fabric-item-api-v1"),
+            java.util.Map.entry("FabricEnchantmentLoadHook", "fabric-item-api-v1"),
+            java.util.Map.entry("FabricIngredientHook", "fabric-recipe-api-v1"),
+            java.util.Map.entry("FabricServerboundPayloadHook", "fabric-networking-api-v1"),
+            java.util.Map.entry("FabricClientboundPayloadHook", "fabric-networking-api-v1"),
+            java.util.Map.entry("FabricMenuHook", "fabric-screen-handler-api-v1"),
+            java.util.Map.entry("FabricBlockEntityUnloadHook", "fabric-lifecycle-events-v1"),
+            java.util.Map.entry("FabricPackDefaultsHook", "fabric-resource-loader-v0"),
+            java.util.Map.entry("FabricDynamicRegistriesHook", "fabric-registry-sync-v0"),
+            java.util.Map.entry("FabricTagProviderHook", "fabric-data-generation-api-v1"),
+            java.util.Map.entry("FabricScreenTickHook", "fabric-screen-api-v1"),
+            java.util.Map.entry("FabricScreenRenderHook", "fabric-screen-api-v1"),
+            java.util.Map.entry("FabricBlockBreakingClientHook", "fabric-item-api-v1"),
+            java.util.Map.entry("FabricSoundHook", "fabric-sound-api-v1"),
+            java.util.Map.entry("FabricFluidRenderHook", "fabric-rendering-fluids-v1"),
+            java.util.Map.entry("FabricSectionCompilerHook", "fabric-renderer-indigo"),
+            java.util.Map.entry("FabricRenderRegionHook", "fabric-block-view-api-v2"),
+            java.util.Map.entry("FabricModelBakeHook", "fabric-model-loading-api-v1"),
+            java.util.Map.entry("FabricParticleHook", "fabric-particles-v1"),
+            java.util.Map.entry("FabricBlockDustHook", "fabric-particles-v1"));
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
