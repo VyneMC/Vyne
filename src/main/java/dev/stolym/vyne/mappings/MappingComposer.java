@@ -829,10 +829,6 @@ public final class MappingComposer {
 
     private static void applyManualClassOverrides(Map<String, String> classMap) {
         putClassOverride(classMap,
-            "net/minecraft/world/entity/decoration/HangingEntity",
-            "net/minecraft/class_9691");
-
-        putClassOverride(classMap,
             "net/minecraft/world/item/CreativeModeTab$Builder",
             "net/minecraft/class_1761$class_7913");
         putClassOverride(classMap,

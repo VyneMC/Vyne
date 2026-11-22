@@ -22,7 +22,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 public final class PatchedGameBuilder {
-    public static final int SCHEMA = 3;
+    public static final int SCHEMA = 5;
     private static final String[] CLIENT_ONLY = {"net/minecraft/client/", "com/mojang/blaze3d/", "com/mojang/realmsclient/"};
 
     public record Result(Path game, Map<Path, Path> converted) {}

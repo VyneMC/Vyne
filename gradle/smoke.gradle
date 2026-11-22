@@ -41,7 +41,7 @@ tasks.register('classLoadCheck', JavaExec) {
     }
 }
 
-def smokeScenarios = ['fabric-only', 'neoforge-simple', 'neoforge-with-lib', 'mixed', 'mixin-fixture', 'patch-layer', 'mixed-content']
+def smokeScenarios = ['fabric-only', 'neoforge-simple', 'neoforge-with-lib', 'mixed', 'mixin-fixture', 'patch-layer', 'mixed-content', 'create']
 def fixtureScenarios = ['mixin-fixture', 'patch-layer', 'mixed-content']
 def smokeTimeoutSeconds = providers.gradleProperty('smoke.timeout').orElse('600').get().toInteger()
 

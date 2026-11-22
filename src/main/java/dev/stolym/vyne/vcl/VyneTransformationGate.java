@@ -29,8 +29,8 @@ public final class VyneTransformationGate {
             warnScopeViolation(dottedName, info.loaderType());
             return b;
         }
-        enforceSideOnly(dottedName, info.loaderType(), b);
-        return b;
+        if (info.loaderType() != DetectedMod.LoaderType.NEOFORGE && info.loaderType() != DetectedMod.LoaderType.UNKNOWN) return b;
+        return DistCleaner.clean(dottedName, b, ON_DEDICATED_SERVER);
     }
 
     private static void warnScopeViolation(String dottedName, DetectedMod.LoaderType loaderType) {
@@ -39,10 +39,6 @@ public final class VyneTransformationGate {
                     + " (owner mod is " + loaderType + "-native; Fabric mods must run untransformed)");
         }
     }
-
-    private static final String[] ONLY_IN_DESCRIPTORS = {
-            "Lnet/neoforged/api/distmarker/OnlyIn;",
-    };
 
     private static final boolean ON_DEDICATED_SERVER = detectDedicatedServer();
 
@@ -54,55 +50,6 @@ public final class VyneTransformationGate {
             return env != null && "SERVER".equals(env.toString());
         } catch (Throwable t) {
             return false;
-        }
-    }
-
-    private static void enforceSideOnly(String dottedName, DetectedMod.LoaderType loaderType, byte[] b) {
-        if (loaderType != DetectedMod.LoaderType.NEOFORGE && loaderType != DetectedMod.LoaderType.UNKNOWN) {
-            return;
-        }
-        try {
-            org.objectweb.asm.ClassReader reader = new org.objectweb.asm.ClassReader(b);
-            String[] side = new String[1];
-            reader.accept(new org.objectweb.asm.ClassVisitor(org.objectweb.asm.Opcodes.ASM9) {
-                @Override
-                public void visit(int version, int access, String name, String signature,
-                                  String superName, String[] interfaces) {
-                }
-
-                @Override
-                public org.objectweb.asm.AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-                    for (String onlyIn : ONLY_IN_DESCRIPTORS) {
-                        if (descriptor.equals(onlyIn)) {
-                            return new org.objectweb.asm.AnnotationVisitor(org.objectweb.asm.Opcodes.ASM9) {
-                                @Override
-                                public void visit(String name, Object value) {
-                                    if (value instanceof String[] arr && arr.length == 2) {
-                                        side[0] = arr[1];
-                                    }
-                                }
-                            };
-                        }
-                    }
-                    return null;
-                }
-            }, org.objectweb.asm.ClassReader.SKIP_CODE
-                    | org.objectweb.asm.ClassReader.SKIP_DEBUG
-                    | org.objectweb.asm.ClassReader.SKIP_FRAMES);
-
-            if (side[0] == null) return;
-            boolean clientOnly = side[0].equals("CLIENT");
-            boolean serverOnly = side[0].equals("DEDICATED_SERVER");
-            if ((clientOnly && ON_DEDICATED_SERVER) || (serverOnly && !ON_DEDICATED_SERVER)) {
-                throw new NoClassDefFoundError(dottedName
-                        + " is @OnlyIn(" + side[0] + ") and cannot be loaded on the "
-                        + (ON_DEDICATED_SERVER ? "dedicated server" : "client")
-                        + " — the mod must guard it with DistExecutor or a dist check");
-            }
-        } catch (NoClassDefFoundError e) {
-            throw e;
-        } catch (Throwable t) {
-            VyneLogger.debug("[VyneGate] @OnlyIn inspection skipped for " + dottedName + ": " + t);
         }
     }
 

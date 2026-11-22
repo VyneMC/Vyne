@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -57,7 +58,9 @@ public final class ExactRemap {
                 .fixPackageAccess(true)
                 .build();
         List<Path> temporary = new ArrayList<>();
-        List<Path> sources = SharedMethodSplit.prepare(inputs, classpath, mappings, outputs.get(0).getParent());
+        List<Map<String, byte[]>> refmaps = new ArrayList<>();
+        List<Path> sources = MixinTargetNames.fix(SharedMethodSplit.prepare(inputs, classpath, mappings, outputs.get(0).getParent()),
+                inputs, mappings, outputs.get(0).getParent());
         try {
             for (Path entry : classpath) {
                 if (entry != null && Files.exists(entry) && !inputs.contains(entry)) remapper.readClassPath(entry);
@@ -75,6 +78,7 @@ public final class ExactRemap {
                     consumer.addNonClassFiles(sources.get(i), NonClassCopyMode.FIX_META_INF, remapper);
                     remapper.apply(consumer, tags.get(i));
                 }
+                refmaps.add(RefmapNames.remap(sources.get(i), remapper.getEnvironment().getRemapper()));
             }
         } finally {
             remapper.finish();
@@ -83,12 +87,12 @@ public final class ExactRemap {
             }
         }
         for (int i = 0; i < inputs.size(); i++) {
-            route(temporary.get(i), outputs.get(i));
+            route(temporary.get(i), outputs.get(i), refmaps.get(i));
             Files.deleteIfExists(temporary.get(i));
         }
     }
 
-    static void route(Path in, Path out) throws IOException {
+    static void route(Path in, Path out, Map<String, byte[]> refmaps) throws IOException {
         Path routed = out.resolveSibling(out.getFileName() + "." + ProcessHandle.current().pid() + ".routing");
         try (ZipFile zip = new ZipFile(in.toFile());
              ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(routed))) {
@@ -97,7 +101,9 @@ public final class ExactRemap {
                 zos.putNextEntry(new ZipEntry(entry.getName()));
                 try (InputStream data = zip.getInputStream(entry)) {
                     byte[] bytes = data.readAllBytes();
-                    zos.write(entry.getName().endsWith(".class") ? Routing.apply(SharedMethodSplit.restoreNames(bytes)) : bytes);
+                    zos.write(entry.getName().endsWith(".class")
+                            ? Routing.apply(SharedMethodSplit.restoreNames(bytes))
+                            : refmaps.getOrDefault(entry.getName(), bytes));
                 }
                 zos.closeEntry();
             }

@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ModConverter {
-    public static final int SCHEMA = 3;
+    public static final int SCHEMA = 4;
 
     private static final String INDEX_FILE = "index.properties";
     private static final Map<String, Path> RUNTIME_JARS = new ConcurrentHashMap<>();

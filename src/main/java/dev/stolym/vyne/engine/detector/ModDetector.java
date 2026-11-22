@@ -172,6 +172,17 @@ public final class ModDetector {
 
             JarEntry forgeEntry = jar.getJarEntry("META-INF/mods.toml");
             if (forgeEntry != null) return parseForgeToml(jarPath, jar, forgeEntry);
+
+            java.util.jar.Manifest manifest = jar.getManifest();
+            String modType = manifest != null ? manifest.getMainAttributes().getValue("FMLModType") : null;
+            if ("GAMELIBRARY".equals(modType) || "LIBRARY".equals(modType)) {
+                String id = jarPath.getFileName().toString().replaceAll("[-_+]?\\d[\\w.+-]*\\.jar$", "").replaceAll("\\.jar$", "").toLowerCase(java.util.Locale.ROOT);
+                String version = manifest.getMainAttributes().getValue("Implementation-Version");
+                DetectedMod library = new DetectedMod(jarPath, DetectedMod.LoaderType.NEOFORGE, id, jarPath.getFileName().toString(),
+                        version != null ? version : "unknown", null, null, null);
+                library.setLibrary(true);
+                return library;
+            }
         }
 
         return new DetectedMod(jarPath, DetectedMod.LoaderType.UNKNOWN, jarPath.getFileName().toString(), null, "unknown", null, null);

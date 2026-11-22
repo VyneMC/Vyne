@@ -27,6 +27,7 @@ public final class DetectedMod {
     private final List<String> mixins;
     private final LoaderModMetadata realMetadata;
     private Environment side = Environment.UNIVERSAL;
+    private boolean library;
     private final Map<String, String> dependencies = new java.util.LinkedHashMap<>();
     private final Map<String, String> optionalDependencies = new java.util.LinkedHashMap<>();
 
@@ -68,6 +69,8 @@ public final class DetectedMod {
     }
 
     public void setSide(Environment side) { this.side = side; }
+    public boolean isLibrary() { return library; }
+    public void setLibrary(boolean library) { this.library = library; }
     public Environment getSide() { return side; }
 
     public Path getJarPath()                  { return jarPath; }

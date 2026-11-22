@@ -62,7 +62,7 @@ public final class VyneMods {
         List<DetectedMod> detected = VyneLauncher.getDetectedMods();
         if (detected != null) {
             for (DetectedMod mod : detected) {
-                if (mod.getLoaderType() != DetectedMod.LoaderType.NEOFORGE || mod.getJarPath() == null) continue;
+                if (mod.getLoaderType() != DetectedMod.LoaderType.NEOFORGE || mod.isLibrary() || mod.getJarPath() == null) continue;
                 if (dev.stolym.vyne.core.ModActivity.isInactive(mod.getModId())) continue;
                 Path runtime = ModConverter.runtimeJar(mod.getJarPath());
                 addJar(runtime, runtime, mod.getVersion());
