@@ -31,6 +31,11 @@ public final class PatchLayerHandlers {
                 makeOptional(method.visibleAnnotations);
                 makeOptional(method.invisibleAnnotations);
             }
+            try {
+                HookRetarget.retarget(node);
+            } catch (RuntimeException | LinkageError e) {
+                VyneLogger.debug("[PatchLayer] Could not retarget hooks of " + node.name + ": " + e);
+            }
         }
         rewriteForNeoForge(node);
         Map<String, String> handlers = table().get(node.name);

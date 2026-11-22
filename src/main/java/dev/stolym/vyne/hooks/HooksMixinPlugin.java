@@ -23,8 +23,15 @@ public final class HooksMixinPlugin implements IMixinConfigPlugin {
         return null;
     }
 
+    private static final java.util.Map<String, String> FABRIC_API_HOOKS = java.util.Map.of(
+            "FabricBlockBreakHook", "fabric-events-interaction-v0");
+
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        String module = FABRIC_API_HOOKS.get(mixinClassName.substring(mixinClassName.lastIndexOf('.') + 1));
+        if (module != null) {
+            return VyneMode.patchedGame() && net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded(module);
+        }
         return VyneMode.hooks();
     }
 

@@ -76,7 +76,7 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
     - [x] Every Fabric mod's injectors are optional on the patched game (also `CAPTURE_FAILHARD` → `CAPTURE_FAILSOFT`); each hook that attaches nowhere is logged with its mod (`PatchLayerHandlers.reportUnapplied`); hooks covered elsewhere are listed in `vyne/patch-layer/covered-hooks.txt` (2026-11-21)
     - [x] Client fixes found by booting the client: colour providers read NeoForge's `blockColors`/`itemColors` (Fabric mixins rewritten at load), particle factories through a raw-id view of NeoForge's `providers`, registry-sync client mixins off, shader stage and import ids no longer prefixed twice, `UseEntityCallback` on the client via `EntityInteractSpecific`, `BLOCK_ENTITY_UNLOAD` in `getBlockEntity`, block dust tint via `areBreakingParticlesTinted`
     - [x] `smokeClient_<scenario>`: boots the client under Xvfb without the asset store, passes at the title screen (`mixed` passes); run one at a time, the client is heavy
-    - [x] Architectury bridged (tested in `mixed-content`): `BlockEvent.BREAK`, `EntityEvent.ADD` (server), `LIVING_CHECK_SPAWN` via `MobSpawnEvent.PositionCheck`, screen render and char-typed events, client right-click-air
+    - [x] Architectury bridged, temporary until its spots are covered by the spot table (tested in `mixed-content`): `BlockEvent.BREAK`, `EntityEvent.ADD` (server), `LIVING_CHECK_SPAWN` via `MobSpawnEvent.PositionCheck`, screen render and char-typed events, client right-click-air
     - [ ] Remaining third-party hooks seen: REI `modifyBl` (left-side potion effects, could use `ScreenEvent.RenderInventoryMobEffects`), Continuity item frame model hooks
     - [x] `mixed-content` scenario with the test pack's server-safe mods plus the fixture (REI, Architectury, AppleSkin, Traveler's Backpack, Comforts)
     - [ ] Test on a real client: a mixed pack joining a server (instance `VyneMixedTest` in Prism)
@@ -86,6 +86,14 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
   - [x] Compatibility path deleted: hand-written NeoForge/Forge classes, VCL lifecycle, dynamic bridge engine, registry/event/fluid/capability/config/network bridges, runtime bytecode translation (`VyneRemapper`), 28 emulation mixins; NeoForge mods are remapped exactly once or the launch stops with an error
   - [x] Legacy Forge mods (`net.minecraftforge`) are skipped with a warning; they only ever ran on the hand-written classes
   - [x] Gaps the hand-written classes had been covering: NeoForge's `mergetool` API library (`Dist`, `OnlyIn`) is now downloaded; modlauncher's `TransformingThrowablePatternConverter` is provided by Vyne's FML (`src/fml`)
+- [ ] Phase 6 proper (design: `docs/dev/unified-platform.md` 4.1 and 4.2)
+  - [x] Retarget moved hooks at launch (`HookRetarget`): a Fabric mod's call-site hook whose call moved into a lambda or helper of the same class is pointed at its new place, only when the handler provably fits; it replaced the hand-written known-packs and vanilla-language bridges
+  - [ ] Fabric API's calls inside Vyne's patches at the shared spots (one hook fires both APIs); its mixins and the hand-written bridges at those spots removed
+    - [x] Typed hooks: `src/hooks` compiles in Mojang names against Fabric API remapped to Mojang names (`./gradlew fabricApiMojangJar`); a hook applies on the patched game when its Fabric module is loaded (`HooksMixinPlugin`)
+    - [x] Block breaking ported (`FabricBlockBreakHook`); reflection bridge deleted; same results in `patch-layer`
+    - [ ] Port the other bridges: fuel, sleep, items, ingredients, payloads, menus, interaction, block entity unload, screens, fluids, sounds, Indigo, render data, models, particles, colours, resources
+    - [ ] Bake the hooks into the binary patches at build time instead of applying them as mixins at launch
+  - [ ] Spot table for spots NeoForge replaced with events, written against Vyne's hooks; Architectury bridge removed
 - [ ] Phase 6b: Mojang names at runtime; port the remaining Vyne code; delete the Minecraft stand-ins
   - [x] `./gradlew minecraftRuntimeJar`: vanilla client jar with runtime (intermediary) names, built from Mojang's jar and Fabric's intermediary mappings (`src/minecraftJar`)
   - [x] `main` compiles against it; all `class_xxxx` and Mojang-named stand-ins deleted (2026-11-21); was blocked by the compatibility path

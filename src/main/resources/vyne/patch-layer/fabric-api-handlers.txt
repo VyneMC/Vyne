@@ -49,8 +49,6 @@ net/fabricmc/fabric/mixin/object/builder/TradeOffersTypeAwareBuyForOneEmeraldFac
 net/fabricmc/fabric/mixin/object/builder/client/HangingSignEditScreenMixin init replaced
 net/fabricmc/fabric/mixin/recipe/ingredient/IngredientMixin useCustomIngredientPacketCodec replaced
 net/fabricmc/fabric/mixin/registry/sync/SaveLoadingMixin modifyLoadedEntries replaced
-net/fabricmc/fabric/mixin/resource/loader/ServerConfigurationNetworkHandlerMixin filterKnownPacks replaced
-net/fabricmc/fabric/mixin/resource/loader/server/LanguageMixin readCorrectVanillaResource replaced
 net/fabricmc/fabric/mixin/screen/GameRendererMixin onRenderScreen replaced
 net/fabricmc/fabric/mixin/screen/MinecraftClientMixin afterScreenTick replaced
 net/fabricmc/fabric/mixin/screen/MinecraftClientMixin beforeScreenTick replaced

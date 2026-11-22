@@ -23,7 +23,6 @@ public class VCLMixinConfigPlugin implements IMixinConfigPlugin {
     }
 
     private static final java.util.Map<String, String> PATCH_LAYER_MIXINS = java.util.Map.ofEntries(
-            java.util.Map.entry("PatchLayerBlockBreakMixin", "fabric-events-interaction-v0"),
             java.util.Map.entry("PatchLayerPackDefaultsMixin", "fabric-resource-loader-v0"),
             java.util.Map.entry("PatchLayerDynamicRegistriesMixin", "fabric-registry-sync-v0"),
             java.util.Map.entry("PatchLayerLivingSleepMixin", "fabric-entity-events-v1"),
@@ -34,8 +33,6 @@ public class VCLMixinConfigPlugin implements IMixinConfigPlugin {
             java.util.Map.entry("PatchLayerServerboundPayloadMixin", "fabric-networking-api-v1"),
             java.util.Map.entry("PatchLayerClientboundPayloadMixin", "fabric-networking-api-v1"),
             java.util.Map.entry("PatchLayerMenuMixin", "fabric-screen-handler-api-v1"),
-            java.util.Map.entry("PatchLayerKnownPacksMixin", "fabric-resource-loader-v0"),
-            java.util.Map.entry("PatchLayerLanguageMixin", "fabric-resource-loader-v0"),
             java.util.Map.entry("PatchLayerTagProviderMixin", "fabric-data-generation-api-v1"),
             java.util.Map.entry("PatchLayerScreenTickMixin", "fabric-screen-api-v1"),
             java.util.Map.entry("PatchLayerScreenRenderMixin", "fabric-screen-api-v1"),

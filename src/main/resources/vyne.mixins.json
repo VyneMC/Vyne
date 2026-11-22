@@ -4,7 +4,6 @@
   "compatibilityLevel": "JAVA_21",
   "plugin": "dev.stolym.vyne.mixin.VCLMixinConfigPlugin",
   "mixins": [
-    "PatchLayerBlockBreakMixin",
     "PatchLayerPackDefaultsMixin",
     "PatchLayerDynamicRegistriesMixin",
     "PatchLayerLivingSleepMixin",
@@ -15,8 +14,6 @@
     "PatchLayerServerboundPayloadMixin",
     "PatchLayerClientboundPayloadMixin",
     "PatchLayerMenuMixin",
-    "PatchLayerKnownPacksMixin",
-    "PatchLayerLanguageMixin",
     "PatchLayerTagProviderMixin",
     "PatchLayerBlockEntityUnloadMixin",
     "PackRepositoryVyneMixin",

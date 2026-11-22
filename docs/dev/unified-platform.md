@@ -105,6 +105,36 @@ With Fabric API and NeoForge no longer mixing into vanilla themselves, what is l
 
 The promise is: everything that can run together does, and real conflicts are caught and explained instead of crashing or silently misbehaving.
 
+### 4.1 Mods whose mixins target spots NeoForge changed (2026-11-22)
+
+A Fabric mod written for vanilla can mix into a spot that NeoForge's patches changed. Its hook then finds nothing. NeoForge changes a spot in one of three ways, and each has its own fix:
+
+| What happened to the spot | Fix | Who maintains it |
+|---|---|---|
+| The code moved: into a lambda, a renamed lambda or a helper method of the same class | Vyne looks up at launch where the targeted call went in the patched class and points the hook there | Nobody: it is computed from the patched game every time, so it follows NeoForge updates |
+| The code around it changed (other locals, other order) | The hook is kept if it still fits; local-capturing hooks fail soft instead of crashing | Nobody |
+| NeoForge replaced the vanilla code with its own event | The spot table says once what replaced it (`BaseSpawner.serverTick` → `checkSpawnRules` call → `MobSpawnEvent.PositionCheck`) and Vyne answers the hook from there | One entry per spot, not per mod. The tooling lists new and changed spots for each NeoForge release (section 3.3), so an update means reviewing a short list |
+
+The fixes work per spot, never per mod: every Fabric mod hooking the same spot benefits. Bridges written for one library (the Architectury bridge of 2026-11-22) are temporary and go away once its spots are covered.
+
+Hooks that none of these fix are skipped and logged with the mod's name (`[PatchLayer] <mod>: hook <name> found nothing to attach to ...`), so a lost feature is visible instead of a crash.
+
+### 4.2 Where this is heading: Vyne's own hooks
+
+Today Vyne's patches are NeoForge's patched classes, applied by Vyne, and Fabric API runs on top through the patch layer (Fabric API's broken mixins replaced by bridges to NeoForge's hooks). That works, but NeoForge is the base and Fabric API a guest.
+
+Phase 6 turns this around, as section 2.2 describes: at each spot both APIs touch, Vyne's patch contains one hook that fires NeoForge's event and Fabric API's event, and Fabric API's own mixins at those spots are left out. NeoForge then becomes one API on Vyne's hook layer, the same as Fabric API. The spot table of 4.1 targets those hooks too, so other Fabric mods' mixins land on Vyne's hooks instead of on NeoForge's code.
+
+```
+vanilla Minecraft
+   └─ Vyne's patches: one hook per spot
+        ├─ NeoForge API events   → NeoForge mods
+        ├─ Fabric API events     → Fabric mods
+        └─ spot table            → other Fabric mods' mixins (moved, replaced)
+```
+
+The order of work: (1) retarget moved hooks at launch; (2) move Fabric API's calls into Vyne's patches, which replaces the hand-written patch-layer bridges; (3) the spot table for replaced spots, written against Vyne's hooks.
+
 ## 5. The Guard (crash containment)
 
 The Guard keeps the game running when a mod fails, freezes that mod, and tells the player. It is part of what makes Vyne user friendly, so it stays. Today it catches exceptions inside vanilla methods (the whole render frame, a full entity tick), which can leave the game half-way through an operation: items taken out of one slot but never put in the other, a block entity with half its fields updated. The target design removes that risk:

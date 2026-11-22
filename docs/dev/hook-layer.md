@@ -21,7 +21,7 @@ For a pack whose mods are all NeoForge mods, this is the default:
 3. `NeoForgeLibraries` downloads the six libraries NeoForge needs (FML loader, event bus, jar handler, console), once.
 4. Vyne's copy of the NeoForge API (`META-INF/vyne/neoforge.jar`) and the NeoForge mods go through the same exact rename as the game, and Vyne's own FML (`dev.stolym.vyne.fml`, wired in by `vyne/routing/neoforge-21.1.txt`) runs NeoForge's lifecycle.
 
-`-Dvyne.hooks=false` uses NeoForge's installer at first start instead (the older "patched mode"); Vyne also falls back to it when the patches are missing from the jar. Packs that mix Fabric and NeoForge mods use the compatibility path until Phase 6.
+`-Dvyne.hooks=false` uses NeoForge's installer at first start instead (the older "patched mode"); Vyne also falls back to it when the patches are missing from the jar. Packs that mix Fabric and NeoForge mods run on the same patched game; Fabric API runs on it through the patch layer.
 
 Tested (2026-11-16): NeoForge-only servers with Mouse Tweaks, CraftPresence, UniLib and Comforts (blocks placed, items present) reach `Done` with 0 ERROR lines; clients with Mouse Tweaks, CraftPresence, UniLib and Skin Layers 3D reach the title screen.
 
@@ -37,6 +37,8 @@ For NeoForge 21.1.265: 6 superclasses, 91 interfaces, 272 fields, 853 methods, 8
 ## Fabric API on the patch layer (Phase 6)
 
 NeoForge's patches change 211 vanilla methods that Fabric API's mixins also target (`data/hooks/overlap-*.tsv`, see [hook-inventory.md](hook-inventory.md)); those mixins fail on the patched classes. Because Vyne builds its own patches, the Fabric API event call is added into the patched method when the patches are built, next to NeoForge's hook, instead of being applied as a mixin at runtime. Fabric API's other mixins target code NeoForge does not change and stay as they are.
+
+Status (2026-11-22): the hooks live in `src/hooks`, written with Mojang names and compiled against Minecraft with NeoForge's surface, Vyne's copy of the NeoForge API and Fabric API remapped to Mojang names (`./gradlew fabricApiMojangJar`). `remapHooksJar` renames them to the runtime names and they ship in the Vyne jar (`vyne.hooks.mixins.json`). A Fabric API hook applies on the patched game (Vyne's patches or NeoForge's installer) when its Fabric API module is loaded. Block breaking is the first one (`FabricBlockBreakHook`); the other spots still use the reflection-based patch-layer bridges in `dev.stolym.vyne.patchlayer` and move over one by one. For now the hooks are applied as mixins at launch; baking them into the binary patches is the last step.
 
 ## Vyne's copy of the NeoForge API
 

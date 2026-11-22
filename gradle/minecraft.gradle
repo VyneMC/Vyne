@@ -101,6 +101,27 @@ tasks.register('minecraftRuntimeJar', JavaExec) {
 }
 
 ext.minecraftRuntime = files(runtimeJar) { builtBy 'minecraftRuntimeJar' }
+
+def clientMojangMappings = new File(minecraftDir, "minecraft-${project.minecraft_version}-client-mappings.txt")
+
+tasks.register('minecraftClientMappings') {
+    group = 'vyne'
+    description = 'Downloads Mojang\'s client mappings and checks their SHA-1.'
+    def download = versionMeta.downloads.client_mappings
+    outputs.file(clientMojangMappings)
+    doLast {
+        def tmp = new File(clientMojangMappings.parentFile, clientMojangMappings.name + '.part')
+        new URL(download.url).withInputStream { input -> tmp.withOutputStream { it << input } }
+        def sha1 = java.security.MessageDigest.getInstance('SHA-1').digest(tmp.bytes).encodeHex().toString()
+        if (sha1 != download.sha1) {
+            tmp.delete()
+            throw new GradleException("Mojang client mappings SHA-1 mismatch: expected ${download.sha1}, got ${sha1}")
+        }
+        java.nio.file.Files.move(tmp.toPath(), clientMojangMappings.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    }
+    onlyIf { !clientMojangMappings.isFile() }
+}
+ext.minecraftClientMappingsFile = clientMojangMappings
 ext.minecraftOfficialClient = files(officialClientJar) { builtBy 'minecraftOfficialClientJar' }
 ext.minecraftAssetIndex = versionMeta.assetIndex.id
 

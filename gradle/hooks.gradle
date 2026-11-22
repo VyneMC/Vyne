@@ -20,9 +20,30 @@ dependencies {
     hooksMixin 'io.github.llamalad7:mixinextras-fabric:0.5.5'
 }
 
+def fabricApiMojangJar = layout.buildDirectory.file("hooks-jar/fabric-api-${project.hook_fabric_api_version}-mojang.jar").get().asFile
+
+tasks.register('fabricApiMojangJar', JavaExec) {
+    group = 'vyne'
+    description = 'Fabric API with Mojang names, so Vyne\'s hooks can call its events directly.'
+    dependsOn 'minecraftRuntimeJar', 'minecraftClientMappings', tasks.named('minecraftJarClasses')
+    classpath = sourceSets.minecraftJar.runtimeClasspath
+    mainClass = 'dev.stolym.vyne.minecraftjar.MojangNamedJar'
+    def fabricApi = configurations.hookFabricApi
+    def mappings = configurations.intermediaryMappings
+    def runtime = project.ext.minecraftRuntime
+    def clientMappings = project.ext.minecraftClientMappingsFile
+    inputs.files(fabricApi, mappings, runtime)
+    inputs.file(clientMappings)
+    outputs.file(fabricApiMojangJar)
+    argumentProviders.add({ [fabricApi.singleFile.absolutePath, mappings.singleFile.absolutePath, clientMappings.absolutePath,
+                             runtime.singleFile.absolutePath, fabricApiMojangJar.absolutePath] } as CommandLineArgumentProvider)
+    maxHeapSize = '2G'
+}
+
 afterEvaluate {
     sourceSets.hooks.compileClasspath = project.ext.minecraftHookedOpen + sourceSets.neoforge.output +
-            configurations.neoforgeLibraries + configurations.hooksMixin
+            configurations.neoforgeLibraries + configurations.hooksMixin +
+            files(fabricApiMojangJar) { builtBy 'fabricApiMojangJar' }
 }
 
 tasks.register('hooksJar', Jar) {

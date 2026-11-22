@@ -3,7 +3,9 @@
   "package": "dev.stolym.vyne.hooks.mixin",
   "compatibilityLevel": "JAVA_21",
   "plugin": "dev.stolym.vyne.hooks.HooksMixinPlugin",
-  "mixins": [],
+  "mixins": [
+    "FabricBlockBreakHook"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
