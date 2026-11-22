@@ -15,11 +15,16 @@ configurations {
     minecraftLibraries {
         transitive = false
     }
+    minecraftClientNatives {
+        transitive = false
+    }
 }
 
 dependencies {
     versionMeta.libraries.each { library ->
-        if (library.name.split(':').length == 3) minecraftLibraries library.name
+        def parts = library.name.split(':')
+        if (parts.length == 3) minecraftLibraries library.name
+        if (parts.length == 4 && (parts[3] == 'natives-linux' || parts[3] == 'linux-x86_64')) minecraftClientNatives library.name
     }
 }
 
@@ -96,6 +101,8 @@ tasks.register('minecraftRuntimeJar', JavaExec) {
 }
 
 ext.minecraftRuntime = files(runtimeJar) { builtBy 'minecraftRuntimeJar' }
+ext.minecraftOfficialClient = files(officialClientJar) { builtBy 'minecraftOfficialClientJar' }
+ext.minecraftAssetIndex = versionMeta.assetIndex.id
 
 tasks.register('printMinecraftClasspath') {
     dependsOn 'minecraftMojangJar'

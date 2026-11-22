@@ -21,6 +21,7 @@ out/
 .DS_Store
 
 # --- Local game runs ----------------------------------------------------------
+scripts/
 run/
 logs/
 *.log

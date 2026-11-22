@@ -257,6 +257,54 @@ final class EventBridgeProbe {
         return Class.forName("net.minecraft.class_1799", true, loader).getConstructor(convertible).newInstance(item);
     }
 
+    private static final AtomicInteger ARCH_BREAKS = new AtomicInteger();
+    private static final AtomicInteger ARCH_ADDS = new AtomicInteger();
+
+    static boolean registerArchitectury(ClassLoader loader) {
+        try {
+            Class.forName("dev.architectury.event.Event", false, loader);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+        try {
+            Class<?> results = Class.forName("dev.architectury.event.EventResult", true, loader);
+            Object pass = results.getMethod("pass").invoke(null);
+            Object veto = results.getMethod("interruptFalse").invoke(null);
+            Class<?> pigType = Class.forName("net.minecraft.class_1452", true, loader);
+            architecturyListen(loader, "common.BlockEvent", "BREAK", "Break", args -> {
+                ARCH_BREAKS.incrementAndGet();
+                return pass;
+            });
+            architecturyListen(loader, "common.EntityEvent", "ADD", "Add", args -> {
+                if (!pigType.isInstance(args[0])) return pass;
+                ARCH_ADDS.incrementAndGet();
+                return veto;
+            });
+            return true;
+        } catch (Exception e) {
+            System.out.println("[VyneFixture] architectury listeners could not register: " + e);
+            return false;
+        }
+    }
+
+    static void architectury(ClassLoader loader, Object level, int x, int y, int z) throws Exception {
+        Object pig = call(Class.forName("net.minecraft.class_1299", true, loader).getField("field_6093").get(null), "method_5883", level);
+        call(pig, "method_5814", x + 0.5, (double) (y + 5), z + 0.5);
+        boolean added = (boolean) call(level, "method_8649", pig);
+        System.out.println("[VyneFixture] architectury: break-fired=" + (ARCH_BREAKS.get() > 0) + " pig-vetoed=" + (!added && ARCH_ADDS.get() > 0));
+    }
+
+    private static void architecturyListen(ClassLoader loader, String holder, String field, String type, Body body) throws Exception {
+        String owner = "dev.architectury.event.events." + holder;
+        Object event = Class.forName(owner, true, loader).getField(field).get(null);
+        Class<?> listenerType = Class.forName(owner + "$" + type, true, loader);
+        Object listener = Proxy.newProxyInstance(loader, new Class<?>[] {listenerType}, (proxy, method, args) -> {
+            if (method.getDeclaringClass() == Object.class) return method.invoke(EventBridgeProbe.class, args);
+            return body.apply(args);
+        });
+        Class.forName("dev.architectury.event.Event", true, loader).getMethod("register", Object.class).invoke(event, listener);
+    }
+
     private interface Body {
         Object apply(Object[] args) throws Exception;
     }

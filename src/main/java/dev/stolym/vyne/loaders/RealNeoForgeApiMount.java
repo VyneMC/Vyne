@@ -30,6 +30,7 @@ public final class RealNeoForgeApiMount {
         Path out = dir.resolve("api-net.jar");
         Path done = dir.resolve("done");
         if (Files.isRegularFile(done) && Files.isRegularFile(out) && ("schema=" + CACHE_SCHEMA).equals(Files.readString(done).trim())) {
+            dev.stolym.vyne.convert.CacheCleanup.keepOnly(dir.getParent(), dir);
             return out;
         }
         Files.createDirectories(dir);
@@ -51,6 +52,7 @@ public final class RealNeoForgeApiMount {
             }
         }
         Files.writeString(done, "schema=" + CACHE_SCHEMA);
+        dev.stolym.vyne.convert.CacheCleanup.keepOnly(dir.getParent(), dir);
         VyneLogger.info("[RealNeoAPI] Prepared the NeoForge API jar (" + dir.getFileName() + ") from " + universalJar.getFileName());
         return out;
     }

@@ -49,7 +49,7 @@ public final class CurseForgeInstaller {
         lines.add("");
         if (r.fabricLike()) {
             lines.add("Open the CurseForge app → launch this instance. Vyne rides the instance's");
-            lines.add("Fabric Loader and handles Forge / NeoForge / Fabric mods from mods/.");
+            lines.add("Fabric Loader and handles NeoForge and Fabric mods from mods/.");
         } else {
             lines.add("This instance is not Fabric. In the CurseForge app, open the instance →");
             lines.add("Modloader tab → switch to Fabric (matching MC version) and save before");
@@ -116,7 +116,7 @@ public final class CurseForgeInstaller {
         sb.append("Mods folder  : ").append(modsDir.toAbsolutePath()).append("\n\n");
         if (fabricLike) {
             sb.append("This instance is Fabric-based — Vyne will activate automatically.\n");
-            sb.append("Drop any Forge / NeoForge / Fabric mod into mods/ and launch the instance.\n");
+            sb.append("Drop any NeoForge or Fabric mod into mods/ and launch the instance.\n");
         } else {
             sb.append("This instance is not Fabric. Switch the instance's loader to Fabric in the\n");
             sb.append("CurseForge app (Modloader tab) before launching so Vyne can take over.\n");

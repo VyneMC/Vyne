@@ -18,6 +18,7 @@
     "PatchLayerKnownPacksMixin",
     "PatchLayerLanguageMixin",
     "PatchLayerTagProviderMixin",
+    "PatchLayerBlockEntityUnloadMixin",
     "PackRepositoryVyneMixin",
     "MinecraftServerLagMitigationMixin",
     "LevelEntityTickContainmentMixin",
@@ -43,7 +44,9 @@
     "PatchLayerFluidRenderMixin",
     "PatchLayerSectionCompilerMixin",
     "PatchLayerRenderRegionMixin",
-    "PatchLayerModelBakeMixin"
+    "PatchLayerModelBakeMixin",
+    "PatchLayerParticleMixin",
+    "PatchLayerBlockDustMixin"
   ],
   "server": ["DedicatedServerMixin"],
   "injectors": { "defaultRequire": 1 }

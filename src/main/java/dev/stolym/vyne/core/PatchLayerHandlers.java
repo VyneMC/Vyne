@@ -26,12 +26,13 @@ public final class PatchLayerHandlers {
 
     public static void strip(ClassNode node) {
         if (node == null || !VyneMode.patchedGame()) return;
-        if (node.name.startsWith("net/fabricmc/fabric/mixin/")) {
+        if (isFabricModMixin(node.name)) {
             for (MethodNode method : node.methods) {
                 makeOptional(method.visibleAnnotations);
                 makeOptional(method.invisibleAnnotations);
             }
         }
+        rewriteForNeoForge(node);
         Map<String, String> handlers = table().get(node.name);
         if (handlers == null) return;
         for (MethodNode method : node.methods) {
@@ -84,11 +85,140 @@ public final class PatchLayerHandlers {
         }
     }
 
+    private static void rewriteForNeoForge(ClassNode node) {
+        switch (node.name) {
+            case "net/fabricmc/fabric/mixin/client/rendering/BlockColorsMixin" ->
+                    colorLookup(node, "field_1995", "blockColors", "(Lnet/minecraft/class_2248;)Lnet/minecraft/class_322;", "net/minecraft/class_322", false);
+            case "net/fabricmc/fabric/mixin/client/rendering/ItemColorsMixin" ->
+                    colorLookup(node, "field_1996", "itemColors", "(Lnet/minecraft/class_1935;)Lnet/minecraft/class_326;", "net/minecraft/class_326", true);
+            case "net/fabricmc/fabric/mixin/client/particle/ParticleManagerAccessor" -> {
+                for (MethodNode method : node.methods) {
+                    if (!method.name.equals("getFactories") || method.visibleAnnotations == null) continue;
+                    for (AnnotationNode annotation : method.visibleAnnotations) {
+                        if (!annotation.desc.equals("Lorg/spongepowered/asm/mixin/gen/Accessor;")) continue;
+                        annotation.values = new java.util.ArrayList<>(List.of("value", "vyne$fabricParticleFactories"));
+                    }
+                }
+                VyneLogger.info("[PatchLayer] Fabric particle factories go into NeoForge's particle providers");
+            }
+            default -> {
+            }
+        }
+    }
+
+    private static void colorLookup(ClassNode node, String vanillaField, String neoForgeField, String getDesc, String provider, boolean item) {
+        for (org.objectweb.asm.tree.FieldNode field : node.fields) {
+            if (field.name.equals(vanillaField)) {
+                field.name = neoForgeField;
+                field.desc = "Ljava/util/Map;";
+                field.signature = null;
+            }
+        }
+        for (MethodNode method : node.methods) {
+            if (!method.name.equals("get") || !method.desc.equals(getDesc)) continue;
+            org.objectweb.asm.tree.InsnList code = new org.objectweb.asm.tree.InsnList();
+            code.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 0));
+            code.add(new org.objectweb.asm.tree.FieldInsnNode(org.objectweb.asm.Opcodes.GETFIELD, node.name, neoForgeField, "Ljava/util/Map;"));
+            code.add(new org.objectweb.asm.tree.VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 1));
+            if (item) {
+                code.add(new org.objectweb.asm.tree.MethodInsnNode(org.objectweb.asm.Opcodes.INVOKEINTERFACE, "net/minecraft/class_1935", "method_8389", "()Lnet/minecraft/class_1792;", true));
+            }
+            code.add(new org.objectweb.asm.tree.MethodInsnNode(org.objectweb.asm.Opcodes.INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true));
+            code.add(new org.objectweb.asm.tree.TypeInsnNode(org.objectweb.asm.Opcodes.CHECKCAST, provider));
+            code.add(new org.objectweb.asm.tree.InsnNode(org.objectweb.asm.Opcodes.ARETURN));
+            method.instructions = code;
+            method.tryCatchBlocks = new java.util.ArrayList<>();
+            method.localVariables = null;
+            method.maxStack = 2;
+            method.maxLocals = 2;
+        }
+        VyneLogger.info("[PatchLayer] Fabric " + (item ? "item" : "block") + " colour providers read NeoForge's " + neoForgeField);
+    }
+
+    private static boolean isFabricModMixin(String internalName) {
+        if (internalName.startsWith("net/fabricmc/fabric/mixin/")) return true;
+        if (internalName.startsWith("dev/stolym/vyne/")) return false;
+        dev.stolym.vyne.vcl.metadata.VyneMetadataIndex.ClassInfo info = dev.stolym.vyne.vcl.metadata.VyneMetadataIndex.get(internalName.replace('/', '.'));
+        return info == null || info.loaderType() == DetectedMod.LoaderType.FABRIC;
+    }
+
+    private static final java.util.regex.Pattern HANDLER = java.util.regex.Pattern.compile(
+            "^(handler|redirect|modify|args|localvar|constant|wrapOperation|modifyExpressionValue|modifyReturnValue|modifyReceiver|wrapWithCondition|wrapMethod)\\$[a-z0-9]+\\$(.+)$");
+    private static final java.util.Set<String> REPORTED = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
+    public static void reportUnapplied(String className, byte[] bytes) {
+        if (bytes == null || !VyneMode.patchedGame() || !className.startsWith("net.minecraft.")) return;
+        try {
+            ClassNode node = new ClassNode();
+            new org.objectweb.asm.ClassReader(bytes).accept(node, org.objectweb.asm.ClassReader.SKIP_FRAMES | org.objectweb.asm.ClassReader.SKIP_DEBUG);
+            java.util.Set<String> handlers = new java.util.LinkedHashSet<>();
+            for (MethodNode method : node.methods) {
+                if (HANDLER.matcher(method.name).matches()) handlers.add(method.name);
+            }
+            if (handlers.isEmpty()) return;
+            for (MethodNode method : node.methods) {
+                if (method.instructions == null) continue;
+                for (org.objectweb.asm.tree.AbstractInsnNode insn : method.instructions) {
+                    if (insn instanceof org.objectweb.asm.tree.MethodInsnNode call) {
+                        handlers.remove(call.name);
+                    } else if (insn instanceof org.objectweb.asm.tree.InvokeDynamicInsnNode indy) {
+                        for (Object arg : indy.bsmArgs) {
+                            if (arg instanceof org.objectweb.asm.Handle handle) handlers.remove(handle.getName());
+                        }
+                    } else if (insn instanceof org.objectweb.asm.tree.LdcInsnNode ldc && ldc.cst instanceof org.objectweb.asm.Handle handle) {
+                        handlers.remove(handle.getName());
+                    }
+                }
+            }
+            for (String handler : handlers) {
+                java.util.regex.Matcher m = HANDLER.matcher(handler);
+                if (!m.matches() || !REPORTED.add(className + "#" + handler)) continue;
+                String rest = m.group(2);
+                int split = rest.indexOf('$');
+                String mod = split > 0 ? rest.substring(0, split) : "?";
+                String method = split > 0 ? rest.substring(split + 1) : rest;
+                if ("fabricloader".equals(mod)) continue;
+                if (covered().contains(mod + " " + method)) {
+                    VyneLogger.info("[PatchLayer] " + mod + "#" + method + " is handled by Vyne's patch layer");
+                    continue;
+                }
+                VyneLogger.warn("[PatchLayer] " + mod + ": hook " + method + " found nothing to attach to in " + className
+                        + " on NeoForge's patched game and is skipped");
+            }
+        } catch (RuntimeException e) {
+            VyneLogger.debug("[PatchLayer] Could not check hooks in " + className + ": " + e);
+        }
+    }
+
+    private static volatile java.util.Set<String> covered;
+
+    private static java.util.Set<String> covered() {
+        java.util.Set<String> current = covered;
+        if (current != null) return current;
+        java.util.Set<String> loaded = new java.util.HashSet<>();
+        try (InputStream in = PatchLayerHandlers.class.getResourceAsStream("/vyne/patch-layer/covered-hooks.txt")) {
+            if (in != null) {
+                for (String line : new String(in.readAllBytes(), StandardCharsets.UTF_8).split("\n")) {
+                    if (!line.isBlank()) loaded.add(line.trim().replaceAll("\\s+", " "));
+                }
+            }
+        } catch (Exception e) {
+            VyneLogger.warn("[PatchLayer] Could not read covered-hooks.txt: " + e.getMessage());
+        }
+        covered = loaded;
+        return loaded;
+    }
+
     static void makeOptional(List<AnnotationNode> annotations) {
         if (annotations == null) return;
         for (AnnotationNode annotation : annotations) {
             if (!isInjector(annotation)) continue;
             if (annotation.values == null) annotation.values = new java.util.ArrayList<>();
+            int locals = annotation.values.indexOf("locals");
+            if (locals >= 0 && locals % 2 == 0 && annotation.values.get(locals + 1) instanceof String[] capture
+                    && capture.length == 2 && "CAPTURE_FAILHARD".equals(capture[1])) {
+                annotation.values.set(locals + 1, new String[] {capture[0], "CAPTURE_FAILSOFT"});
+            }
             int index = annotation.values.indexOf("require");
             if (index >= 0 && index % 2 == 0) {
                 annotation.values.set(index + 1, 0);

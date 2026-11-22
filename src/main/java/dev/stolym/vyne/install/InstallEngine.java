@@ -81,12 +81,12 @@ public final class InstallEngine {
 
         report(progress, 80, "Writing Vyne config…");
         writeVyneConfig(instanceDir);
-        writeLauncherNotes(instanceDir, profile.kind(),
-            instanceDir.resolve(".minecraft").resolve("mods"));
+        Path modsDir = resolveModsDir(instanceDir, profile.kind());
+        Files.createDirectories(modsDir);
+        writeLauncherNotes(instanceDir, profile.kind(), modsDir);
 
         report(progress, 100, "Component installed.");
-        return new InstallResult(result.jarPath(),
-            instanceDir.resolve(".minecraft").resolve("mods"), instanceDir,
+        return new InstallResult(result.jarPath(), modsDir, instanceDir,
             Mode.COMPONENT, PrismComponentInstaller.summary(result));
     }
 
@@ -324,10 +324,9 @@ public final class InstallEngine {
         sb.append("Launcher  : ").append(kind.label()).append("\n");
         sb.append("Minecraft : ").append(VyneLauncher.TARGET_MC).append("\n");
         sb.append("Mods dir  : ").append(modsDir.toAbsolutePath()).append("\n\n");
-        sb.append("Launch Minecraft with a Fabric ").append(VyneLauncher.TARGET_MC)
-            .append(" profile active in ").append(kind.label())
-            .append(" — Vyne picks up Forge / NeoForge / Fabric mods from ")
-            .append(modsDir.getFileName()).append("/.\n\n");
+        sb.append("Launch the instance in ").append(kind.label())
+            .append(". Vyne loads Fabric and NeoForge ").append(VyneLauncher.TARGET_MC)
+            .append(" mods from the mods folder above; Fabric Loader is not needed next to it.\n\n");
         sb.append("Support : https://github.com/VyneMC/Vyne/issues\n");
         Files.writeString(notes, sb.toString(),
             StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -345,9 +344,7 @@ public final class InstallEngine {
             case POLYMC: {
                 Path dotMc = instanceDir.resolve(".minecraft");
                 if (Files.exists(dotMc)) return dotMc.resolve("mods");
-                Path mc = instanceDir.resolve("minecraft");
-                if (Files.exists(mc)) return mc.resolve("mods");
-                return instanceDir.resolve("mods");
+                return instanceDir.resolve("minecraft").resolve("mods");
             }
             default:
                 return instanceDir.resolve("mods");

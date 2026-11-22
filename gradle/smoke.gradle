@@ -40,8 +40,8 @@ tasks.register('classLoadCheck', JavaExec) {
     }
 }
 
-def smokeScenarios = ['fabric-only', 'neoforge-simple', 'neoforge-with-lib', 'mixed', 'mixin-fixture', 'patch-layer']
-def fixtureScenarios = ['mixin-fixture', 'patch-layer']
+def smokeScenarios = ['fabric-only', 'neoforge-simple', 'neoforge-with-lib', 'mixed', 'mixin-fixture', 'patch-layer', 'mixed-content']
+def fixtureScenarios = ['mixin-fixture', 'patch-layer', 'mixed-content']
 def smokeTimeoutSeconds = providers.gradleProperty('smoke.timeout').orElse('600').get().toInteger()
 
 def forbiddenPatterns = [
@@ -53,7 +53,17 @@ def forbiddenPatterns = [
         ~/\[Containment\]/,
 ]
 
+def firstLaunchOnly = [
+        ~/\[Converter\] Remapping \d+ jar/,
+        ~/\[PatchedGame\] Prepared NeoForge's patched game/,
+        ~/\[RealNeoAPI\] Prepared the NeoForge API jar/,
+        ~/\[MojmapDownloader\] Downloading/,
+]
+
 def expectedPatterns = [
+        'mixed-content': [
+                ~/\[VyneFixture\] architectury: break-fired=true pig-vetoed=true/,
+        ],
         'mixin-fixture': [
                 ~/\[VyneFixture\] mod instance created/,
                 ~/\[VyneFixture\] mixin injected into MinecraftServer\.runServer/,
@@ -166,56 +176,159 @@ smokeScenarios.each { scenario ->
                 }
             }
 
-            def proc = new ProcessBuilder(serverCommand(vyneJar, scenario))
-                    .directory(runDir)
-                    .redirectErrorStream(true)
-                    .start()
-
-            boolean timedOut = false
-            boolean started = false
-            def lines = []
-
-            def watchdog = new Thread({
-                try {
-                    Thread.sleep(smokeTimeoutSeconds * 1000L)
-                    if (proc.alive) { timedOut = true; proc.destroyForcibly() }
-                } catch (InterruptedException ignored) { }
-            })
-            watchdog.daemon = true
-            watchdog.start()
-
-            proc.inputStream.eachLine { line ->
-                lines << line
-                if (!started && line.contains('Done (')) {
-                    started = true
-                    proc.outputStream.write('stop\n'.bytes)
-                    proc.outputStream.flush()
+            def boot = { String logName ->
+                def proc = new ProcessBuilder(serverCommand(vyneJar, scenario))
+                        .directory(runDir)
+                        .redirectErrorStream(true)
+                        .start()
+                boolean timedOut = false
+                boolean started = false
+                def lines = []
+                def watchdog = new Thread({
+                    try {
+                        Thread.sleep(smokeTimeoutSeconds * 1000L)
+                        if (proc.alive) { timedOut = true; proc.destroyForcibly() }
+                    } catch (InterruptedException ignored) { }
+                })
+                watchdog.daemon = true
+                watchdog.start()
+                proc.inputStream.eachLine { line ->
+                    lines << line
+                    if (!started && line.contains('Done (')) {
+                        started = true
+                        proc.outputStream.write('stop\n'.bytes)
+                        proc.outputStream.flush()
+                    }
                 }
+                int exit = proc.waitFor()
+                watchdog.interrupt()
+                new File(runDir, logName).text = lines.join('\n')
+                def problems = []
+                if (timedOut) problems << "timed out after ${smokeTimeoutSeconds}s"
+                if (!started) problems << 'server never reached the "Done" line'
+                if (started && exit != 0) problems << "server exited with code ${exit}"
+                lines.each { l ->
+                    if (forbiddenPatterns.any { it.matcher(l).find() } || l.contains('/ERROR]') || l.startsWith('[Vyne] ERROR')) problems << "log: ${l.take(200)}"
+                }
+                (expectedPatterns[scenario] ?: []).each { pat ->
+                    if (!lines.any { pat.matcher(it).find() }) problems << "expected pattern not found in log: ${pat}"
+                }
+                if (problems) {
+                    throw new GradleException("Smoke scenario '${scenario}' FAILED (${logName}):\n  - " + problems.join('\n  - ') +
+                            "\nFull log: ${new File(runDir, logName)}")
+                }
+                return lines
             }
-            int exit = proc.waitFor()
-            watchdog.interrupt()
 
+            boot('smoke.log')
+            logger.lifecycle("Smoke scenario '${scenario}' passed (log: ${new File(runDir, 'smoke.log')})")
+            if (providers.gradleProperty('smoke.secondBoot').isPresent()) {
+                def second = boot('smoke-second.log')
+                def redone = second.findAll { l -> firstLaunchOnly.any { it.matcher(l).find() } }
+                if (redone) {
+                    throw new GradleException("Smoke scenario '${scenario}': the second boot redid first-launch work:\n  - "
+                            + redone.collect { it.take(200) }.join('\n  - ') + "\nFull log: ${new File(runDir, 'smoke-second.log')}")
+                }
+                logger.lifecycle("Smoke scenario '${scenario}' second boot reused every cache (log: ${new File(runDir, 'smoke-second.log')})")
+            }
+        }
+    }
+}
+
+def clientKnownErrors = [
+        ~/Can't open the resource index file/,
+        ~/Couldn't set icon/,
+        ~/\[CraftPresence\/ERROR\]: Unable to get "[a-z]+" pack data/,
+]
+def clientReadyPattern = ~/Created: \d+x\d+x\d+ minecraft:textures\/atlas\/gui\.png-atlas/
+def clientSettleSeconds = 15
+
+smokeScenarios.each { scenario ->
+    tasks.register("smokeClient_${scenario}") {
+        group = 'verification'
+        description = "Boots the client under Xvfb with scenario '${scenario}' and checks it reaches the title screen."
+        def shadow = tasks.named('shadowJar')
+        dependsOn shadow, 'minecraftOfficialClientJar'
+        if (scenario in fixtureScenarios) dependsOn tasks.named('mixinFixtureJar')
+        def clientLibraries = configurations.minecraftLibraries
+        def clientNatives = configurations.minecraftClientNatives
+        def mappings = configurations.intermediaryMappings
+        def officialClient = project.ext.minecraftOfficialClient
+        def assetIndex = project.ext.minecraftAssetIndex
+
+        doLast {
+            if (['which', 'xvfb-run'].execute().waitFor() != 0) {
+                throw new GradleException("smokeClient needs xvfb-run (package xvfb) to run the client without a screen")
+            }
+            File modsDir = project.file("smoke/scenarios/${scenario}/mods")
+            File runDir = layout.buildDirectory.dir("smoke-client/${scenario}").get().asFile
+            project.delete(runDir)
+            new File(runDir, 'mods').mkdirs()
+            new File(runDir, 'assets').mkdirs()
+            if (modsDir.isDirectory()) project.copy { from modsDir; into new File(runDir, 'mods') }
+            if (scenario in fixtureScenarios) {
+                project.copy { from tasks.named('mixinFixtureJar').get().archiveFile.get().asFile; into new File(runDir, 'mods') }
+            }
+            new File(runDir, 'options.txt').text = 'onboardAccessibility:false\nnarrator:0\nsoundCategory_master:0.0\n'
+
+            def classpath = [shadow.get().archiveFile.get().asFile] + officialClient.files + mappings.files + clientLibraries.files + clientNatives.files
+            def maxHeap = providers.gradleProperty('smoke.xmx').orElse('3G').get()
+            def command = ['xvfb-run', '-a', '-s', '-screen 0 1280x720x24',
+                           'java', '-Xmx' + maxHeap, '-Xms512M', '-Dvyne.dev=true', '-Dvyne.earlyWindow=false',
+                           '-cp', classpath*.absolutePath.join(File.pathSeparator),
+                           'dev.stolym.vyne.core.VyneLauncher',
+                           '--username', 'VyneSmoke', '--version', project.property('minecraft_version'),
+                           '--gameDir', runDir.absolutePath, '--assetsDir', new File(runDir, 'assets').absolutePath,
+                           '--assetIndex', assetIndex, '--uuid', '00000000000000000000000000000001',
+                           '--accessToken', '0', '--userType', 'legacy', '--versionType', 'release']
+            def proc = new ProcessBuilder(command).directory(runDir).redirectErrorStream(true).start()
+            def lines = Collections.synchronizedList([])
+            def readyAt = new java.util.concurrent.atomic.AtomicLong(0L)
+            long deadline = System.currentTimeMillis() + smokeTimeoutSeconds * 1000L
+            boolean exitedEarly = false
+            Thread reader = null
+            try {
+                reader = Thread.start {
+                    proc.inputStream.eachLine { line ->
+                        lines << line
+                        if (readyAt.get() == 0L && clientReadyPattern.matcher(line).find()) readyAt.set(System.currentTimeMillis())
+                    }
+                }
+                while (proc.alive && System.currentTimeMillis() < deadline) {
+                    long at = readyAt.get()
+                    if (at != 0L && System.currentTimeMillis() - at > clientSettleSeconds * 1000L) break
+                    Thread.sleep(500)
+                }
+                exitedEarly = !proc.alive
+            } finally {
+                proc.toHandle().descendants().each { it.destroyForcibly() }
+                proc.destroyForcibly()
+                proc.waitFor()
+                reader?.join(5000)
+            }
+            boolean ready = readyAt.get() != 0L
+            List<String> snapshot
+            synchronized (lines) { snapshot = new ArrayList<>(lines) }
+            lines = snapshot
             new File(runDir, 'smoke.log').text = lines.join('\n')
 
             def problems = []
-            if (timedOut) problems << "timed out after ${smokeTimeoutSeconds}s"
-            if (!started) problems << 'server never reached the "Done" line'
-            if (started && exit != 0) problems << "server exited with code ${exit}"
+            File crashes = new File(runDir, 'crash-reports')
+            if (crashes.isDirectory() && crashes.listFiles()?.length) problems << "crash report written: ${crashes.listFiles()*.name.join(', ')}"
+            if (!ready) problems << (exitedEarly ? 'client exited before reaching the title screen' : "client did not reach the title screen within ${smokeTimeoutSeconds}s")
+            if (ready && exitedEarly) problems << 'client exited within ' + clientSettleSeconds + 's of reaching the title screen'
             lines.each { l ->
-                if (forbiddenPatterns.any { it.matcher(l).find() }) problems << "log: ${l.take(200)}"
+                boolean knownError = l.contains('/ERROR]') && clientKnownErrors.any { it.matcher(l).find() }
+                if (forbiddenPatterns.any { it.matcher(l).find() } || l.contains('Game crashed')
+                        || (l.contains('/ERROR]') && !knownError) || l.startsWith('[Vyne] ERROR')) problems << "log: ${l.take(200)}"
             }
-            (expectedPatterns[scenario] ?: []).each { pat ->
-                if (!lines.any { pat.matcher(it).find() }) {
-                    problems << "expected pattern not found in log: ${pat}"
-                }
-            }
-
+            int errors = lines.count { it.contains('/ERROR]') }
+            int skipped = lines.count { it.contains('found nothing to attach') && it.startsWith('[') }
             if (problems) {
-                throw new GradleException(
-                        "Smoke scenario '${scenario}' FAILED:\n  - " + problems.join('\n  - ') +
+                throw new GradleException("Client smoke scenario '${scenario}' FAILED:\n  - " + problems.join('\n  - ') +
                         "\nFull log: ${new File(runDir, 'smoke.log')}")
             }
-            logger.lifecycle("Smoke scenario '${scenario}' passed (log: ${new File(runDir, 'smoke.log')})")
+            logger.lifecycle("Client smoke scenario '${scenario}' passed (${errors} ERROR lines, ${skipped} skipped mod hooks; log: ${new File(runDir, 'smoke.log')})")
         }
     }
 }

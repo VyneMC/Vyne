@@ -28,10 +28,20 @@ public class BrandingControl {
         if (brandings == null) {
             ImmutableList.Builder<String> brd = ImmutableList.builder();
             brd.add("Minecraft " + DetectedVersion.BUILT_IN.getName());
+            String vyne = vyneBranding();
+            if (vyne != null) brd.add(vyne);
             int modCount = ModList.get().size();
             brd.add(FMLTranslations.parseMessage("fml.menu.branding", ForgeSnapshotsMod.BRANDING_NAME + ' ' + NeoForgeVersion.getVersion(), modCount));
             brandings = brd.build();
             brandingsNoMC = brandings.subList(1, brandings.size());
+        }
+    }
+
+    private static String vyneBranding() {
+        try {
+            return (String) Class.forName("dev.stolym.vyne.core.VyneBranding").getMethod("line").invoke(null);
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
+            return null;
         }
     }
 

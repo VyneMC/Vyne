@@ -31,7 +31,7 @@ Shadowed from `gradle/dependencies.gradle`:
 | Code | Origin | License |
 |---|---|---|
 | `net/fabricmc/loader/**` | Patched fork of [Fabric Loader](https://github.com/FabricMC/fabric-loader) 0.20.1. Original headers are kept in forked files. | Apache-2.0 |
-| `net/minecraftforge/**`, `net/neoforged/**` | Vyne's own implementations of the parts of the Forge/NeoForge API surface Vyne must provide itself (loader integration, registries, events). Not copied source. Any copied source must keep its original header and be listed here. | GPL-3.0 (Vyne) |
+| `src/fml/java/cpw/mods/modlauncher/log/TransformingThrowablePatternConverter.java` | Vyne's own stand-in for the one modlauncher method NeoForge's crash reports call; Vyne's FML replaces modlauncher. Not copied source. | GPL-3.0 (Vyne) |
 | `src/neoforge/` | Vyne's copy of the [NeoForge](https://github.com/neoforged/NeoForge) 21.1.265 API source and resources (from NeoForge's published sources jar). NeoForge's own headers are kept in every file. Vyne changes it to run on Vyne's hook layer. | LGPL-2.1-only (`Licenses/LICENSE_NEOFORGE`) |
 | `src/neoforge/java/net/neoforged/neoforge/common/LenientUnboundedMapCodec.java` | Part of NeoForge's source, originally from Microsoft's DataFixerUpper | MIT (header kept) |
 | `src/main/resources/vyne/hooks/neoforge-21.1.265/` | `accesstransformer.cfg` is NeoForge's access-transformer list; `surface.tsv` is generated from NeoForge's patched classes (the interfaces, fields, methods and access NeoForge adds to vanilla) | LGPL-2.1-only |
@@ -52,6 +52,8 @@ Shadowed from `gradle/dependencies.gradle`:
 | Component | Source | License | How Vyne uses it |
 |---|---|---|---|
 | NeoForge universal jar | maven.neoforged.net | LGPL-2.1 | Downloaded on first start into `.vyne/references/`. A translated copy is kept in the local cache (`.vyne/cache/`) on the player's machine and is never redistributed by Vyne. |
+| NeoForge's libraries: FancyModLoader `loader` 4.0.45, `bus` 8.0.5, `mergetool` 2.0.0 (`api`), `securejarhandler` 3.0.8; on servers also JLine 3.20.0 and TerminalConsoleAppender 1.3.0 | maven.neoforged.net, Maven Central | LGPL-2.1 (NeoForge's), BSD-3-Clause (JLine), MIT (TerminalConsoleAppender) | Downloaded into `.vyne/libraries/` when a pack has NeoForge mods, checked against the repository's SHA-1. Never bundled. |
+| NeoForge's installer (only with `-Dvyne.hooks=false`) | maven.neoforged.net | LGPL-2.1 | Run once on the player's machine; the jars it produces are kept in `.vyne/neoforge/`. Never bundled. |
 | Mojang mappings and the Minecraft client jar | Mojang's official distribution | Mojang EULA / mapping license | Downloaded into `.vyne/mappings/` for remapping. Never bundled. |
 | Intermediary mappings | maven.fabricmc.net | CC0-1.0 | Downloaded into `.vyne/mappings/`. |
 | Minecraft's `ascii.png` font sheet | The installed Minecraft jar | Mojang EULA | Read from the game jar at runtime to draw Vyne's loading screen in Minecraft's font. Never bundled. |

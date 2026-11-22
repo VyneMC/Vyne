@@ -626,7 +626,7 @@ public final class MappingComposer {
             String key = mojClass + "#" + mojField;
             if (LOGGED_FIELD_REMAPS.add(key)) {
                 try {
-                    dev.stolym.vyne.util.VyneLogger.info(
+                    dev.stolym.vyne.util.VyneLogger.debug(
                         "[FieldRemap] " + mojClass + "." + mojField + " -> " + inter
                         + " [" + via + "]");
                 } catch (Throwable ignored) {}

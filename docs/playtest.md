@@ -116,9 +116,11 @@ Deleting `.vyne/` gives you a completely fresh Vyne state (mods and world untouc
 
 ```bash
 ./gradlew check        # unit tests + classLoadCheck + jar composition guard
-./gradlew smokeTest    # 6 dedicated-server scenarios (incl. mixin fixture and patch layer), ~15 min
+./gradlew smokeTest    # 7 dedicated-server scenarios (incl. mixin fixture, patch layer and mixed-content), ~15 min
 ./gradlew smokeServer_mixed            # a single scenario
 ./gradlew smokeServer_mixed -Psmoke.installer  # use NeoForge's installer instead of Vyne's patches
+./gradlew smokeServer_mixed -Psmoke.secondBoot  # boot twice; the second boot must reuse every cache
+./gradlew smokeClient_mixed            # boot the client under Xvfb (needs xvfb-run); passes at the title screen
 ./gradlew smokeTest -Psmoke.timeout=900
 ```
 

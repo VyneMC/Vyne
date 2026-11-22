@@ -17,6 +17,7 @@ final class BlockBreakProbe {
     private static final Map<String, Integer> COUNTS = new ConcurrentHashMap<>();
     private static volatile Object fabricCancelPos;
     private static volatile Object neoForgeCancelPos;
+    private static volatile boolean ARCHITECTURY;
 
     private BlockBreakProbe() {}
 
@@ -44,6 +45,7 @@ final class BlockBreakProbe {
             registerFabric(loader);
             registerFuel(loader);
             EventBridgeProbe.registerFabric(loader);
+            ARCHITECTURY = EventBridgeProbe.registerArchitectury(loader);
             System.out.println("[VyneFixture] block-break probe registered");
         } catch (Throwable t) {
             System.out.println("[VyneFixture] block-break probe could not register: " + t);
@@ -139,6 +141,7 @@ final class BlockBreakProbe {
             EventBridgeProbe.ingredients(loader);
             EventBridgeProbe.payloads(loader, level);
             EventBridgeProbe.menus(loader, player);
+            if (ARCHITECTURY) EventBridgeProbe.architectury(loader, level, x, y, z);
         } catch (Throwable t) {
             System.out.println("[VyneFixture] block-break probe failed: " + t);
         }

@@ -44,7 +44,10 @@ public class VCLMixinConfigPlugin implements IMixinConfigPlugin {
             java.util.Map.entry("PatchLayerFluidRenderMixin", "fabric-rendering-fluids-v1"),
             java.util.Map.entry("PatchLayerSectionCompilerMixin", "fabric-renderer-indigo"),
             java.util.Map.entry("PatchLayerRenderRegionMixin", "fabric-block-view-api-v2"),
-            java.util.Map.entry("PatchLayerModelBakeMixin", "fabric-model-loading-api-v1"));
+            java.util.Map.entry("PatchLayerModelBakeMixin", "fabric-model-loading-api-v1"),
+            java.util.Map.entry("PatchLayerParticleMixin", "fabric-particles-v1"),
+            java.util.Map.entry("PatchLayerBlockDustMixin", "fabric-particles-v1"),
+            java.util.Map.entry("PatchLayerBlockEntityUnloadMixin", "fabric-lifecycle-events-v1"));
 
     private static final java.util.Set<String> PATCHED_GAME_MIXINS = java.util.Set.of(
             "LoadingOverlayVyneMixin",

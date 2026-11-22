@@ -23,7 +23,7 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
 - [x] NeoForge's lifecycle constructs the mods; NeoForge's data pack and assets kept; `@EventBusSubscriber` per method
 - [x] Default for packs with NeoForge mods (since 2026-11-21 also with Fabric mods, see Phase 6)
 - [x] All five smoke scenarios pass (`neoforge-simple`, `neoforge-with-lib` on patched mode; `mixed`, `fabric-only`, `mixin-fixture` as before); client reaches NeoForge's title screen with the three test mods
-- [ ] Small gaps while it lives: Vyne branding instead of NeoForge's in the title screen corner; early-screen mod tiles advance as mods are constructed
+- [x] Title screen corner shows a Vyne line (version and Fabric mod count) under Minecraft's, above NeoForge's; early-screen mod tiles advance as NeoForge constructs each mod
 
 ## Done: Phase 3, hook inventory (2026-11-15)
 
@@ -73,7 +73,13 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
     - [x] Batch 5, recipes and content (tested in `patch-layer`): Fabric custom ingredients (`fabric:type`) in NeoForge's ingredient codecs, including the list codecs built from `MAP_CODEC_NONEMPTY`; network falls back to item lists as Fabric does for clients without the type; villager trades and chunk section air checks already done by NeoForge
     - [x] Batch 6, menus and networking (server side tested in `patch-layer`, client connection still to test): Fabric payload types in NeoForge's four custom payload codecs (round trip tested), extended screen handlers through NeoForge's `openMenu`, Fabric's close-current-screen check, known packs filter, vanilla language file, datagen tag `replace`
     - [x] Client-only handlers (targets checked against the patched client jar, not run yet): screen tick and render events, Indigo chunk building (non-vanilla Fabric models), block entity render data, fluid sprites and overlays, sound streams, model modifiers, block-breaking continuation; hanging signs and namespaced shaders already done by NeoForge
-    - [ ] Test on a real client: a mixed pack joining a server
+    - [x] Every Fabric mod's injectors are optional on the patched game (also `CAPTURE_FAILHARD` → `CAPTURE_FAILSOFT`); each hook that attaches nowhere is logged with its mod (`PatchLayerHandlers.reportUnapplied`); hooks covered elsewhere are listed in `vyne/patch-layer/covered-hooks.txt` (2026-11-21)
+    - [x] Client fixes found by booting the client: colour providers read NeoForge's `blockColors`/`itemColors` (Fabric mixins rewritten at load), particle factories through a raw-id view of NeoForge's `providers`, registry-sync client mixins off, shader stage and import ids no longer prefixed twice, `UseEntityCallback` on the client via `EntityInteractSpecific`, `BLOCK_ENTITY_UNLOAD` in `getBlockEntity`, block dust tint via `areBreakingParticlesTinted`
+    - [x] `smokeClient_<scenario>`: boots the client under Xvfb without the asset store, passes at the title screen (`mixed` passes); run one at a time, the client is heavy
+    - [x] Architectury bridged (tested in `mixed-content`): `BlockEvent.BREAK`, `EntityEvent.ADD` (server), `LIVING_CHECK_SPAWN` via `MobSpawnEvent.PositionCheck`, screen render and char-typed events, client right-click-air
+    - [ ] Remaining third-party hooks seen: REI `modifyBl` (left-side potion effects, could use `ScreenEvent.RenderInventoryMobEffects`), Continuity item frame model hooks
+    - [x] `mixed-content` scenario with the test pack's server-safe mods plus the fixture (REI, Architectury, AppleSkin, Traveler's Backpack, Comforts)
+    - [ ] Test on a real client: a mixed pack joining a server (instance `VyneMixedTest` in Prism)
   - [ ] Analysis: slices and same-name members added by both loaders (missed `WorldChunkMixin.onRemoveBlockEntity` and `TagFileMixin`), and injections that apply to code NeoForge no longer uses (missed `IngredientMixin.injectCodec`: NeoForge builds `Ingredient.CODEC` from `CraftingHelper`, not `codec(boolean)`)
   - [x] Replace every disabled Fabric API handler: 60 replaced, 0 disabled in the table
   - [x] Patch layer is the default for mixed packs, also on the NeoForge installer fallback (`-Dvyne.hooks=false`); `mixed` smoke scenario passes both ways (2026-11-21)
@@ -86,18 +92,21 @@ NeoForge-only packs run on NeoForge 21.1.265's own patched game behind Vyne's lo
 - [ ] Phase 7: mixin duplicate/collision detection; content-mod smoke scenarios
 - [ ] Phase 8: Guard redesign (points 1 to 5 in the design doc)
 - [ ] Phase 9: inventory diff per NeoForge / Fabric API release
-- [ ] Phase 10: benchmark table, CI, release workflow, notices for the NeoForge and Fabric API source copies
+- [ ] Phase 10: benchmark table, CI, release workflow
+  - [x] Third-party notices: NeoForge source copy, runtime-downloaded NeoForge libraries and installer, modlauncher stand-in; deleted hand-written NeoForge/Forge classes removed from the list
+  - [ ] Notices for Vyne's own copy of Fabric API, once it ships
 - [ ] Move the crossing check and link check from scratch scripts into the repo
 
 ## Chores (after Vyne works)
 
 See [docs/dev/small-fixes.md](docs/dev/small-fixes.md) for the full list. Highlights:
 
-- [ ] Log noise: duplicated Vyne lines, `[FieldRemap]` at INFO, `[VynePacks]` ERROR when Fabric API is absent
-- [ ] Gate warning about `class_2385` / `class_2378` missing from the metadata index on every server boot
+- [x] Log noise: Vyne lines mirrored to stdout only while the logger drops them, `[FieldRemap]` at DEBUG, `[VynePacks]` gone with the compatibility path, no more `BOOT → BOOT` warning
+- [x] Gate warning about `class_2385` / `class_2378` missing from the metadata index (gone with the compatibility path)
 - [x] Skip mounting/converting the NeoForge API when no NeoForge mod is installed (and Vyne's NeoForge event hooks stay off)
-- [ ] Smoke suite: second boot per scenario to prove the cache is reused; fail on ERROR-level registration failures
-- [ ] Prune old `.vyne/cache/remap` and `.vyne/cache/realneo` buckets
+- [x] Smoke suite: `-Psmoke.secondBoot` boots each scenario twice and fails if the second boot redoes first-launch work (remap, patched game, API jar, downloads)
+- [x] Smoke suite: server scenarios fail on any ERROR line (log4j or `[Vyne] ERROR`); the client test allows only the missing asset index, the window icon and CraftPresence's pack lookups
+- [x] Prune old caches: `.vyne/cache/remap` removed at start, `realneo` keeps only the current API jar
 
 ## Done on 2026-11-15 (fixes from player logs)
 
@@ -115,8 +124,8 @@ See [docs/dev/small-fixes.md](docs/dev/small-fixes.md) for the full list. Highli
 - [x] A mod that fails to construct ends the phase with a `ModLoadingException`, so NeoForge writes the crash report its error screen opens
 - [x] Loading overlay mixin uses `@WrapOperation` so splash-screen mods (Puzzle) can change the same calls
 - [x] Every push to `dev-1.21.1` builds, tests and publishes a GitHub pre-release (`.github/workflows/dev-build.yml`)
-- [ ] Early window: log why it did not open (`glfwInit` / `glfwCreateWindow` failures return silently)
-- [ ] Installer: notes point at `.minecraft/mods` instead of Prism's `minecraft/mods`; the Fabric Loader component is left next to Vyne
+- [x] Early window: logs GLFW's error when `glfwInit` or `glfwCreateWindow` fails
+- [x] Installer: Prism mods folder is `minecraft/mods` unless `.minecraft` exists; the command-line Prism install is a component install that disables Fabric Loader; notes no longer promise Forge mods
 
 ## Done on 2026-11-14
 

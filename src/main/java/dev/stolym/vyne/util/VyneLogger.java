@@ -76,22 +76,22 @@ public final class VyneLogger {
     public static void info(String message) {
         if (message.contains("TRACE StatusLogger")) return;
         LOG.info(prefixed(message));
-        mirrorStdout(prefixed(message));
+        if (!LOG.isInfoEnabled()) mirrorStdout(prefixed(message));
     }
 
     public static void warn(String message) {
         LOG.warn(YELLOW + prefixed(message) + RESET);
-        mirrorStderr("WARN " + prefixed(message));
+        if (!LOG.isWarnEnabled()) mirrorStderr("WARN " + prefixed(message));
     }
 
     public static void warn(String message, Throwable t) {
         LOG.warn(YELLOW + prefixed(message) + RESET, t);
-        mirrorStderr("WARN " + prefixed(message) + " — " + t);
+        if (!LOG.isWarnEnabled()) mirrorStderr("WARN " + prefixed(message) + " — " + t);
     }
 
     public static void error(String message) {
         LOG.error(RED + prefixed(message) + RESET);
-        mirrorStderr("ERROR " + prefixed(message));
+        if (!LOG.isErrorEnabled()) mirrorStderr("ERROR " + prefixed(message));
     }
 
     public static void error(String message, Throwable t) {
@@ -105,8 +105,10 @@ public final class VyneLogger {
         }
         LOG.error(RED + "  └" + repeat('─', 56) + RESET);
         LOG.error(RED + "  ↓ Full stacktrace below ↓" + RESET, t);
-        mirrorStderr("ERROR " + prefixed(message) + " — " + prettify(t.toString()));
-        t.printStackTrace(System.err);
+        if (!LOG.isErrorEnabled()) {
+            mirrorStderr("ERROR " + prefixed(message) + " — " + prettify(t.toString()));
+            t.printStackTrace(System.err);
+        }
     }
 
     public static void debug(String message) {

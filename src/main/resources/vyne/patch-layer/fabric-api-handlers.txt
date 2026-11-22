@@ -11,6 +11,7 @@ net/fabricmc/fabric/mixin/client/rendering/fluid/FluidRendererMixin modSideSprit
 net/fabricmc/fabric/mixin/client/rendering/fluid/FluidRendererMixin modSpriteArray replaced
 net/fabricmc/fabric/mixin/client/rendering/shader/ShaderProgramMixin allowNoneMinecraftId replaced
 net/fabricmc/fabric/mixin/client/rendering/shader/ShaderProgramMixin modifyId replaced
+net/fabricmc/fabric/mixin/client/rendering/shader/ShaderProgramMixin modifyStageId replaced
 net/fabricmc/fabric/mixin/client/sound/SoundSystemMixin getStream replaced
 net/fabricmc/fabric/mixin/content/registry/AbstractFurnaceBlockEntityMixin canUseAsFuelRedirect replaced
 net/fabricmc/fabric/mixin/content/registry/AbstractFurnaceBlockEntityMixin getFuelTimeRedirect replaced
@@ -58,3 +59,10 @@ net/fabricmc/fabric/mixin/screenhandler/ServerPlayerEntityMixin fabric_replaceVa
 net/fabricmc/fabric/mixin/screenhandler/ServerPlayerEntityMixin fabric_storeOpenedScreenHandler replaced
 net/fabricmc/fabric/mixin/tag/TagFileMixin * replaced
 net/fabricmc/fabric/mixin/tag/TagGroupLoaderMixin * replaced
+net/fabricmc/fabric/mixin/registry/sync/client/BlockColorsMixin * replaced
+net/fabricmc/fabric/mixin/registry/sync/client/ItemColorsMixin * replaced
+net/fabricmc/fabric/mixin/registry/sync/client/ParticleManagerMixin * replaced
+net/fabricmc/fabric/mixin/event/interaction/client/MinecraftClientMixin injectUseEntityCallback replaced
+net/fabricmc/fabric/mixin/client/particle/BlockDustParticleMixin removeUntintableParticles replaced
+net/fabricmc/fabric/mixin/client/rendering/shader/ShaderProgramImportProcessorMixin modifyImportId replaced
+net/fabricmc/fabric/mixin/client/rendering/fluid/FluidRendererMixin modWaterOverlaySprite replaced

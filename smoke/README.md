@@ -35,8 +35,19 @@ Scenarios (the golden mod set from [`docs/dev/improvement-plan.md`](../docs/dev/
 | `smokeServer_neoforge-simple` | one simple NeoForge mod, no dependencies | basic remap + lifecycle |
 | `smokeServer_neoforge-with-lib` | NeoForge mod + its library (CraftPresence + UniLib) | dependency visibility between NeoForge mods |
 | `smokeServer_mixed` | Fabric + NeoForge mods together | coexistence in the unified Knot |
+| `smokeServer_mixin-fixture` | the fixture mod only (built from `src/mixinFixture`) | NeoForge mod mixins, dist-aware init |
+| `smokeServer_patch-layer` | Fabric API + the fixture mod | Fabric API events through NeoForge's hooks (fake player, beds, items, ingredients, payloads, menus) |
+| `smokeServer_mixed-content` | Fabric API, REI, Architectury, Cloth Config, AppleSkin, Traveler's Backpack, Cardinal Components, Comforts | a realistic mixed pack on the patch layer |
 
-`./gradlew smokeTest` runs all of them.
+`./gradlew smokeTest` runs all of them. `-Psmoke.secondBoot` boots each scenario twice and fails if the second boot
+redoes first-launch work (remapping, building the patched game, downloads).
+
+## 3. `./gradlew smokeClient_<scenario>` — the client (needs `xvfb-run`)
+
+Boots the real client off-screen under Xvfb with the same scenario mods, an empty asset store and an offline
+account, and passes once the title screen's textures are built and the client survives 15 more seconds. Fails on a
+crash report or the forbidden log patterns. The client is heavy: run one scenario at a time. Log:
+`build/smoke-client/<scenario>/smoke.log`.
 
 ### Provisioning a scenario
 

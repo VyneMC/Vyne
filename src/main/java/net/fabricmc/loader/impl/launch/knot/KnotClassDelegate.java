@@ -442,7 +442,9 @@ final class KnotClassDelegate<T extends ClassLoader & ClassLoaderAccess> impleme
 		}
 
 		try {
-			return getMixinTransformer().transformClassBytes(name, name, transformedClassArray);
+			byte[] mixed = getMixinTransformer().transformClassBytes(name, name, transformedClassArray);
+			if (mixed != transformedClassArray) dev.stolym.vyne.core.PatchLayerHandlers.reportUnapplied(name, mixed);
+			return mixed;
 		} catch (Throwable t) {
 			String msg = String.format("Mixin transformation of %s failed", name);
 			if (LOG_TRANSFORM_ERRORS) Log.warn(LogCategory.KNOT, msg, t);

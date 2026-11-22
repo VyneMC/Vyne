@@ -79,8 +79,17 @@ public final class VyneInstaller {
         println("  Paste the instance folder path (the one containing mmc-pack.json):");
         print("  Path: ");
         Path instanceDir = Paths.get(scanner.nextLine().trim());
-        warnIfMissing(instanceDir, "mmc-pack.json", "PrismLauncher");
-        installToInstance(instanceDir, "PrismLauncher");
+        if (!Files.exists(instanceDir.resolve("mmc-pack.json"))) {
+            warnIfMissing(instanceDir, "mmc-pack.json", "PrismLauncher");
+            installToInstance(instanceDir, "PrismLauncher");
+            return;
+        }
+        InstallEngine.InstallResult result = InstallEngine.installTo(
+                dev.stolym.vyne.install.gui.LauncherProfile.of(dev.stolym.vyne.install.gui.LauncherProfile.Kind.PRISM, instanceDir.getFileName().toString(), instanceDir),
+                InstallEngine.Mode.COMPONENT, true, (percent, message) -> println(DIM + "  " + message + RESET));
+        println(GREEN + "  [OK] Vyne installed as a Prism component; Fabric Loader is disabled in this instance" + RESET);
+        for (String line : result.summary()) println("  " + line);
+        println("  Mods folder: " + result.modsDir());
     }
 
     private static void installModrinth(Scanner scanner) throws Exception {
@@ -194,7 +203,7 @@ public final class VyneInstaller {
             println("  1. Run: " + CYAN + "./start.sh" + RESET + "  (Linux/Mac)  or  "
                 + CYAN + "start.bat" + RESET + "  (Windows)");
             println("  2. The server will auto-detect all mods in: " + CYAN + modsDir.getFileName() + RESET);
-            println("  3. Add mods to " + CYAN + modsDir.getFileName() + "/" + RESET + " — Fabric, Forge & NeoForge all work.");
+            println("  3. Add mods to " + CYAN + modsDir.getFileName() + "/" + RESET + " — Fabric and NeoForge " + VyneLauncher.TARGET_MC + " mods both work.");
         } else {
             println("  1. Install a Fabric " + VyneLauncher.TARGET_MC + " profile in your launcher");
             println("  2. Double check that Fabric Loader is active");
@@ -332,7 +341,7 @@ public final class VyneInstaller {
             case "Server":
                 sb.append("1. Run ./start.sh (Linux/Mac) or start.bat (Windows)\n");
                 sb.append("2. minecraft_server." + VyneLauncher.TARGET_MC + ".jar is already here\n");
-                sb.append("3. Drop any Fabric/Forge/NeoForge mods into mods/\n");
+                sb.append("3. Drop any Fabric or NeoForge mods into mods/\n");
                 sb.append("4. Vyne handles detection and routing automatically\n");
                 break;
             case "PrismLauncher":
@@ -377,7 +386,7 @@ public final class VyneInstaller {
             case "PrismLauncher":
                 Path prismMc = instanceDir.resolve(".minecraft");
                 if (Files.exists(prismMc)) return prismMc.resolve("mods");
-                return instanceDir.resolve("mods");
+                return instanceDir.resolve("minecraft").resolve("mods");
             default:
                 return instanceDir.resolve("mods");
         }

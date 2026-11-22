@@ -1,0 +1,13 @@
+fabric-lifecycle-events-v1 onRemoveBlockEntity
+architectury checkSpawnerSpawn
+architectury skipDoubleObstruction
+architectury checkPhantomSpawn
+architectury overrideChunkGenSpawnCondition
+architectury addEntity
+architectury onBreak
+architectury renderScreenPre
+architectury renderScreenPost
+architectury wrapCharTypedFirst
+architectury wrapCharTypedSecond
+architectury rightClickAir
+architectury mojangPls

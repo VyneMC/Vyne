@@ -33,6 +33,23 @@ public final class PatchLayerEvents {
                 listen("net.neoforged.neoforge.event.entity.living.LivingConversionEvent$Post", FabricSleep::onConversion);
                 VyneLogger.info("[PatchLayer] Fabric sleep and mob conversion events answered through NeoForge's sleep, spawn and conversion events");
             }
+            if (fabric.isModLoaded("fabric-events-interaction-v0")) {
+                listen("net.neoforged.neoforge.event.entity.player.PlayerInteractEvent$EntityInteractSpecific", FabricInteraction::onEntityInteractSpecific);
+                VyneLogger.info("[PatchLayer] Fabric UseEntityCallback answered on the client through NeoForge's EntityInteractSpecific");
+            }
+            if (fabric.isModLoaded("architectury")) {
+                listen("net.neoforged.neoforge.event.level.BlockEvent$BreakEvent", ArchitecturyBridge::onBlockBreak);
+                listen("net.neoforged.neoforge.event.entity.EntityJoinLevelEvent", ArchitecturyBridge::onEntityJoin);
+                listen("net.neoforged.neoforge.event.entity.living.MobSpawnEvent$PositionCheck", ArchitecturyBridge::onSpawnPositionCheck);
+                if (fabric.getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
+                    listen("net.neoforged.neoforge.client.event.ScreenEvent$Render$Pre", ArchitecturyBridge::onScreenRenderPre);
+                    listen("net.neoforged.neoforge.client.event.ScreenEvent$Render$Post", ArchitecturyBridge::onScreenRenderPost);
+                    listen("net.neoforged.neoforge.client.event.ScreenEvent$CharacterTyped$Pre", ArchitecturyBridge::onCharTypedPre);
+                    listen("net.neoforged.neoforge.client.event.ScreenEvent$CharacterTyped$Post", ArchitecturyBridge::onCharTypedPost);
+                    listen("net.neoforged.neoforge.event.entity.player.PlayerInteractEvent$RightClickEmpty", ArchitecturyBridge::onRightClickEmpty);
+                }
+                VyneLogger.info("[PatchLayer] Architectury's block break, entity add, spawn check, screen and right-click events answered through NeoForge's events");
+            }
         } catch (ReflectiveOperationException | RuntimeException e) {
             VyneLogger.warn("[PatchLayer] Could not register Fabric API bridges: " + e);
         }

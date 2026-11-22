@@ -138,7 +138,6 @@ public final class VyneLauncher {
         }
 
         VyneContainmentConfig.load();
-        VynePhaseTracker.advance(VynePhaseTracker.Phase.BOOT);
 
         VyneLogger.banner(VERSION);
         VyneLogger.info(
@@ -162,6 +161,8 @@ public final class VyneLauncher {
         if (System.getProperty("vyne.gameDir") == null) {
             System.setProperty("vyne.gameDir", baseDir.toString());
         }
+
+        dev.stolym.vyne.convert.CacheCleanup.removeLegacy(baseDir);
 
         Path modsDir = baseDir.resolve("mods");
         if (!Files.exists(modsDir)) {
@@ -204,7 +205,7 @@ public final class VyneLauncher {
             neoForgeApiJar = dev.stolym.vyne.engine.dynamic.NeoForgeReferenceDownloader.resolve(neoVersion, refDir);
         } else {
             neoForgeApiJar = null;
-            VyneLogger.info("[Vyne] No NeoForge or Forge mods installed; the NeoForge API is not loaded.");
+            VyneLogger.info("[Vyne] No NeoForge mods installed; the NeoForge API is not loaded.");
         }
 
         VyneLogger.info("[Vyne] Initializing Unified Knot Environment...");

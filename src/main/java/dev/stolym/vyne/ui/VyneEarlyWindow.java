@@ -39,7 +39,10 @@ public final class VyneEarlyWindow {
         if (handle != 0L || !isEnabled()) return;
         try {
             System.setProperty("java.awt.headless", "true");
-            if (!GLFW.glfwInit()) return;
+            if (!GLFW.glfwInit()) {
+                VyneLogger.warn("[EarlyWindow] GLFW could not start (" + glfwError() + "); Minecraft will open its own window");
+                return;
+            }
             GLFW.glfwDefaultWindowHints();
             GLFW.glfwWindowHint(GLFW.GLFW_CLIENT_API, GLFW.GLFW_OPENGL_API);
             GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_CREATION_API, GLFW.GLFW_NATIVE_CONTEXT_API);
@@ -48,7 +51,10 @@ public final class VyneEarlyWindow {
             GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
             GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE);
             long window = GLFW.glfwCreateWindow(Math.max(320, width), Math.max(240, height), title, 0L, 0L);
-            if (window == 0L) return;
+            if (window == 0L) {
+                VyneLogger.warn("[EarlyWindow] Could not create an OpenGL 3.2 window (" + glfwError() + "); Minecraft will open its own window");
+                return;
+            }
             handle = window;
             mainThread = Thread.currentThread();
             running = true;
@@ -62,6 +68,17 @@ public final class VyneEarlyWindow {
             running = false;
             handle = 0L;
             VyneLogger.warn("[EarlyWindow] Not available, Minecraft will open its own window: " + rootCause(t));
+        }
+    }
+
+    private static String glfwError() {
+        try (org.lwjgl.system.MemoryStack stack = org.lwjgl.system.MemoryStack.stackPush()) {
+            org.lwjgl.PointerBuffer description = stack.mallocPointer(1);
+            int code = GLFW.glfwGetError(description);
+            long text = description.get(0);
+            return "GLFW error 0x" + Integer.toHexString(code) + (text == 0L ? "" : ": " + org.lwjgl.system.MemoryUtil.memUTF8(text));
+        } catch (Throwable t) {
+            return "no GLFW error details: " + t;
         }
     }
 
